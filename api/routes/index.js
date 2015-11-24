@@ -7,6 +7,8 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/tsubscription',function(req,res,next){
+  console.log("Received request!");
+  console.log(req.body);
   res.json(req.body);
 });
 
