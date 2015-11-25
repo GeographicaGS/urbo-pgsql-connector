@@ -1,0 +1,11 @@
+api:
+  #restart: always
+  build: api
+  ports:
+    - "3000:3000"
+
+  # Dev values
+  volumes: 
+    - $(pwd)/api:/usr/src/app
+
+  command: nodemon -L
