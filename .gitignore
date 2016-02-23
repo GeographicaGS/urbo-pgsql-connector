@@ -34,3 +34,10 @@ node_modules
 Icon
 
 *.pyc
+
+#environment parameters
+config.env
+fiware_auth.json
+orion2cartodb.yaml
+
+nginx_dev/
