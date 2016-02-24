@@ -1,0 +1,3 @@
+[submodule "fiw2cartodb/lib/fiware-orion2cartodb"]
+	path = fiw2cartodb/lib/fiware-orion2cartodb
+	url = https://github.com/GeographicaGS/fiware-orion2cartodb.git
