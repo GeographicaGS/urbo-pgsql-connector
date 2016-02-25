@@ -21,6 +21,7 @@
 
 import requests
 import json
+from datetime import datetime
 
 
 def getAuthToken(url_authtk, fl_fw_auth, ssl=False):
@@ -64,6 +65,25 @@ def getData(url_qry, auth_token, serv_name, subserv_name, json_data, ssl=False):
     else:
         print(resp.json())
 
+def updateData(url_udt, auth_token, serv_name, subserv_name, json_data_udt, ssl=False):
+
+    headers_udt = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Fiware-Service': serv_name,
+        'Fiware-ServicePath': '/' + subserv_name,
+        'x-auth-token': auth_token
+    }
+
+    payload = json.dumps(json_data_udt)
+
+    resp = requests.post(url_udt, headers=headers_udt, data=payload, verify=ssl)
+
+    if resp.ok:
+        return(resp.json())
+    else:
+        print(resp.json())
+
 if __name__ == '__main__':
 
     fl_fw_auth = "fiware_auth.json"
@@ -74,7 +94,7 @@ if __name__ == '__main__':
     url_qry = 'https://195.235.93.224:10027/NGSI10/queryContext'
     serv_name = 'sc_smart_region_andalucia'
     subserv_name = 'and_sr_cdm'
-    json_data = {
+    json_data_qry = {
                  "entities": [
                     {
                       "type": "geoEntTest",
@@ -83,7 +103,27 @@ if __name__ == '__main__':
                     }
                   ]
                 }
-    qry = getData(url_qry, auth_token, serv_name, subserv_name, json_data, ssl=False)
+    qry = getData(url_qry, auth_token, serv_name, subserv_name, json_data_qry, ssl=False)
     print(qry)
 
-    
+    url_udt = 'https://195.235.93.224:10027/NGSI10/updateContext'
+    json_data_udt = {
+        "contextElements": [
+            {
+                "type": "geoEntTest",
+                "isPattern": "false",
+                "id": "10027",
+                "attributes": [
+                  {
+                      "name": "timeinstant",
+                      "type": "ISO8601",
+                      "value": datetime.utcnow().isoformat()
+                  }
+                ]
+            }
+        ],
+        "updateAction": "UPDATE"
+    }
+
+    udt = updateData(url_udt, auth_token, serv_name, subserv_name, json_data_udt)
+    print(udt)
