@@ -1,24 +1,24 @@
-# api:
-#   #restart: always
-#   build: api
-#   ports:
-#     - "3000:3000"
-#
-#   # Dev values
-#   volumes:
-#     - $(pwd)/api:/usr/src/app
-#
-#   command: nodemon -L
-
-fiware2cartodb:
-  build: fiw2cartodb
+api:
+  #restart: always
+  build: api
   ports:
     - "3000:3000"
 
   # Dev values
   volumes:
-    - ./fiw2cartodb/lib/fiware-orion2cartodb:/usr/src/app
+    - ./api:/usr/src/app
 
-  working_dir: /usr/src/app
+  command: nodemon -L
 
-  command: python orion2cartodb.py
+# fiware2cartodb:
+#   build: fiw2cartodb
+#   ports:
+#     - "3000:3000"
+#
+#   # Dev values
+#   volumes:
+#     - ./fiw2cartodb/lib/fiware-orion2cartodb:/usr/src/app
+#
+#   working_dir: /usr/src/app
+#
+#   command: python orion2cartodb.py

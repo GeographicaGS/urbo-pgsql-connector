@@ -1,5 +1,5 @@
 
-curl --insecure -i https://195.235.93.224:10027/NGSI10/subscribeContext -s -S --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'Fiware-Service: sc_smart_region_andalucia' --header 'Fiware-ServicePath: /and_sr_cdm' --header 'x-auth-token: MIIEJwYJKoZIhvcNAQcCoIIEGDCCBBQCAQExCTAHBgUrDgMCGjCCAn0GCSqGSIb3DQEHAaCCAm4EggJqeyJ0b2tlbiI6IHsibWV0aG9kcyI6IFsidG9rZW4iLCAicGFzc3dvcmQiXSwgInJvbGVzIjogW3siaWQiOiAiMTBhMTMxOTQxMTI2NGJkZDk4MGY5NzZiNWRlN2IzYTQiLCAibmFtZSI6ICIwY2YyZjA2MTE4OGM0Yzg5YjY4MjBlYjJlZjgwMGNiYSNTdWJTZXJ2aWNlQWRtaW4ifV0sICJleHBpcmVzX2F0IjogIjIwMTYtMDItMjRUMTc6Mjk6MTkuNTI0MDk5WiIsICJwcm9qZWN0IjogeyJkb21haW4iOiB7ImlkIjogIjBjZjJmMDYxMTg4YzRjODliNjgyMGViMmVmODAwY2JhIiwgIm5hbWUiOiAic2Nfc21hcnRfcmVnaW9uX2FuZGFsdWNpYSJ9LCAiaWQiOiAiODA1NjczMjYzM2IyNDMwNjk3ZWVlM2UxYmZiOWNmYzkiLCAibmFtZSI6ICIvYW5kX3NyX2NkbSJ9LCAiY2F0YWxvZyI6IFtdLCAiZXh0cmFzIjoge30sICJ1c2VyIjogeyJkb21haW4iOiB7ImlkIjogIjBjZjJmMDYxMTg4YzRjODliNjgyMGViMmVmODAwY2JhIiwgIm5hbWUiOiAic2Nfc21hcnRfcmVnaW9uX2FuZGFsdWNpYSJ9LCAiaWQiOiAiZjE0MWRhYWUzMzRiNDI3NGFjMmI1NTc4MjNjNTBjNDgiLCAibmFtZSI6ICJhbmRfc3JfY2RtX2FkbWluIn0sICJpc3N1ZWRfYXQiOiAiMjAxNi0wMi0yNFQxNzoxMjo1Ni40NTE3MThaIn19MYIBgTCCAX0CAQEwXDBXMQswCQYDVQQGEwJVUzEOMAwGA1UECAwFVW5zZXQxDjAMBgNVBAcMBVVuc2V0MQ4wDAYDVQQKDAVVbnNldDEYMBYGA1UEAwwPd3d3LmV4YW1wbGUuY29tAgEBMAcGBSsOAwIaMA0GCSqGSIb3DQEBAQUABIIBALMHh7V4KXTHeDmVIS03RB3sN-1UPTKDV+IdmzdW7pljqxWlQdxjAjl0VLoLKT8QJxIlmkmNfv-0jvorgv9SvOZDSuVhag1kn8MFpFtwuD7-3ezyaiNCLQ+xIc6B72qi5ZJWbI0hAaLAN3zIxX9-hKomBnjg5Jx48T6MWBJoP4SG0GHwHHEcdiXiIZLHjGPETzHy1xqw2SyqStuNguThihSIbJY50fYz7+7KdVSUWZUhoBvE+x-43yV7Ytyogo9YiHHWb0p+b8jTmBD+e-fbhEOuZa4RwKCZB32HMinQbs2S2Rqema8yUETaWw7P85jakc2O8ygWSzStfz5LQ1kAUHQ=' -d '
+curl --insecure -i https://195.235.93.224:10027/NGSI10/subscribeContext -s -S --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'Fiware-Service: sc_smart_region_andalucia' --header 'Fiware-ServicePath: /and_sr_cdm' --header 'x-auth-token: MIIC8wYJKoZIhvcNAQcCoIIC5DCCAuACAQExCTAHBgUrDgMCGjCCAUkGCSqGSIb3DQEHAaCCAToEggE2eyJ0b2tlbiI6IHsiaXNzdWVkX2F0IjogIjIwMTYtMDItMjVUMTc6MjE6MjUuNjI2MDQ2WiIsICJleHRyYXMiOiB7fSwgIm1ldGhvZHMiOiBbInBhc3N3b3JkIl0sICJleHBpcmVzX2F0IjogIjIwMTYtMDItMjVUMTg6MjE6MjUuNjI1OTc0WiIsICJ1c2VyIjogeyJkb21haW4iOiB7ImlkIjogIjBjZjJmMDYxMTg4YzRjODliNjgyMGViMmVmODAwY2JhIiwgIm5hbWUiOiAic2Nfc21hcnRfcmVnaW9uX2FuZGFsdWNpYSJ9LCAiaWQiOiAiZjE0MWRhYWUzMzRiNDI3NGFjMmI1NTc4MjNjNTBjNDgiLCAibmFtZSI6ICJhbmRfc3JfY2RtX2FkbWluIn19fTGCAYEwggF9AgEBMFwwVzELMAkGA1UEBhMCVVMxDjAMBgNVBAgMBVVuc2V0MQ4wDAYDVQQHDAVVbnNldDEOMAwGA1UECgwFVW5zZXQxGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbQIBATAHBgUrDgMCGjANBgkqhkiG9w0BAQEFAASCAQBZE0Ov7cedLQV3LlN4yzIGnAX2r4OFyW05JQL-OBWPtRYUq4Sv6HzCEuf0lRZ8+jEUpyFm9mi9kgTWJtw6vrQQwbsGIjhCGnhiMMsfJeOGucAwT+JQhs+RTtrt0YYW3V-2jrqWbQRQtQgrq0blU6cgTRnmJya4pOzQGnBmYfw4wC8HYX+rK3lEEEYYYR+7wqzsqSYfNCIvzjIFRhjUWpifsBZ94C-IdXQXc+z9gWDKTiZ-0cJwPqS9C-nwB4m23bchUs0G3GjPLp71y2LpSjTBqcfHPEBv3zIO13c2vUA+8o0dehOAqBhjZ7+CnEdUKd1CQI1-9DmIl0Y3z7-NpcUl' -d '
 {
     "entities": [
         {
@@ -9,7 +9,7 @@ curl --insecure -i https://195.235.93.224:10027/NGSI10/subscribeContext -s -S --
         }
     ],
     "attributes": [
-            "position","timeinstant","nombre_02", "nombre_01"
+            "position","timeinstant","valor_01", "valor_02"
     ],
     "reference": "http://api-fiware-dashboard.geographica.gs:3000",
     "duration": "P1M",
@@ -17,9 +17,9 @@ curl --insecure -i https://195.235.93.224:10027/NGSI10/subscribeContext -s -S --
         {
             "type": "ONCHANGE",
             "condValues": [
-                "position","timeinstant","nombre_02", "nombre_01"
+                "position","timeinstant","valor_01", "valor_02"
             ]
         }
     ],
-    "throttling": "PT5S"
+    "throttling": "PT0S"
 }'
