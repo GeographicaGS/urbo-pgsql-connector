@@ -1,3 +1,10 @@
+// Load config
+var config = require('./config.js');
+if (!config){
+  console.error('Cannot load config file "config.yml". Exiting...');
+  process.exit(1);
+}
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -24,6 +31,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+
+var subcriptions = require('./routes/subscriptions')(config);
+app.use('/subscriptions',subcriptions);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

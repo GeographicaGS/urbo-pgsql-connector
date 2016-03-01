@@ -1,0 +1,19 @@
+pgsql:
+  host: localhost
+  db: fiware
+  user: fiware
+  passwd: fiware
+
+fiwareAccessToken: 'XXX'
+
+contextBroker:
+  base: 'https://XXXX'
+  subscription: '/subscribeContext'
+
+subscriptions:
+  - callback: '/p1'
+    name: 'This is p 1'
+    service: 'XXX'
+    servicePath: 'XX'
+
+
