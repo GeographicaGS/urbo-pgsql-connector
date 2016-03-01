@@ -41,3 +41,4 @@ fiware_auth.json
 orion2cartodb.yaml
 
 nginx_dev/
+config.yml

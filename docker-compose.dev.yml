@@ -1,5 +1,4 @@
 api:
-  #restart: always
   build: api
   ports:
     - "3000:3000"
