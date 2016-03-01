@@ -1,0 +1,69 @@
+# FIWARE SMART CITIES DASHBOARD CONFIGURATION FILE
+
+# PostgreSQL configuration parameters
+pgsqlParams:
+  host: db_host
+  user: db_user
+  password: db_passw
+  database: db_name
+
+# CartoDB configuration parameters
+cartodbParams:
+  apiKey: xxxxxxxxxxxxxxxxxxxxxx
+  domain: cartodb_domain
+
+# Orion Context Broker API URLs
+contextBrokerUrls:
+  urlAuthtk: xxx.xxx.xxx.xxx:xxxx/xxxxx/auth/tokens
+  urlQry: xxx.xxx.xxx.xxx:xxxx/xxxxx/queryContext
+  urlUdt: xxx.xxx.xxx.xxx:xxxx/xxxxx/updateContext
+  urlSbc: xxx.xxx.xxx.xxx:xxxx/xxxxx/subscribeContext
+
+# Fiware service name
+service: service_name
+
+# Fiware subservices configuration
+subServices:
+  - name: subservice_name_01
+    pgsqlSchema: schema_name
+    authData:
+      user: user_serv
+      password: password_serv
+    subscrData:
+      calback_url: xxxxxxxxxxxxxxxxx
+      entity:
+        type:
+          - ent_type_01
+          - ent_type_02
+      ent_attrib:
+        - name: ent_attrib_01
+          type: string
+          pgsql: true
+        - name: ent_attrib_02
+          type: string
+          pgsql: true
+      condValues:
+        - ent_attrib_01
+        - ent_attrib_02
+
+  - name: subservice_name_02
+    pgsqlSchema: schema_name
+    authData:
+      user: user_serv
+      password: password_serv
+    subscrData:
+      calback_url: xxxxxxxxxxxxxxxxx
+      entity:
+        type:
+          - ent_type_01
+          - ent_type_02
+      ent_attrib:
+        - name: ent_attrib_01
+          type: string
+          pgsql: true
+        - name: ent_attrib_02
+          type: string
+          pgsql: true
+      condValues:
+        - ent_attrib_01
+        - ent_attrib_02

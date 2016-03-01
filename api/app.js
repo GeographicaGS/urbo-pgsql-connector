@@ -32,8 +32,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 
-var subcriptions = require('./routes/subscriptions')(config);
-app.use('/subscriptions',subcriptions);
+var subscriptions = require('./routes/subscriptions')(config);
+app.use('/subscriptions',subscriptions);
 
 
 // catch 404 and forward to error handler

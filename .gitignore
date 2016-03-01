@@ -38,7 +38,7 @@ Icon
 #environment parameters
 config.env
 fiware_auth.json
-orion2cartodb.yaml
+fiware-dashboard-config.yml
 
 nginx_dev/
 config.yml

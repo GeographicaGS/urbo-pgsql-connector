@@ -6,7 +6,7 @@ function createSubscription(sub,config){
 
   // create the subscription callback
   createSubscriptionCallback(sub);
-  
+
   var data = {
     "entities": [
         {
@@ -18,7 +18,8 @@ function createSubscription(sub,config){
     "attributes": [
             "position","timeinstant","valor_01", "valor_02"
     ],
-    "reference": 'http://blabla' + sub.callback,
+    // "reference": 'http://blabla' + sub.callback,
+    "reference": 'http://api-fiware-dashboard.geographica.gs:3000/tsubscription',
     "duration": "P1M",
     "notifyConditions": [
         {
@@ -40,29 +41,36 @@ function createSubscription(sub,config){
   }
 
   var options = {
-    url: config.contextBroker.base + config.contextBroker.subscription,
+    // url: config.contextBroker.base + config.contextBroker.subscription,
+    url: config.contextBroker.subscription,
     method: 'POST',
+    rejectUnauthorized: false,
     headers: headers,
     json: data
   };
-
+  console.log(config);
   console.log(options);
 
   request(options, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      var resp = JSON.parse(body);
-      if (resp.ok){
-        console.log('OK! ' + sub.callback);
-      }
-      else{
-        console.error(resp);
-      }
+      console.log(body);
+      // console.log(JSON.stringify(response));
+      // console.log('STATUS:' + response.statusCode);
+      var resp = JSON.parse(JSON.stringify(response));
+      console.log(resp);
+      // if (resp.ok){
+      //   console.log('OK! ' + sub.callback);
+      // }
+      // else{
+      //   console.error('hollla');
+      // }
     }
     else{
       console.error('Something went wrong')
+      console.log('Request error: ' + error);
     }
   });
-  
+
 }
 
 function createSubscriptionCallback(sub){
@@ -78,7 +86,7 @@ function initialize(config){
   for (var i=0;i<config.subscriptions.length;i++){
     createSubscription(config.subscriptions[i],config);
   }
-  return router;  
+  return router;
 }
 
 module.exports = initialize;
