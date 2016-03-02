@@ -1,10 +1,5 @@
 // Load config
 var config = require('./config.js');
-if (!config){
-  console.error('Cannot load config file "config.yml". Exiting...');
-  process.exit(1);
-}
-
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');

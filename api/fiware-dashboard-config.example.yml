@@ -1,5 +1,9 @@
 # FIWARE SMART CITIES DASHBOARD CONFIGURATION FILE
 
+baseURL: http://mother.geographica.gs:8082
+
+debugAccessToken: XXXX
+
 # PostgreSQL configuration parameters
 pgsqlParams:
   host: db_host
@@ -10,65 +14,38 @@ pgsqlParams:
 # CartoDB configuration parameters
 cartodbParams:
   apiKey: xxxxxxxxxxxxxxxxxxxxxx
-  domain: cartodb_domain
+  account: cartodb_domain
 
 # Orion Context Broker API URLs
 contextBrokerUrls:
-  urlAuthtk: xxx.xxx.xxx.xxx:xxxx/xxxxx/auth/tokens
-  urlQry: xxx.xxx.xxx.xxx:xxxx/xxxxx/queryContext
-  urlUdt: xxx.xxx.xxx.xxx:xxxx/xxxxx/updateContext
-  urlSbc: xxx.xxx.xxx.xxx:xxxx/xxxxx/subscribeContext
+  urlAuthtk: https://195.235.93.224:15001/v3/auth/tokens
+  urlQry: https://195.235.93.224:10027/NGSI10/queryContext
+  urlUdt: https://195.235.93.224:10027/NGSI10/updateContext
+  urlSbc: https://195.235.93.224:10027/NGSI10/subscribeContext
+  urlSbcUpdate: https://195.235.93.224:10027/NGSI10/updateContextSubscription
 
-# Fiware service name
-service: service_name
+# Fiware subservices subscriptions configuration
+subservices:
+  - id: andalucia
+    service: XXX
+    subservice: XXX
+    auth:
+      user: XXX
+      password: XXX
 
-# Fiware subservices configuration
-subServices:
-  - name: subservice_name_01
-    pgsqlSchema: schema_name
-    authData:
-      user: user_serv
-      password: password_serv
-    subscrData:
-      calback_url: xxxxxxxxxxxxxxxxx
-      entityType:
-          - ent_type_01
-          - ent_type_02
-      ent_attrib:
-        - name: ent_attrib_01
-          type: string
-          cartodb: false
-          pgsql: true
-        - name: ent_attrib_02
-          type: string
-          pgsql: true
-      condValues:
-        - ent_attrib_01
-        - ent_attrib_02
+subscriptions:
+  - id: energy
+    subservice_id: andalucia
+    entityTypes:
+      - geoEntTest
+    attributes:
+      - name: position
+        type: coords
+        cartodb: true
+      - name: timeinstant
+        type: ISO8601
+      - name: valor_01
+        type: string
+      - name: valor_02
+        type: string
 
-  - name: subservice_name_02
-    pgsqlSchema: schema_name
-    authData:
-      user: user_serv
-      password: password_serv
-    subscrData:
-      calback_url: xxxxxxxxxxxxxxxxx
-      entityType:
-          - ent_type_01
-          - ent_type_02
-      ent_attrib:
-        - name: position
-          type: coords
-          cartodb: true
-          pgsql: true
-        - name: ent_attrib_01
-          type: string
-          cartodb: false
-          pgsql: true
-        - name: ent_attrib_02
-          type: string
-          cartodb: false
-          pgsql: true
-      condValues:
-        - ent_attrib_01
-        - ent_attrib_02
