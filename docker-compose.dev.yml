@@ -1,23 +1,17 @@
+postgis:
+  image: geographica/postgis:postgresql-9.4.5-postgis-2.2.0-gdal-2.0.1-patched-es_ES
+  volumes_from:
+    - fiwaredashboard_pgdata
 api:
   build: api
   ports:
     - "3000:3000"
+
+  links:
+    - postgis:postgis
 
   # Dev values
   volumes:
     - ./api:/usr/src/app
 
   command: nodemon -L
-
-# fiware2cartodb:
-#   build: fiw2cartodb
-#   ports:
-#     - "3000:3000"
-#
-#   # Dev values
-#   volumes:
-#     - ./fiw2cartodb/lib/fiware-orion2cartodb:/usr/src/app
-#
-#   working_dir: /usr/src/app
-#
-#   command: python orion2cartodb.py
