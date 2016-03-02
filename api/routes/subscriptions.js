@@ -1,69 +1,108 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
+var _ = require('underscore');
+var token;
+
+function getAuthToken(config,cb){
+
+  var data = {
+    'auth': {
+      'identity': {
+        'methods': [
+          'password'
+        ],
+        'password': {
+          'user': {
+            'domain': {
+             'name': 'sc_smart_region_andalucia'
+           },
+           'name': 'and_sr_cdm_admin',
+           'password': '33j4vBWJ95'
+          }
+        }
+      }
+    }
+  };
+
+  var options = {
+    'url': config.getData().contextBrokerUrls.urlAuthtk,
+    'method': 'POST',
+    'rejectUnauthorized': false,
+    'json': data
+  };
+
+  //console.log(config);
+  //console.log(options);
+
+  request(options, function (error, response, body) {
+    
+    if (!error) {
+      var resp = JSON.parse(JSON.stringify(response));
+      cb(null,resp.headers['x-subject-token']);
+    }
+    else{
+      cb(error,null);
+    }
+  });
+}
 
 function createSubscription(sub,config){
+
+  var cfgData = config.getData();
 
   // create the subscription callback
   createSubscriptionCallback(sub);
 
+  var entities =  _.map(sub.entityTypes,function(type){
+    return {
+      'type': type,
+      'isPattern' : 'true',
+      'id': '*'
+    };
+  });
+
+  var attributes = _.pluck(sub.attributes,'name');
+
+  var srv = config.getSubService(sub.subservice_id);
+
   var data = {
-    "entities": [
+    'entities': entities,
+    'attributes': attributes,
+    'reference': cfgData.baseURL + '/subscriptions/' + sub.id,
+    'duration': 'P1M',
+    'notifyConditions': [
         {
-          "type": "geoEntTest",
-          "isPattern": "true",
-          "id": "10*"
+            'type': 'ONCHANGE',
+            'condValues': attributes
         }
     ],
-    "attributes": [
-            "position","timeinstant","valor_01", "valor_02"
-    ],
-    // "reference": 'http://blabla' + sub.callback,
-    "reference": 'http://api-fiware-dashboard.geographica.gs:3000/tsubscription',
-    "duration": "P1M",
-    "notifyConditions": [
-        {
-            "type": "ONCHANGE",
-            "condValues": [
-                "position","timeinstant","valor_01", "valor_02"
-            ]
-        }
-    ],
-    "throttling": "PT0S"
+    'throttling': 'PT0S'
   };
 
   var headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'Fiware-Service': sub.service,
-    'Fiware-ServicePath': '/' + sub.servicePath,
-    'x-auth-token': config.fiwareAccessToken
+    'Fiware-Service': srv.service,
+    'Fiware-ServicePath': '/' + srv.subservice,
+    'x-auth-token': token
   }
 
   var options = {
-    // url: config.contextBroker.base + config.contextBroker.subscription,
-    url: config.contextBroker.subscription,
-    method: 'POST',
-    rejectUnauthorized: false,
-    headers: headers,
-    json: data
+    'url': cfgData.contextBrokerUrls.urlSbc,
+    'method': 'POST',
+    'rejectUnauthorized': false,
+    'headers': headers,
+    'json': data
   };
-  console.log(config);
-  console.log(options);
+  // console.log(config);
+  // console.log(JSON.stringify(options));
 
   request(options, function (error, response, body) {
+    console.log(JSON.parse(JSON.stringify(response)));
     if (!error && response.statusCode == 200) {
-      console.log(body);
-      // console.log(JSON.stringify(response));
-      // console.log('STATUS:' + response.statusCode);
       var resp = JSON.parse(JSON.stringify(response));
       console.log(resp);
-      // if (resp.ok){
-      //   console.log('OK! ' + sub.callback);
-      // }
-      // else{
-      //   console.error('hollla');
-      // }
     }
     else{
       console.error('Something went wrong')
@@ -74,8 +113,8 @@ function createSubscription(sub,config){
 }
 
 function createSubscriptionCallback(sub){
-  router.post(sub.callback,function(req,res,next){
-    console.log("Received request " + sub.callback);
+  router.post(sub.id,function(req,res,next){
+    console.log('Received request ' + sub.callback);
     console.log(req.body);
     res.json(req.body);
   });
@@ -83,10 +122,19 @@ function createSubscriptionCallback(sub){
 
 function initialize(config){
 
-  for (var i=0;i<config.subscriptions.length;i++){
-    createSubscription(config.subscriptions[i],config);
-  }
-  return router;
+  getAuthToken(config,function(error,t){
+    if (error){
+      console.error('Cannot get access token');
+      return console.error(error);
+    }
+    token = t;
+    var subscriptions = config.getSubs();
+    for (var i=0;i<subscriptions.length;i++){
+      createSubscription(subscriptions[i],config);
+    }
+  });
+
+  return router;  
 }
 
 module.exports = initialize;
