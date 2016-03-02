@@ -19,7 +19,8 @@ function createSubscription(sub,config){
             "position","timeinstant","valor_01", "valor_02"
     ],
     // "reference": 'http://blabla' + sub.callback,
-    "reference": 'http://api-fiware-dashboard.geographica.gs:3000/tsubscription',
+    // "reference": 'http://api-fiware-dashboard.geographica.gs:3000/tsubscription',
+    "reference": 'http://mother.geographica.gs:8081/tsubscription',
     "duration": "P1M",
     "notifyConditions": [
         {
