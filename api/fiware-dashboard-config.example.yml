@@ -2,14 +2,15 @@
 
 baseURL: http://mother.geographica.gs:8082
 
-debugAccessToken: XXXX
+debugAccessToken: 
 
 # PostgreSQL configuration parameters
-pgsqlParams:
-  host: db_host
-  user: db_user
-  password: db_passw
-  database: db_name
+pgsql:
+  host: XXX
+  user: XXX
+  password: XXX
+  database: XXX
+  port: 5432
 
 # CartoDB configuration parameters
 cartodbParams:
@@ -26,16 +27,16 @@ contextBrokerUrls:
 
 # Fiware subservices subscriptions configuration
 subservices:
-  - id: andalucia
+  - id: XXX
     service: XXX
     subservice: XXX
     auth:
       user: XXX
-      password: XXX
+      password: XX
 
 subscriptions:
-  - id: energy
-    subservice_id: andalucia
+  - id: XXX
+    subservice_id: XXX
     entityTypes:
       - geoEntTest
     attributes:
@@ -48,4 +49,5 @@ subscriptions:
         type: string
       - name: valor_02
         type: string
+      
 

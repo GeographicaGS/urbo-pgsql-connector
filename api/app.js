@@ -30,7 +30,6 @@ app.use('/users', users);
 var subscriptions = require('./routes/subscriptions')(config);
 app.use('/subscriptions',subscriptions);
 
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

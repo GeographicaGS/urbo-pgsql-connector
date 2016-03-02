@@ -2,9 +2,11 @@ var express = require('express');
 var router = express.Router();
 var request = require('request');
 var _ = require('underscore');
+var SubscriptionsModel = require('../models/subscriptionsmodel');
 var token;
+var config;
 
-function getAuthToken(config,cb){
+function getAuthToken(cb){
 
   var data = {
     'auth': {
@@ -47,12 +49,20 @@ function getAuthToken(config,cb){
   });
 }
 
-function createSubscription(sub,config){
+function createSubscription(sub){
 
   var cfgData = config.getData();
 
   // create the subscription callback
   createSubscriptionCallback(sub);
+  createTable(sub,function(err){
+    if (err)
+      return console.error('Cannot create table for subscription');
+    registerSubscription(sub);
+  });
+}
+
+function registerSubscription(sub){
 
   var entities =  _.map(sub.entityTypes,function(type){
     return {
@@ -116,13 +126,20 @@ function createSubscriptionCallback(sub){
   router.post(sub.id,function(req,res,next){
     console.log('Received request ' + sub.callback);
     console.log(req.body);
+    model = new SubscriptionsModel(config.getData().pgsql);
+    //model.insert(sub.id,{})
     res.json(req.body);
   });
 }
 
-function initialize(config){
+function createTable(sub,cb){
+  model = new SubscriptionsModel(config.getData().pgsql);
+  model.createTable(sub,cb);
+}
 
-  getAuthToken(config,function(error,t){
+function initialize(cfg){
+  config = cfg;
+  getAuthToken(function(error,t){
     if (error){
       console.error('Cannot get access token');
       return console.error(error);
