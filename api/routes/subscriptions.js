@@ -57,7 +57,7 @@ function createSubscription(sub){
   createTable(sub,function(err){
     if (err)
       return console.error('Cannot create table for subscription');
-    registerSubscription(sub);
+    //registerSubscription(sub);
 
   });
 }
@@ -65,7 +65,7 @@ function createSubscription(sub){
 function registerSubscription(sub){
 
   var cfgData = config.getData();
-  
+
   var entities =  _.map(sub.entityTypes,function(type){
     return {
       'type': type,

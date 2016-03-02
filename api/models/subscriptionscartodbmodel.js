@@ -15,7 +15,7 @@ util.inherits(SubscriptionsCartoDBModel, CartoDBModel);
 SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
 
   var sql = ['SELECT count(*) as n FROM information_schema.tables',
-       " WHERE table_schema = '{user}' AND table_name = '{table}'"]
+       " WHERE table_schema = '{{user}}' AND table_name = '{{table}}'"];
 
   var that = this;
   this.query({ 
@@ -49,9 +49,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
         if (err){
           log.error('Error saving table at CartoDB');
           log.error(err);
-          //cb(err);
-          // TODO!
-          cb(null);
+          cb(err);
         }
         else{
           cb();
@@ -59,28 +57,21 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
       });
     }
     else{
-      // TODO: Fix it
-      cb();
-      return;
-
       // get table info. Apply alter table is needed. NEVER DROP COLUMNS except if config says it 
-      // TODO: Create metadata table.
-      //select * from INFORMATION_SCHEMA.COLUMNS where table_name = 'energy'
-      // https://alasarr.cartodb.com/api/v2/sql?api_key=daf3960b41733ef71e03ea77019642761d547f5b&q=select * from INFORMATION_SCHEMA.COLUMNS where table_schema = 'alasarr' and table_name = 'energy'
-      
-
+     
       that.query({ 
-        'query': "select column_name from INFORMATION_SCHEMA.COLUMNS where table_schema = '{user}' AND table_name = '{table}'",
+        'query': "select column_name from INFORMATION_SCHEMA.COLUMNS where table_schema = '{{user}}' AND table_name = '{{table}}'",
         'params' : { 'user' : that._user, 'table': sub.id}
       },function(err,data){
         if (err){
           log.error('Error getting fields information')
           return cb(err,null)
         }
-        console.log(data);
+
+        
         var current = _.pluck(data.rows,'column_name');
         var attributes = _.filter(sub.attributes, function(attr){ return attr.cartodb && attr.type!='coords'; });
-        var needed = _.pluck(attributes,'name').concat('cartodb_id','the_geom','the_geom_webmercator','created_at');
+        var needed = _.pluck(attributes,'name').concat('cartodb_id','the_geom','the_geom_webmercator');
         var toadd = _.difference(needed,current);
         var toremove = _.difference(current,needed);
 
@@ -92,7 +83,6 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
 
         // Add element
         if (toadd.length){
-          console.log(toadd);
           var fields = [];
           for (var i=0;i<attributes.length;i++){
             var attr = attributes[i];
@@ -106,16 +96,12 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
               log.error('Error altering table ' + sub.id);
               return cb(err,null);
             }
-            console.log('HECHO');
             cb();
           });
         }
         else{
           cb();
         }
-
-        
-
       });
     }
   });
