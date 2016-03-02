@@ -3,6 +3,7 @@ var router = express.Router();
 var request = require('request');
 var _ = require('underscore');
 var SubscriptionsModel = require('../models/subscriptionsmodel');
+var SubscriptionsCartoDBModel = require('../models/subscriptionscartodbmodel');
 var token;
 var config;
 
@@ -51,19 +52,20 @@ function getAuthToken(cb){
 
 function createSubscription(sub){
 
-  var cfgData = config.getData();
-
   // create the subscription callback
   createSubscriptionCallback(sub);
   createTable(sub,function(err){
     if (err)
       return console.error('Cannot create table for subscription');
     registerSubscription(sub);
+
   });
 }
 
 function registerSubscription(sub){
 
+  var cfgData = config.getData();
+  
   var entities =  _.map(sub.entityTypes,function(type){
     return {
       'type': type,
@@ -134,7 +136,20 @@ function createSubscriptionCallback(sub){
 
 function createTable(sub,cb){
   model = new SubscriptionsModel(config.getData().pgsql);
-  model.createTable(sub,cb);
+  model.createTable(sub,function(err){
+    if (err){
+      console.error('Error creating table');
+      return cb(err)
+    }
+    cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
+    cdbmodel.createTable(sub,function(err){
+      if (err)
+        console.error('Error creating table at CartoDB');
+      else
+        console.log('Create table at CartoDB completed');
+      cb(err);
+     });
+  });
 }
 
 function initialize(cfg){

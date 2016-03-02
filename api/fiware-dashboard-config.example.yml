@@ -13,7 +13,7 @@ pgsql:
   port: 5432
 
 # CartoDB configuration parameters
-cartodbParams:
+cartodb:
   apiKey: xxxxxxxxxxxxxxxxxxxxxx
   account: cartodb_domain
 

@@ -1,6 +1,5 @@
 var util = require('util'),
     PGSQLModel = require('./pgsqlmodel.js'),
-    mustache = require('mustache'),
     utils = require('./utils'),
     _ = require('underscore');
 
@@ -36,7 +35,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
         if (err)
           console.log(err);
         else
-          console.log('Created');
+          cb();
       });
     }
     else{
@@ -55,6 +54,12 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
         var toadd = _.difference(needed,current);
         var toremove = _.difference(current,needed);
 
+        if (toremove.length){
+          // TODO: REMOVE element.  
+          console.log('TOREMOVE');
+          console.log(toremove);
+        }
+
         // Add element
         if (toadd.length){
           var fields = [];
@@ -70,16 +75,12 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
               log.error('Error altering table ' + sub.id);
               return cb(err,null)
             }
-            console.log('HECHO')
+            cb();
           });
         }
-
-        if (toremove.length){
-          // TODO: REMOVE element.  
-          console.log('TOREMOVE');
-          console.log(toremove);
+        else{
+          cb();
         }
-
       });
     }
   });

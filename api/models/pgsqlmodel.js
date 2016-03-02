@@ -17,7 +17,7 @@ function PGSQLModel(cfg){
 };
 
 // 'energy',
-// data: {field: 'value'}
+// data:{field: 'value'}
 PGSQLModel.prototype.insert = function(table,data,cb){
   if (!data || (data.isArray && data.length==0)){
     log.warning('Trying to insert data with no data. Ignoring.')
