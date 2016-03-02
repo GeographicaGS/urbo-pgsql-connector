@@ -31,13 +31,13 @@ subServices:
       password: password_serv
     subscrData:
       calback_url: xxxxxxxxxxxxxxxxx
-      entity:
-        type:
+      entityType:
           - ent_type_01
           - ent_type_02
       ent_attrib:
         - name: ent_attrib_01
           type: string
+          cartodb: false
           pgsql: true
         - name: ent_attrib_02
           type: string
@@ -53,16 +53,21 @@ subServices:
       password: password_serv
     subscrData:
       calback_url: xxxxxxxxxxxxxxxxx
-      entity:
-        type:
+      entityType:
           - ent_type_01
           - ent_type_02
       ent_attrib:
+        - name: position
+          type: coords
+          cartodb: true
+          pgsql: true
         - name: ent_attrib_01
           type: string
+          cartodb: false
           pgsql: true
         - name: ent_attrib_02
           type: string
+          cartodb: false
           pgsql: true
       condValues:
         - ent_attrib_01
