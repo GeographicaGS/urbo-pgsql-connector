@@ -51,14 +51,8 @@ function createSubscription(sub){
 
   var cfgData = config.getData();
 
-  // create the subscription callback
-  createSubscriptionCallback(sub);
-  registerSubscription(sub, cfgData);
-  createTable(sub,function(err){
-    if (err)
-      return console.error('Cannot create table for subscription');
-    // registerSubscription(sub);
-  });
+  var q = 'SELECT subs_id FROM subscriptions WHERE id_name=$1'
+  getSubscription(sub, cfgData, q, [sub.id]);
 }
 
 function registerSubscription(sub, cfgData){
@@ -111,7 +105,8 @@ function registerSubscription(sub, cfgData){
       var resp = JSON.parse(JSON.stringify(response));
       var subscritionID = resp.body.subscribeResponse.subscriptionId;
       var data = {subs_id: subscritionID, id_name: sub.id};
-      handleSubscriptionsTable('SELECT COUNT(*) FROM subscriptions', null, data);
+      var q = 'SELECT COUNT(*) FROM subscriptions WHERE id_name=$1';
+      handleSubscriptionsTable(q, [sub.id], data);
     }
     else{
       console.error('Something went wrong')
@@ -133,6 +128,71 @@ function handleSubscriptionsTable(sql, bindings, data){
       }
       else{
           updateDataTable('subscriptions', data);
+      }
+    });
+}
+
+function getSubscription(sub, cfgData, sql, bindings, data){
+    model = new SubscriptionsModel(config.getData().pgsql);
+    model.query(sql, bindings, function(err, r){
+      if (err)
+        return console.error('Cannot execute sql query');
+
+      console.log(r.rows);
+      if (r.rows.length === 1) {
+          var subs_id = r.rows[0].subs_id;
+          updateSubscription(sub, cfgData, subs_id);
+          console.log('Updated subscription...');
+      }
+      else{
+          console.log('Creating new subscription...');
+          // create the subscription callback
+          createSubscriptionCallback(sub);
+          registerSubscription(sub, cfgData);
+          createTable(sub,function(err){
+            if (err)
+              return console.error('Cannot create table for subscription');
+            // registerSubscription(sub);
+          });
+      }
+
+    });
+}
+
+function updateSubscription(sub, cfgData, subs_id){
+    var srv = config.getSubService(sub.subservice_id);
+
+    var data = {
+       'subscriptionId': subs_id,
+       'duration': 'P1M'
+    };
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Fiware-Service': srv.service,
+      'Fiware-ServicePath': '/' + srv.subservice,
+      'x-auth-token': token
+    }
+
+    var options = {
+      'url': cfgData.contextBrokerUrls.urlSbcUpdate,
+      'method': 'POST',
+      'rejectUnauthorized': false,
+      'headers': headers,
+      'json': data
+    };
+    // console.log(config);
+    // console.log(JSON.stringify(options));
+
+    request(options, function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        var resp = JSON.parse(JSON.stringify(response));
+        console.log('Updated subscription: ' + sub.id);
+      }
+      else{
+        console.error('Something went wrong')
+        console.log('Request error: ' + error);
       }
     });
 }
