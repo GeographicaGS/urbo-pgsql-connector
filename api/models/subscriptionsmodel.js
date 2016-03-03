@@ -127,4 +127,8 @@ SubscriptionsModel.prototype.handleSubscriptionsTable = function(data, cb){
   });
 }
 
+SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
+  
+}
+
 module.exports = SubscriptionsModel;
