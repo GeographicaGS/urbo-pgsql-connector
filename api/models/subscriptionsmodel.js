@@ -1,7 +1,10 @@
 var util = require('util'),
     PGSQLModel = require('./pgsqlmodel.js'),
     utils = require('./utils'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    log = require('log4js').getLogger();
+
+log.setLevel(process.env.LOG_LEVEL || 'INFO');
 
 function SubscriptionsModel(cfg) {
   PGSQLModel.call(this,cfg);
@@ -29,7 +32,8 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
       var q = [
         'CREATE TABLE ' + sub.id + ' ( id bigserial  CONSTRAINT ' + sub.id + '_pk PRIMARY KEY,',
           fields.join(','),
-          ", created_at timestamp without time zone default (now() at time zone 'utc')",
+          ",id_entity varchar(64) not null",
+          ",created_at timestamp without time zone default (now() at time zone 'utc')",
           ')'];
       that.query(q.join(' '),null,function(err,data){
         if (err)
@@ -50,7 +54,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           return cb(err,null)
         }
         var current = _.pluck(data.rows,'column_name');
-        var needed = _.pluck(sub.attributes,'name').concat('id','created_at');
+        var needed = _.pluck(sub.attributes,'name').concat('id','created_at','id_entity');
         var toadd = _.difference(needed,current);
         var toremove = _.difference(current,needed);
 
@@ -119,7 +123,7 @@ SubscriptionsModel.prototype.handleSubscriptionsTable = function(data, cb){
       return console.error('Cannot execute sql query');
 
     if (!r.rows[0].n == '0') {
-      self.insert(table,[data],cb);
+      self.insertBatch(table,[data],cb);
     }     
     else{
       self.update(table,data,cb);
@@ -128,7 +132,19 @@ SubscriptionsModel.prototype.handleSubscriptionsTable = function(data, cb){
 }
 
 SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
-  
+  for (var i=0;i<contextResponses.length;i++){
+    var obj = {}, objdq = {};
+    _.each(contextResponses[i].contextElement.attributes,function(attr){
+      obj['id_entity'] = contextResponses[i].contextElement.id;
+      var v = utils.getValueForType(attr.value,attr.type);
+      if (utils.isTypeQuoted(attr.type))
+        obj[attr.name] = v;
+      else
+        objdq[attr.name] = v;
+    });
+    this.insert(sub.id,obj,objdq);
+  }
+
 }
 
 module.exports = SubscriptionsModel;

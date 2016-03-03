@@ -18,7 +18,7 @@ function PGSQLModel(cfg){
 
 // 'energy',
 // data:{field: 'value'}
-PGSQLModel.prototype.insert = function(table,data,cb){
+PGSQLModel.prototype.insertBatch = function(table,data,cb){
   if (!data || (data.isArray && data.length==0)){
     log.warning('Trying to insert data with no data. Ignoring.')
     return;
@@ -30,7 +30,35 @@ PGSQLModel.prototype.insert = function(table,data,cb){
     client.query(sql,function(err,r){
       done();
       if (err){
-        console.log(err);
+        console.log(sql);
+        log.error('Error when inserting data');
+        log.error(err);
+      }
+      if (cb) cb(err,r);
+    });
+  });
+}
+
+PGSQLModel.prototype.insert = function(table,data,dontquotedata,cb){
+  //console.log(data);
+  //console.log(dontquotedata);
+  var constructor = this._squel.insert().into(table);
+
+  for (var i in data){
+    constructor.set(i,data[i]);
+  }
+
+  for (var i in dontquotedata){
+    constructor.set(i,dontquotedata[i],{dontQuote: true});
+  }
+
+  var sql = constructor.toString();
+
+  this._connect(function(err,client,done){
+    client.query(sql,function(err,r){
+      done();
+      if (err){
+        console.log(sql);
         log.error('Error when inserting data');
         log.error(err);
       }
