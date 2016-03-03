@@ -50,8 +50,6 @@ function getAuthToken(subserv, cb){
 
 function createSubscription(sub){
 
-  createSubscriptionCallback(sub);
-
   createTable(sub,function(err){
     if (err)
       return console.error('Cannot create table for subscription');
@@ -86,7 +84,7 @@ function newOrionSubscription(sub, cfgData){
     return {
       'type': type,
       'isPattern' : 'true',
-      'id': '*'
+      'id': '.*'
     };
   });
 
@@ -116,7 +114,7 @@ function newOrionSubscription(sub, cfgData){
     'Fiware-Service': srv.service,
     'Fiware-ServicePath': '/' + srv.subservice,
     'x-auth-token': token
-  }
+  };
 
   var options = {
     'url': cfgData.contextBrokerUrls.urlSbc,
@@ -192,10 +190,12 @@ function createSubscriptionCallback(sub){
   console.log('Set router: ' + sub.id);
 
   router.post('/' + sub.id,function(req,res,next){
-    model = new SubscriptionsModel(config.getData().pgsql);
-    //model.insert(sub.id,{})
-    console.log('Recibida respuesta');
-    console.log(res);
+    psqlmodel = new SubscriptionsModel(config.getData().pgsql);
+    psqlmodel.storeData(sub,req.body.contextResponses);
+
+    // cdbmodel = new SubscriptionsCartoDBModel(config.getData().pgsql);
+    // cdbmodel.storeData(sub,req.body.contextResponses);
+
     res.json(req.body);
   });
   
@@ -235,8 +235,19 @@ function initialize(cfg,cb){
     });
   }
 
-  return router;
-  
 }
 
-module.exports = initialize;
+function routes(cfg){
+  config = cfg;
+
+  var subscriptions = config.getSubs();
+  for (var i=0;i<subscriptions.length;i++){
+    var sub = subscriptions[i];
+    createSubscriptionCallback(sub);  
+  }
+
+  return router;
+}
+
+module.exports.routes = routes;
+module.exports.initialize = initialize;
