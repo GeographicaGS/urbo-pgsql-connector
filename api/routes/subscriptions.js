@@ -7,8 +7,8 @@ var SubscriptionsCartoDBModel = require('../models/subscriptionscartodbmodel');
 var token;
 var config;
 
-function getAuthToken(cb){
-
+function getAuthToken(subserv, cb){
+  var subservAuth = JSON.parse(JSON.stringify(config.getSubServiceAuth(subserv)));
   var data = {
     'auth': {
       'identity': {
@@ -18,10 +18,10 @@ function getAuthToken(cb){
         'password': {
           'user': {
             'domain': {
-             'name': 'sc_smart_region_andalucia'
-           },
-           'name': 'and_sr_cdm_admin',
-           'password': '33j4vBWJ95'
+             'name': subservAuth.service
+            },
+           'name': subservAuth.user,
+           'password': subservAuth.password
           }
         }
       }
@@ -35,13 +35,11 @@ function getAuthToken(cb){
     'json': data
   };
 
-  //console.log(config);
-  //console.log(options);
-
   request(options, function (error, response, body) {
-    
+
     if (!error) {
       var resp = JSON.parse(JSON.stringify(response));
+      // console.log(resp);
       cb(null,resp.headers['x-subject-token']);
     }
     else{
@@ -57,14 +55,32 @@ function createSubscription(sub){
   createTable(sub,function(err){
     if (err)
       return console.error('Cannot create table for subscription');
-    //registerSubscription(sub);
-
+    
+    registerSubscription(sub);
   });
+
 }
 
 function registerSubscription(sub){
 
   var cfgData = config.getData();
+
+  model = new SubscriptionsModel(config.getData().pgsql);
+
+  model.getSubscription(sub.id,function(err,d){
+    if (err){
+      return console.log('Error getting subscription');
+    }
+    else if (d){
+      updateOrionSubscription(sub, cfgData,d.subs_id);
+    }
+    else{
+      newOrionSubscription(sub, cfgData); 
+    }
+  });
+}
+
+function newOrionSubscription(sub, cfgData){
 
   var entities =  _.map(sub.entityTypes,function(type){
     return {
@@ -107,14 +123,22 @@ function registerSubscription(sub){
     'headers': headers,
     'json': data
   };
+
   // console.log(config);
   // console.log(JSON.stringify(options));
 
   request(options, function (error, response, body) {
-    console.log(JSON.parse(JSON.stringify(response)));
     if (!error && response.statusCode == 200) {
+
       var resp = JSON.parse(JSON.stringify(response));
-      console.log(resp);
+      var subscritionID = resp.body.subscribeResponse.subscriptionId;
+      model = new SubscriptionsModel(config.getData().pgsql);
+      model.handleSubscriptionsTable({'subs_id': subscritionID, 'id_name': sub.id},function(err){
+        if (err){
+          console.error('Error handiling subscription');
+          return console.error(err);
+        }
+      });
     }
     else{
       console.error('Something went wrong')
@@ -124,12 +148,49 @@ function registerSubscription(sub){
 
 }
 
+function updateOrionSubscription(sub, cfgData, subs_id){
+    var srv = config.getSubService(sub.subservice_id);
+
+    var data = {
+       'subscriptionId': subs_id,
+       'duration': 'P1M'
+    };
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Fiware-Service': srv.service,
+      'Fiware-ServicePath': '/' + srv.subservice,
+      'x-auth-token': token
+    }
+
+    var options = {
+      'url': cfgData.contextBrokerUrls.urlSbcUpdate,
+      'method': 'POST',
+      'rejectUnauthorized': false,
+      'headers': headers,
+      'json': data
+    };
+    // console.log(config);
+    // console.log(JSON.stringify(options));
+
+    request(options, function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        var resp = JSON.parse(JSON.stringify(response));
+        console.log('Updated subscription: ' + sub.id);
+      }
+      else{
+        console.error('Something went wrong')
+        console.log('Request error: ' + error);
+      }
+    });
+}
+
 function createSubscriptionCallback(sub){
   router.post(sub.id,function(req,res,next){
-    console.log('Received request ' + sub.callback);
-    console.log(req.body);
     model = new SubscriptionsModel(config.getData().pgsql);
     //model.insert(sub.id,{})
+    console.log('Recibida respuesta');
     res.json(req.body);
   });
 }
@@ -154,19 +215,24 @@ function createTable(sub,cb){
 
 function initialize(cfg){
   config = cfg;
-  getAuthToken(function(error,t){
-    if (error){
-      console.error('Cannot get access token');
-      return console.error(error);
-    }
-    token = t;
-    var subscriptions = config.getSubs();
-    for (var i=0;i<subscriptions.length;i++){
-      createSubscription(subscriptions[i],config);
-    }
-  });
 
-  return router;  
+  var subscriptions = config.getSubs();
+  for (var i=0;i<subscriptions.length;i++){
+    var subscrData = subscriptions[i];
+
+    getAuthToken(i, function(error,t){
+      if (error){
+        console.error('Cannot get access token');
+        return console.error(error);
+      }
+      token = t;
+      console.log(token);
+      // console.log(subscrData);
+      createSubscription(subscrData,config);
+      });
+  }
+
+  return router;
 }
 
 module.exports = initialize;

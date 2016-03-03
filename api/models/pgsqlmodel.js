@@ -22,10 +22,10 @@ PGSQLModel.prototype.insert = function(table,data,cb){
   if (!data || (data.isArray && data.length==0)){
     log.warning('Trying to insert data with no data. Ignoring.')
     return;
-  } 
+  }
 
   var sql = this._squel.insert().into(table).setFieldsRows(data).toString();
-  
+
   this._connect(function(err,client,done){
     client.query(sql,function(err,r){
       done();
@@ -36,7 +36,28 @@ PGSQLModel.prototype.insert = function(table,data,cb){
       }
       if (cb) cb(err,r);
     });
-  }); 
+  });
+}
+
+PGSQLModel.prototype.update = function(table,data,cb){
+  if (!data || (data.isArray && data.length==0)){
+    log.warning('Trying to update data with no data. Ignoring.')
+    return;
+  }
+
+  var sql = this._squel.update().table(table).setFields(data).toString();
+
+  this._connect(function(err,client,done){
+    client.query(sql,function(err,r){
+      done();
+      if (err){
+        console.log(err);
+        log.error('Error when updating data');
+        log.error(err);
+      }
+      if (cb) cb(err,r);
+    });
+  });
 }
 
 PGSQLModel.prototype._connect = function(cb){
