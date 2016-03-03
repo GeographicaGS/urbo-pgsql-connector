@@ -40,7 +40,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
       });
     }
     else{
-      // get table info. Apply alter table is needed. NEVER DROP COLUMNS except if config says it 
+      // get table info. Apply alter table is needed. NEVER DROP COLUMNS except if config says it
       // TODO: Create metadata table.
       sql = ['select column_name, data_type, character_maximum_length',
               ' from INFORMATION_SCHEMA.COLUMNS where table_name = $1'];
@@ -61,7 +61,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           for (var i=0;i<sub.attributes.length;i++){
             var attr = sub.attributes[i];
             if (toadd.indexOf(attr.name)!=-1){
-              fields.push('ADD COLUMN ' + attr.name + ' ' + utils.getPostgresType(attr.type));  
+              fields.push('ADD COLUMN ' + attr.name + ' ' + utils.getPostgresType(attr.type));
             }
           }
           sql = 'ALTER TABLE ' + sub.id + ' ' + fields.join(',');
@@ -75,7 +75,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
         }
 
         if (toremove.length){
-          // TODO: REMOVE element.  
+          // TODO: REMOVE element.
           console.log('TOREMOVE');
           console.log(toremove);
         }
@@ -85,8 +85,16 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
   });
 }
 
-SubscriptionsModel.prototype.insert = function(table,data,cb){
+SubscriptionsModel.prototype.insertData = function(table,data,cb){
   this.insert(table,data,cb);
-} 
+}
+
+SubscriptionsModel.prototype.updateData = function(table,data,cb){
+  this.update(table,data,cb);
+}
+
+SubscriptionsModel.prototype.queryData = function(sql,bindings,cb){
+  this.query(sql,bindings,cb);
+}
 
 module.exports = SubscriptionsModel;

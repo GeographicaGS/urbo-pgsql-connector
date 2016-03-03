@@ -6,8 +6,8 @@ var SubscriptionsModel = require('../models/subscriptionsmodel');
 var token;
 var config;
 
-function getAuthToken(cb){
-
+function getAuthToken(subserv, cb){
+  var subservAuth = JSON.parse(JSON.stringify(config.getSubServiceAuth(subserv)));
   var data = {
     'auth': {
       'identity': {
@@ -17,10 +17,10 @@ function getAuthToken(cb){
         'password': {
           'user': {
             'domain': {
-             'name': 'sc_smart_region_andalucia'
+             'name': subservAuth.service
            },
-           'name': 'and_sr_cdm_admin',
-           'password': '33j4vBWJ95'
+           'name': subservAuth.user,
+           'password': subservAuth.password
           }
         }
       }
@@ -34,13 +34,11 @@ function getAuthToken(cb){
     'json': data
   };
 
-  //console.log(config);
-  //console.log(options);
-
   request(options, function (error, response, body) {
 
     if (!error) {
       var resp = JSON.parse(JSON.stringify(response));
+      // console.log(resp);
       cb(null,resp.headers['x-subject-token']);
     }
     else{
@@ -55,15 +53,15 @@ function createSubscription(sub){
 
   // create the subscription callback
   createSubscriptionCallback(sub);
+  registerSubscription(sub, cfgData);
   createTable(sub,function(err){
     if (err)
       return console.error('Cannot create table for subscription');
-    registerSubscription(sub);
+    // registerSubscription(sub);
   });
 }
 
-function registerSubscription(sub){
-
+function registerSubscription(sub, cfgData){
   var entities =  _.map(sub.entityTypes,function(type){
     return {
       'type': type,
@@ -109,10 +107,11 @@ function registerSubscription(sub){
   // console.log(JSON.stringify(options));
 
   request(options, function (error, response, body) {
-    console.log(JSON.parse(JSON.stringify(response)));
     if (!error && response.statusCode == 200) {
       var resp = JSON.parse(JSON.stringify(response));
-      console.log(resp);
+      var subscritionID = resp.body.subscribeResponse.subscriptionId;
+      var data = {subs_id: subscritionID, id_name: sub.id};
+      handleSubscriptionsTable('SELECT COUNT(*) FROM subscriptions', null, data);
     }
     else{
       console.error('Something went wrong')
@@ -120,6 +119,38 @@ function registerSubscription(sub){
     }
   });
 
+}
+
+function handleSubscriptionsTable(sql, bindings, data){
+    model = new SubscriptionsModel(config.getData().pgsql);
+    model.query(sql, bindings, function(err, r){
+      if (err)
+        return console.error('Cannot execute sql query');
+
+      console.log(r.rows[0].count);
+      if (r.rows[0].count === '0') {
+          insertDataTable('subscriptions', [data]);
+      }
+      else{
+          updateDataTable('subscriptions', data);
+      }
+    });
+}
+
+function insertDataTable(table, data){
+    model = new SubscriptionsModel(config.getData().pgsql);
+    model.insertData(table, data, function(err){
+      if (err)
+        return console.error('Cannot create insert subscription data');
+    });
+}
+
+function updateDataTable(table, data){
+    model = new SubscriptionsModel(config.getData().pgsql);
+    model.updateData(table, data, function(err){
+      if (err)
+        return console.error('Cannot create update subscription data');
+    });
 }
 
 function createSubscriptionCallback(sub){
@@ -139,17 +170,22 @@ function createTable(sub,cb){
 
 function initialize(cfg){
   config = cfg;
-  getAuthToken(function(error,t){
-    if (error){
-      console.error('Cannot get access token');
-      return console.error(error);
-    }
-    token = t;
-    var subscriptions = config.getSubs();
-    for (var i=0;i<subscriptions.length;i++){
-      createSubscription(subscriptions[i],config);
-    }
-  });
+
+  var subscriptions = config.getSubs();
+  for (var i=0;i<subscriptions.length;i++){
+    var subscrData = subscriptions[i];
+
+    getAuthToken(i, function(error,t){
+      if (error){
+        console.error('Cannot get access token');
+        return console.error(error);
+      }
+      token = t;
+      console.log(token);
+      // console.log(subscrData);
+      createSubscription(subscrData,config);
+      });
+  }
 
   return router;
 }
