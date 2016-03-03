@@ -29,6 +29,7 @@ function Config(){
   this.getSubs = function(){
     return this._data.subscriptions;
   };
+  
 }
 
 module.exports = new Config()

@@ -190,11 +190,12 @@ function createSubscriptionCallback(sub){
   console.log('Set router: ' + sub.id);
 
   router.post('/' + sub.id,function(req,res,next){
-    psqlmodel = new SubscriptionsModel(config.getData().pgsql);
-    psqlmodel.storeData(sub,req.body.contextResponses);
 
-    // cdbmodel = new SubscriptionsCartoDBModel(config.getData().pgsql);
-    // cdbmodel.storeData(sub,req.body.contextResponses);
+    psqlmodel = new SubscriptionsModel(config.getData().pgsql);
+    psqlmodel.storeData(sub,req.body.contextResponses,config.getData().cartodb);
+
+    cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
+    cdbmodel.storeData(sub,req.body.contextResponses);
 
     res.json(req.body);
   });

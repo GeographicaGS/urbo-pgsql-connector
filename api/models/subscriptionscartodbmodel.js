@@ -30,7 +30,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
     }
 
     if (!data.rows[0].n){
-      var fields = [];
+      var fields = ['id_entity varchar(64) not null'];
       for (var i=0;i<sub.attributes.length;i++){
         var attr = sub.attributes[i];
         if (attr.cartodb){
@@ -42,6 +42,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
       var q = [
         'CREATE TABLE ' + that._user + '.' + sub.id + ' (',
           fields.join(','),
+
           ');',
           "SELECT cdb_cartodbfytable('" +that._user + "','" + sub.id +"')" ];
       
@@ -68,7 +69,6 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
           return cb(err,null)
         }
 
-        
         var current = _.pluck(data.rows,'column_name');
         var attributes = _.filter(sub.attributes, function(attr){ return attr.cartodb && attr.type!='coords'; });
         var needed = _.pluck(attributes,'name').concat('cartodb_id','the_geom','the_geom_webmercator');
@@ -105,6 +105,29 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
       });
     }
   });
+}
+
+SubscriptionsCartoDBModel.prototype.storeData = function(sub,contextResponses){
+  var valid_attrs = _.pluck(_.filter(sub.attributes, function(attr){ return attr.cartodb || attr.type=='coords';}),'name');
+  
+  for (var i=0;i<contextResponses.length;i++){
+    var obj = {}, objdq = {};
+    obj['id_entity'] = contextResponses[i].contextElement.id;
+
+    _.each(contextResponses[i].contextElement.attributes,function(attr){
+      if (valid_attrs.indexOf(attr.name)!=-1){
+        var v = utils.getValueForType(attr.value,attr.type);
+        var name = attr.type!='coords' ? attr.name : 'the_geom';
+        if (utils.isTypeQuoted(attr.type))
+          obj[name] = v;
+        else
+          objdq[name] = v;  
+      }
+    });
+
+
+    this.insert(sub.id,obj,objdq);
+  }
 }
 
 module.exports = SubscriptionsCartoDBModel;

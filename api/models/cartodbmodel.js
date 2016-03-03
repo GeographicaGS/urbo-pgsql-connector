@@ -7,6 +7,7 @@ function CartoDBModel(cfg){
   this._user = cfg.user;
   this._apiKey = cfg.apiKey;
   this._sql = new CartoDB.SQL({user: cfg.user,api_key: cfg.apiKey});
+  this._squel = require('squel');
 };
 
 CartoDBModel.prototype.query = function(opts,cb){
@@ -23,18 +24,42 @@ CartoDBModel.prototype.query = function(opts,cb){
     cb(err);
   }
   else{
-    
+    // console.log('BEFORE EXECUTE');
+    // console.log(this._sql.sql_api_url);
+    // console.log(opts.query);
+    // var self = this;
+
     this._sql.execute(opts.query, opts.params)
       .done(function(data){
-        log.error(valueTemplate(opts.query, opts.params));
-        cb(null,data);        
+        // console.log('On DONE');
+        // console.log(self._sql.sql_api_url);
+        // console.log(opts.query);
+        if (cb) cb(null,data);        
       })
       .error(function(err){
+        // console.log('here');
+        // console.log(err);
         log.error(err);
         log.error(valueTemplate(opts.query, opts.params));
-        cb(err);
+        if (cb) cb(err);
       });
   }
+}
+
+CartoDBModel.prototype.insert = function(table,data,dontquotedata,cb){
+  
+  var constructor = this._squel.insert().into(table);
+
+  for (var i in data){
+    constructor.set(i,data[i]);
+  }
+
+  for (var i in dontquotedata){
+    constructor.set(i,dontquotedata[i],{dontQuote: true});
+  }
+
+  var sql = constructor.toString();
+  this.query({query: sql},cb);
 
 }
 

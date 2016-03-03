@@ -109,7 +109,6 @@ SubscriptionsModel.prototype.getSubscription = function(id,cb){
     else{
       cb(null,d.rows[0]);  
     }
-
   });
 }
 
@@ -134,8 +133,9 @@ SubscriptionsModel.prototype.handleSubscriptionsTable = function(data, cb){
 SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
   for (var i=0;i<contextResponses.length;i++){
     var obj = {}, objdq = {};
+    obj['id_entity'] = contextResponses[i].contextElement.id;
+
     _.each(contextResponses[i].contextElement.attributes,function(attr){
-      obj['id_entity'] = contextResponses[i].contextElement.id;
       var v = utils.getValueForType(attr.value,attr.type);
       if (utils.isTypeQuoted(attr.type))
         obj[attr.name] = v;
@@ -144,7 +144,6 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
     });
     this.insert(sub.id,obj,objdq);
   }
-
 }
 
 module.exports = SubscriptionsModel;
