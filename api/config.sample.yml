@@ -1,19 +1,73 @@
+# FIWARE SMART CITIES DASHBOARD CONFIGURATION FILE
+
+# BASE URL
+baseURL: http://mother.geographica.gs:8082
+
+# PostgreSQL configuration parameters
 pgsql:
-  host: localhost
-  db: fiware
-  user: fiware
-  passwd: fiware
+  host: postgis
+  user: fiware_admin
+  password: fiware
+  database: fiware
+  port: 5432
 
-fiwareAccessToken: 'XXX'
+# CartoDB configuration parameters
+cartodb:
+  apiKey: XXX
+  user: XXX
 
-contextBroker:
-  base: 'https://XXXX'
-  subscription: '/subscribeContext'
+# Orion Context Broker API URLs
+contextBrokerUrls:
+  urlAuthtk: https://XXX/v3/auth/tokens
+  urlQry: https://XXX/NGSI10/queryContext
+  urlUdt: https://XXX/NGSI10/updateContext
+  urlSbc: https://XXX/NGSI10/subscribeContext
+  urlSbcUpdate: https://XXX/NGSI10/updateContextSubscription
 
+# Fiware subservices catalog.
+subservices:
+  - # Internal id of subservice. It must be a string without spaces or special characters. Only [a-z][A-Z]
+    id: andalucia
+    # Fiware service name 
+    service: sc_smart_region_andalucia
+    # Fiware subservice name 
+    subservice: and_sr_cdm
+    # Credentiales
+    auth:
+      user: and_sr_cdm_admin
+      password: 33j4vBWJ95
+
+# List of subscriptions
 subscriptions:
-  - callback: '/p1'
-    name: 'This is p 1'
-    service: 'XXX'
-    servicePath: 'XX'
+  - # Mandatory: Internal ID for the subscription
+    id: testsub3
+    # Mandatory: ID of subservice at subservices catalog.
+    subservice_id: andalucia
+    # Mandatory: Fiware entities to be subscribed.
+    entityTypes:
+      - geoEntTest
 
+    # Optional: Table name for PGSQL and CartoDB. If not provided default to ID.
+    tablename: testsub3
+    # Optional: Subscription model. Posible values are append|update. Default to append
+    mode: append
+    # List of attributes. It defined the attributes of the subcription and how they're mapped into the PostgreSQL database and CartoDB
+    attributes:
+      - # Attribute name
+        name: name
+        # Type of attribute: Currently supported: 'coords','string','float','integer','ISO8601|timestamp'. Todo: geojson.
+        type: string
+        # Optional. Default to false. If set to true, the attribute will be synced at CartoDB
+        cartodb: true
+        # Optional. Default to false. If true a index will be created at PostgreSQL.
+        index: true
+
+      - name: position
+        type: coords
+        cartodb: true
+      - name: timeinstant
+        type: ISO8601
+      - name: valor_01
+        type: string
+      
 
