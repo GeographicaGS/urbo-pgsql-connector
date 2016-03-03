@@ -50,8 +50,8 @@ function getAuthToken(subserv, cb){
 
 function createSubscription(sub){
 
-  // create the subscription callback
   createSubscriptionCallback(sub);
+
   createTable(sub,function(err){
     if (err)
       return console.error('Cannot create table for subscription');
@@ -93,6 +93,8 @@ function newOrionSubscription(sub, cfgData){
   var attributes = _.pluck(sub.attributes,'name');
 
   var srv = config.getSubService(sub.subservice_id);
+
+  console.log('CALLBACK: ' + cfgData.baseURL + '/subscriptions/' + sub.id);
 
   var data = {
     'entities': entities,
@@ -187,12 +189,16 @@ function updateOrionSubscription(sub, cfgData, subs_id){
 }
 
 function createSubscriptionCallback(sub){
-  router.post(sub.id,function(req,res,next){
+  console.log('Set router: ' + sub.id);
+
+  router.post('/' + sub.id,function(req,res,next){
     model = new SubscriptionsModel(config.getData().pgsql);
     //model.insert(sub.id,{})
     console.log('Recibida respuesta');
+    console.log(res);
     res.json(req.body);
   });
+  
 }
 
 function createTable(sub,cb){
@@ -213,26 +219,24 @@ function createTable(sub,cb){
   });
 }
 
-function initialize(cfg){
+function initialize(cfg,cb){
   config = cfg;
 
   var subscriptions = config.getSubs();
   for (var i=0;i<subscriptions.length;i++){
-    var subscrData = subscriptions[i];
-
+    var sub = subscriptions[i];
     getAuthToken(i, function(error,t){
       if (error){
         console.error('Cannot get access token');
         return console.error(error);
       }
       token = t;
-      console.log(token);
-      // console.log(subscrData);
-      createSubscription(subscrData,config);
-      });
+      createSubscription(sub,config);
+    });
   }
 
   return router;
+  
 }
 
 module.exports = initialize;
