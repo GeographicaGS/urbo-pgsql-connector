@@ -12,7 +12,7 @@ You need the following dependencies to run this project:
 * Docker-compose: https://docs.docker.com/compose
 
 
-1. Prepare the database.
+### 1. Prepare the database.
 ```
 // Create data container
 docker create --name fiwarepgsqlconetor_pgdata -v /data debian /bin/true
@@ -23,7 +23,7 @@ docker exec -i tmp_fiware_pgsql psql -U postgres < db/createdb.sql
 docker exec -i tmp_fiware_pgsql psql -U postgres < db/createtables.sql
 ```
 
-2. Prepare your config file. 
+### 2. Prepare your config file. 
 
 At this file you specify which part of fiware you want to listen to and how to map the info.
 
@@ -33,7 +33,7 @@ cp api/config.sample.yml api/config.yml
 
 Now, you can edit this file using your favourite text editor.
 
-3. Run.
+### 3. Run.
 
 ```
 docker-compose up 
