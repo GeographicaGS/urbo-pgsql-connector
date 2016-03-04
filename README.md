@@ -21,6 +21,9 @@ docker run --rm --name tmp_fiware_pgsql -it -e "POSTGRES_PASSWD=postgres" --volu
 // Create the database and execute the start scripts (Edit the file db/createdb.sql with you database name, user and password)
 docker exec -i tmp_fiware_pgsql psql -U postgres < db/createdb.sql
 docker exec -i tmp_fiware_pgsql psql -U postgres < db/createtables.sql
+
+// remove docker
+docker rm -f tmp_fiware_pgsql
 ```
 
 ### 2. Prepare your config file. 
