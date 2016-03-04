@@ -1,0 +1,12 @@
+postgis:
+  image: geographica/postgis:postgresql-9.4.5-postgis-2.2.0-gdal-2.0.1-patched-es_ES
+  volumes_from:
+    - fiwaredashboard_pgdata
+    
+api:
+  build: api
+  ports:
+    - "80:3000"
+
+  links:
+    - postgis:postgis
