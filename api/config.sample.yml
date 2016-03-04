@@ -5,10 +5,10 @@ baseURL: http://mother.geographica.gs:8082
 
 # PostgreSQL configuration parameters
 pgsql:
-  host: postgis
-  user: fiware_admin
-  password: fiware
-  database: fiware
+  host: XXX
+  user: XXX
+  password: XXX
+  database: XXX
   port: 5432
 
 # CartoDB configuration parameters
@@ -27,28 +27,28 @@ contextBrokerUrls:
 # Fiware subservices catalog.
 subservices:
   - # Internal id of subservice. It must be a string without spaces or special characters. Only [a-z][A-Z]
-    id: andalucia
+    id: id_subservice
     # Fiware service name 
-    service: sc_smart_region_andalucia
+    service: XXX
     # Fiware subservice name 
-    subservice: and_sr_cdm
+    subservice: XXX
     # Credentiales
     auth:
-      user: and_sr_cdm_admin
-      password: 33j4vBWJ95
+      user: XXX
+      password: XXX
 
 # List of subscriptions
 subscriptions:
   - # Mandatory: Internal ID for the subscription
-    id: testsub3
+    id: subscription_id
     # Mandatory: ID of subservice at subservices catalog.
-    subservice_id: andalucia
+    subservice_id: id_subservice
     # Mandatory: Fiware entities to be subscribed.
     entityTypes:
       - geoEntTest
 
     # Optional: Table name for PGSQL and CartoDB. If not provided default to ID.
-    tablename: testsub3
+    tablename: subscription_id
     # Optional: Subscription model. Posible values are append|update. Default to append
     mode: append
     # List of attributes. It defined the attributes of the subcription and how they're mapped into the PostgreSQL database and CartoDB
@@ -69,5 +69,8 @@ subscriptions:
         type: ISO8601
       - name: valor_01
         type: string
+
+
+
       
 
