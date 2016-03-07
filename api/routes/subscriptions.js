@@ -53,7 +53,7 @@ function createSubscription(sub){
   createTable(sub,function(err){
     if (err)
       return console.error('Cannot create table for subscription');
-    
+
     registerSubscription(sub);
   });
 
@@ -73,7 +73,7 @@ function registerSubscription(sub){
       updateOrionSubscription(sub, cfgData,d.subs_id);
     }
     else{
-      newOrionSubscription(sub, cfgData); 
+      newOrionSubscription(sub, cfgData);
     }
   });
 }
@@ -199,7 +199,7 @@ function createSubscriptionCallback(sub){
 
     res.json(req.body);
   });
-  
+
 }
 
 function createTable(sub,cb){
@@ -244,7 +244,7 @@ function routes(cfg){
   var subscriptions = config.getSubs();
   for (var i=0;i<subscriptions.length;i++){
     var sub = subscriptions[i];
-    createSubscriptionCallback(sub);  
+    createSubscriptionCallback(sub);
   }
 
   return router;

@@ -30,3 +30,14 @@ module.exports.isTypeQuoted = function(type){
     throw Error('Unknown type: ' + type);
   }
 }
+
+module.exports.wrapStrings = function(value,wrap) {
+  if (wrap.length == 1)
+    return [wrap[0],value,wrap[0]].join('')
+  else if (wrap.length == 2)
+    return [wrap[0],value,wrap[1]].join('')
+  else{
+    console.log('Wrap length must be 1 or 2');
+    throw Error('Wrap length must be 1 or 2');
+  }
+}
