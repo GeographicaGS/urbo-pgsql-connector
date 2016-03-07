@@ -40,7 +40,7 @@ PGSQLModel.prototype.insertBatch = function(table,data,cb){
 }
 
 PGSQLModel.prototype.insert = function(table,data,dontquotedata,cb){
-  
+
   var constructor = this._squel.insert().into(table);
 
   for (var i in data){
