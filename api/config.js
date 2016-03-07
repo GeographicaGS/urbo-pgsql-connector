@@ -26,10 +26,33 @@ function Config(){
     return null;
   };
 
+  this.getCtxBrUrls = function(optype){
+    var urlCtxBrBase = this._data.contextBrokerUrls.urlCtxBrBase;
+    if (optype == 'authtk'){
+      var urlAuthtk = this._data.contextBrokerUrls.urlAuthtk;
+      var portAuthtk = this._data.contextBrokerUrls.portAuthtk;
+      return urlCtxBrBase + ':' + portAuthtk + urlAuthtk
+    }
+    else{
+      var portCtxApi = this._data.contextBrokerUrls.portCtxApi;
+      var apiBase = urlCtxBrBase + ':' + portCtxApi;
+      if (optype == 'subscr')
+        return apiBase + this._data.contextBrokerUrls.urlSbc;
+      else if (optype == 'updsbscr')
+        return apiBase + this._data.contextBrokerUrls.urlSbcUpdate;
+      else if (optype == 'update')
+        return apiBase + this._data.contextBrokerUrls.urlUdt;
+      else if (optype == 'updsbscr')
+        return apiBase + this._data.contextBrokerUrls.urlQry;
+      else
+        return null
+    }
+  }
+
   this.getSubs = function(){
     return this._data.subscriptions;
   };
-  
+
 }
 
 module.exports = new Config()
