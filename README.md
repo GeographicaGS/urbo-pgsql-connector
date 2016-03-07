@@ -18,9 +18,13 @@ You need the following dependencies to run this project:
 docker create --name fiwarepgsqlconector_pgdata -v /data debian /bin/true
 // Start the db
 docker run --rm --name tmp_fiware_pgsql -it -e "POSTGRES_PASSWD=postgres" --volumes-from fiwarepgsqlconector_pgdata geographica/postgis:postgresql-9.4.5-postgis-2.2.0-gdal-2.0.1-patched-es_ES
+```
+
+Now from another terminal in the project folder:
+```
 // Create the database and execute the start scripts (Edit the file db/createdb.sql with you database name, user and password)
 docker exec -i tmp_fiware_pgsql psql -U postgres < db/createdb.sql
-docker exec -i tmp_fiware_pgsql psql -U postgres < db/createtables.sql
+docker exec -i tmp_fiware_pgsql psql -U postgres -d fiware < db/createtables.sql
 
 // remove docker
 docker rm -f tmp_fiware_pgsql
@@ -39,8 +43,13 @@ Now, you can edit this file using your favourite text editor.
 ### 3. Run.
 
 ```
-docker-compose up
+docker-compose up postgis
 ```
+
+```
+docker-compose up api
+```
+
 
 ## Development
 ### First time
