@@ -18,11 +18,11 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
        " WHERE table_schema = '{{user}}' AND table_name = '{{table}}'"];
 
   var that = this;
-  this.query({ 
+  this.query({
       'query': sql.join(' '),
       'params' : { 'user' : this._user, 'table': sub.id}
     },function(err,data){
-    
+
     if (err){
       log.error('Error getting table information');
       log.error(err);
@@ -45,7 +45,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
 
           ');',
           "SELECT cdb_cartodbfytable('" +that._user + "','" + sub.id +"')" ];
-      
+
       that.query({ 'query' : q.join(' ') },function(err,data){
         if (err){
           log.error('Error saving table at CartoDB');
@@ -58,9 +58,9 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
       });
     }
     else{
-      // get table info. Apply alter table is needed. NEVER DROP COLUMNS except if config says it 
-     
-      that.query({ 
+      // get table info. Apply alter table is needed. NEVER DROP COLUMNS except if config says it
+
+      that.query({
         'query': "select column_name from INFORMATION_SCHEMA.COLUMNS where table_schema = '{{user}}' AND table_name = '{{table}}'",
         'params' : { 'user' : that._user, 'table': sub.id}
       },function(err,data){
@@ -76,7 +76,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
         var toremove = _.difference(current,needed);
 
         if (toremove.length){
-          // TODO: REMOVE element.  
+          // TODO: REMOVE element.
           console.log('TOREMOVE CDB');
           console.log(toremove);
         }
@@ -87,7 +87,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
           for (var i=0;i<attributes.length;i++){
             var attr = attributes[i];
             if (toadd.indexOf(attr.name)!=-1){
-              fields.push('ADD COLUMN ' + attr.name + ' ' + utils.getPostgresType(attr.type));  
+              fields.push('ADD COLUMN ' + attr.name + ' ' + utils.getPostgresType(attr.type));
             }
           }
           sql = 'ALTER TABLE ' + sub.id + ' ' + fields.join(',');
@@ -107,9 +107,49 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
   });
 }
 
+SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(sub, obj, objdq){
+  var sqpg = this._squel.useFlavour('postgres');
+
+  var updtConstructor = sqpg.update().table(sub.id);
+  var slConstructor = this._squel.select();
+
+  for (var i in obj){
+      updtConstructor.set(i,obj[i]);
+      slConstructor.field(utils.wrapStrings(obj[i],["'"]),i);
+  }
+  for (var i in objdq){
+      updtConstructor.set(i,objdq[i],{dontQuote: true});
+      slConstructor.field(objdq[i],i,{dontQuote: true});
+  }
+  var slMaxid = sqpg.select()
+                  .field('MAX(cartodb_id)')
+                  .from(sub.id)
+                  .where("id_entity = ?",obj.id_entity)
+
+  var udtQry = updtConstructor.where('cartodb_id = ?', slMaxid)
+                .returning("*")
+                .toString();
+
+  var slUpsrt = this._squel.select().from("upsert");
+  var slCon = slConstructor.from("").where("NOT EXISTS ?", slUpsrt);
+
+  var dataKeys = _.keys(_.extend(obj, objdq));
+  var insQry = this._squel.insert()
+                 .into(sub.id)
+                 .fromQuery(dataKeys, slCon)
+                 .toString();
+
+  var sql = ["WITH upsert AS ",utils.wrapStrings(udtQry,["(",")"]),insQry]
+  var q = sql.join(' ')
+  this.query({ 'query' : q}, null, function(err, r){
+    if (err)
+      return console.error('Cannot execute upsert query - CartoDB');
+  });
+}
+
 SubscriptionsCartoDBModel.prototype.storeData = function(sub,contextResponses){
   var valid_attrs = _.pluck(_.filter(sub.attributes, function(attr){ return attr.cartodb || attr.type=='coords';}),'name');
-  
+
   for (var i=0;i<contextResponses.length;i++){
     var obj = {}, objdq = {};
     obj['id_entity'] = contextResponses[i].contextElement.id;
@@ -121,12 +161,15 @@ SubscriptionsCartoDBModel.prototype.storeData = function(sub,contextResponses){
         if (utils.isTypeQuoted(attr.type))
           obj[name] = v;
         else
-          objdq[name] = v;  
+          objdq[name] = v;
       }
     });
 
+    if ("mode" in sub && sub.mode == "update")
+      this.upsertSubscriptedData(sub,obj,objdq);
+    else
+      this.insert(sub.id,obj,objdq);
 
-    this.insert(sub.id,obj,objdq);
   }
 }
 

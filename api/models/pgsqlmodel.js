@@ -72,7 +72,11 @@ PGSQLModel.prototype.update = function(table,data,cb){
     return;
   }
 
-  var sql = this._squel.update().table(table).setFields(data).toString();
+  var sql = this._squel.update()
+              .table(table)
+              .setFields(data)
+              .toString();
+  console.log(sql);
 
   this._connect(function(err,client,done){
     client.query(sql,function(err,r){
