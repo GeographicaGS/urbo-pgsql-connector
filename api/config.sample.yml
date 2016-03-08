@@ -21,11 +21,6 @@ contextBrokerUrls:
   portAuthtk: XXXXX
   portCtxApi: XXXXX
   urlCtxBrBase: https://xxx.xxx.xxx.xxx
-  urlAuthtk: /v3/auth/tokens
-  urlQry: /NGSI10/queryContext
-  urlUdt: /NGSI10/updateContext
-  urlSbc: /NGSI10/subscribeContext
-  urlSbcUpdate: /NGSI10/updateContextSubscription
 
 # Fiware subservices catalog.
 subservices:
