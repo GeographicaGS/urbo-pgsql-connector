@@ -12,4 +12,7 @@ api:
   # Dev values
   volumes:
     - ./api:/usr/src/app
-  command: ./debug.sh
+  #For debugging mode:
+  #command: npm run-script debug
+  #Standard mode:
+  command: npm run-script start

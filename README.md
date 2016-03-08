@@ -43,11 +43,7 @@ Now, you can edit this file using your favourite text editor.
 ### 3. Run.
 
 ```
-docker-compose up postgis
-```
-
-```
-docker-compose up api
+docker-compose up
 ```
 
 
