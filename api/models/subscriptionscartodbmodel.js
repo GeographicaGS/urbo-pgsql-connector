@@ -108,6 +108,27 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
 }
 
 SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(sub, obj, objdq){
+  /*
+  Upsert SQL example:
+
+  WITH upsert AS
+      (
+          UPDATE dev_agua
+          SET id_entity='dispositivo_k01',
+              value='18',
+              timeinstant='2016-03-04T16:09:54.01',
+              position=ST_SetSRID(ST_MakePoint(-4.45,37.09),4326)
+          WHERE cartodb_id=(SELECT MAX(cartodb_id) FROM dev_agua WHERE id_entity='dispositivo_k01')
+          RETURNING *
+      )
+  INSERT INTO dev_agua (id_entity, value, timeinstant, position)
+      SELECT 'dispositivo_k01' AS id_entity,
+             '0.234' AS value,
+             '2015-03-04T16:09:54.01' AS timeinstant,
+             ST_SetSRID(ST_MakePoint(-4.45,37.09),4326) AS position
+      WHERE NOT EXISTS (SELECT * FROM upsert);
+  */
+
   var sqpg = this._squel.useFlavour('postgres');
 
   var updtConstructor = sqpg.update().table(sub.id);

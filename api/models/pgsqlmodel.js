@@ -1,10 +1,3 @@
-// var dbconfig = {
-//     database : process.env.POSTGRES_DB || 'db',
-//     user : process.env.POSTGRES_USER || null,
-//     password : process.env.POSTGRES_PASSWORD || null,
-//     host :  process.env.POSTGRES_HOST || 'localhost',
-//     port :  process.env.POSTGRES_PORT || 5432
-// };
 
 var log = require('log4js').getLogger();
 log.setLevel(process.env.LOG_LEVEL || 'INFO');
