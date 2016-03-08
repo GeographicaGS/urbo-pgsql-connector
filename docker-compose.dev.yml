@@ -6,11 +6,10 @@ api:
   build: api
   ports:
     - "3000:3000"
+    - "8080:8080"
   links:
     - postgis:postgis
-
   # Dev values
   volumes:
     - ./api:/usr/src/app
-
-  command: nodemon -L
+  command: ./debug.sh
