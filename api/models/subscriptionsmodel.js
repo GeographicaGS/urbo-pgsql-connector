@@ -59,7 +59,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
         var toremove = _.difference(current,needed);
 
         if (toremove.length){
-          // TODO: REMOVE element.  
+          // TODO: REMOVE element.
           console.log('TOREMOVE');
           console.log(toremove);
         }
@@ -107,7 +107,7 @@ SubscriptionsModel.prototype.getSubscription = function(id,cb){
       cb(null,null);
     }
     else{
-      cb(null,d.rows[0]);  
+      cb(null,d.rows[0]);
     }
   });
 }
@@ -115,7 +115,7 @@ SubscriptionsModel.prototype.getSubscription = function(id,cb){
 SubscriptionsModel.prototype.handleSubscriptionsTable = function(data, cb){
   var table = 'subscriptions';
   var sql = 'SELECT COUNT(*) as n FROM subscriptions WHERE id_name=$1';
-  
+
   var self = this;
   this.query(sql, [data.id_name], function(err, r){
     if (err)
@@ -123,11 +123,53 @@ SubscriptionsModel.prototype.handleSubscriptionsTable = function(data, cb){
 
     if (!r.rows[0].n == '0') {
       self.insertBatch(table,[data],cb);
-    }     
+    }
     else{
       self.update(table,data,cb);
     }
   });
+}
+
+SubscriptionsModel.prototype.upsertSubscriptedData = function(sub, obj, objdq){
+  console.log(obj);
+  var sqpg = this._squel.useFlavour('postgres');
+
+  var updtConstructor = sqpg.update().table(sub.id);
+  var slConstructor = this._squel.select();
+
+  for (var i in obj){
+      updtConstructor.set(i,obj[i]);
+      slConstructor.field(utils.wrapStrings(obj[i],["'"]),i);
+  }
+  for (var i in objdq){
+      updtConstructor.set(i,objdq[i],{dontQuote: true});
+      slConstructor.field(objdq[i],i,{dontQuote: true});
+  }
+  var slMaxid = sqpg.select()
+                  .field('MAX(id)')
+                  .from(sub.id)
+                  .where("id_entity = ?",obj.id_entity)
+
+  var udtQry = updtConstructor.where('id = ?', slMaxid)
+                .returning("*")
+                .toString();
+
+  var slUpsrt = this._squel.select().from("upsert");
+  var slCon = slConstructor.from("").where("NOT EXISTS ?", slUpsrt);
+
+  var dataKeys = _.keys(_.extend(obj, objdq));
+  var insQry = this._squel.insert()
+                 .into(sub.id)
+                 .fromQuery(dataKeys, slCon)
+                 .toString();
+
+  var sql = ["WITH upsert AS ",utils.wrapStrings(udtQry,["(",")"]),insQry]
+  var q = sql.join(' ')
+  this.query(q, null, function(err, r){
+    if (err)
+      return console.error('Cannot execute upsert query');
+  });
+  console.log(q);
 }
 
 SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
@@ -142,7 +184,12 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
       else
         objdq[attr.name] = v;
     });
-    this.insert(sub.id,obj,objdq);
+
+    if ("mode" in sub && sub.mode == "update")
+      this.upsertSubscriptedData(sub,obj,objdq);
+    else
+      this.insert(sub.id,obj,objdq);
+
   }
 }
 
