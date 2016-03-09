@@ -15,18 +15,22 @@ You need the following dependencies to run this project:
 ### 1. Prepare the database.
 ```
 // Create data container
-docker create --name fiwarepgsqlconetor_pgdata -v /data debian /bin/true
+docker create --name fiwarepgsqlconector_pgdata -v /data debian /bin/true
 // Start the db
-docker run --rm --name tmp_fiware_pgsql -it -e "POSTGRES_PASSWD=postgres" --volumes-from fiwarepgsqlconetor_pgdata geographica/postgis:postgresql-9.4.5-postgis-2.2.0-gdal-2.0.1-patched-es_ES
+docker run --rm --name tmp_fiware_pgsql -it -e "POSTGRES_PASSWD=postgres" --volumes-from fiwarepgsqlconector_pgdata geographica/postgis:postgresql-9.4.5-postgis-2.2.0-gdal-2.0.1-patched-es_ES
+```
+
+Now from another terminal in the project folder:
+```
 // Create the database and execute the start scripts (Edit the file db/createdb.sql with you database name, user and password)
 docker exec -i tmp_fiware_pgsql psql -U postgres < db/createdb.sql
-docker exec -i tmp_fiware_pgsql psql -U postgres < db/createtables.sql
+docker exec -i tmp_fiware_pgsql psql -U postgres -d fiware < db/createtables.sql
 
 // remove docker
 docker rm -f tmp_fiware_pgsql
 ```
 
-### 2. Prepare your config file. 
+### 2. Prepare your config file.
 
 At this file you specify which part of fiware you want to listen to and how to map the info.
 
@@ -39,8 +43,9 @@ Now, you can edit this file using your favourite text editor.
 ### 3. Run.
 
 ```
-docker-compose up 
+docker-compose up
 ```
+
 
 ## Development
 ### First time
@@ -51,19 +56,19 @@ docker-compose -f docker-compose.dev.yml build
 ```
 Install node packages on sources directory
 ```
-docker run --rm -it -v $(pwd)/api:/usr/src/app fiwarepgsqlconetor_api npm install --no-bin-links
+docker run --rm -it -v $(pwd)/api:/usr/src/app fiwarepgsqlconector_api npm install --no-bin-links
 ```
 
 PostGIS
 ```
 // 1. Create data container
-docker create --name fiwarepgsqlconetor_pgdata -v /data debian /bin/true
+docker create --name fiwarepgsqlconector_pgdata -v /data debian /bin/true
 // 2. Start the db
-docker run --rm --name tmp_fiware_pgsql -it -e "POSTGRES_PASSWD=postgres" --volumes-from fiwarepgsqlconetor_pgdata geographica/postgis:postgresql-9.4.5-postgis-2.2.0-gdal-2.0.1-patched-es_ES
+docker run --rm --name tmp_fiware_pgsql -it -e "POSTGRES_PASSWD=postgres" --volumes-from fiwarepgsqlconector_pgdata geographica/postgis:postgresql-9.4.5-postgis-2.2.0-gdal-2.0.1-patched-es_ES
 // 3. Create the database and execute the start scripts (Edit the file with you database name, user and password)
 docker exec -i tmp_fiware_pgsql psql -U postgres < db/createdb.sql
 // Do either 4.1 or 4.2
-// 4.1 Create empty db 
+// 4.1 Create empty db
 docker exec -i tmp_fiware_pgsql psql -U postgres -d fiware < db/initial.sql
 // 4.2 Import dabase dump
 docker exec -i tmp_fiware_pgsql psql -U postgres -d fiware < <dumpfile.sql>

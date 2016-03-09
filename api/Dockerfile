@@ -3,5 +3,6 @@
 FROM node:4-onbuild
 
 RUN npm install -g nodemon
+RUN npm install -g node-inspector
 
 EXPOSE 3000

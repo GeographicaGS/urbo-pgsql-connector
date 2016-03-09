@@ -1,7 +1,7 @@
 postgis:
   image: geographica/postgis:postgresql-9.4.5-postgis-2.2.0-gdal-2.0.1-patched-es_ES
   volumes_from:
-    - fiwarepgsqlconetor_pgdata
+    - fiwarepgsqlconector_pgdata
 
 api:
   build: api

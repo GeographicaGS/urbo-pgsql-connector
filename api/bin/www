@@ -3,31 +3,69 @@
 /**
  * Module dependencies.
  */
-
-var app = require('../app');
+var config = require('../config.js');
 var debug = require('debug')('api:server');
-var http = require('http');
 
 /**
- * Get port from environment and store in Express.
+ * PGSQL connection retries config:
  */
+var pg = require('pg');
+var connect_retries = 3;
+var connect_retry_timeout = 3000;
+var connect_count = 1;
 
-var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+var startServer = function(){
+  var app = require('../app');
+  var http = require('http');
+
+  /**
+   * Get port from environment and store in Express.
+   */
+  var port = normalizePort(process.env.PORT || '3000');
+  app.set('port', port);
+
+  /**
+   * Initialize HTTP server.
+   */
+  var server = http.createServer(app);
+
+  /**
+   * Listen on provided port, on all network interfaces.
+   */
+  server.listen(port);
+  server.on('error', onError);
+  server.on('listening', function() {
+    var addr = server.address();
+    var bind = typeof addr === 'string'
+      ? 'pipe ' + addr
+      : 'port ' + addr.port;
+    debug('Listening on ' + bind);
+  });
+}
 
 /**
- * Create HTTP server.
+ * Recursive n retries to connect PGSQL.
  */
-
-var server = http.createServer(app);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
-
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+var trydb = function(err, client, done) {
+  if (!err) {
+    console.log("* Connected to PGSQL. Launching Server.");
+    startServer();
+  } else {
+    if (connect_count <= connect_retries) {
+      console.log("* Connecting to PGSQL: " + connect_count + "/" + connect_retries + " retries failed. Waiting " + (connect_retry_timeout / 1000) + " seconds...");
+      connect_count = connect_count + 1;
+      setTimeout(function(){
+        pg.connect(config.getData().pgsql, trydb);
+      }, connect_retry_timeout);
+    } else {
+      console.log("*** FATAL EROR: Cannot connect to PGSQL.");
+    }
+  }
+}
+//Needs to wait the first time (db shutdown while initial error checking process):
+setTimeout(function(){
+  pg.connect(config.getData().pgsql, trydb);
+}, connect_retry_timeout);
 
 /**
  * Normalize a port into a number, string, or false.
@@ -75,16 +113,4 @@ function onError(error) {
     default:
       throw error;
   }
-}
-
-/**
- * Event listener for HTTP server "listening" event.
- */
-
-function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
 }
