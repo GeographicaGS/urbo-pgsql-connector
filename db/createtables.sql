@@ -1,3 +1,5 @@
+CREATE EXTENSION postgis;
+
 CREATE TABLE public.subscriptions
 (
   subs_id character varying(255) NOT NULL,
