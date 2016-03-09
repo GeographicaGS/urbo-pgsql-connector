@@ -25,7 +25,7 @@ var log = log4js.getLogger(logParams.output);
 log.setLevel(logParams.level);
 app.use(log4js.connectLogger(log, { level: logParams.level}));
 log.info('Logger successfully started');
-log.error('Test error log...');
+log.error('Test error log (REMOVE THIS LINE FROM app.js - ONLY FOR TESTING)...');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

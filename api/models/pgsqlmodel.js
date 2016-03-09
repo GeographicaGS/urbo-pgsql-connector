@@ -22,7 +22,7 @@ PGSQLModel.prototype.insertBatch = function(table,data,cb){
     client.query(sql,function(err,r){
       done();
       if (err){
-        console.log(sql);
+        log.error(sql);
         log.error('Error when inserting data');
         log.error(err);
       }
@@ -49,7 +49,7 @@ PGSQLModel.prototype.insert = function(table,data,dontquotedata,cb){
     client.query(sql,function(err,r){
       done();
       if (err){
-        console.log(sql);
+        log.error(sql);
         log.error('Error when inserting data');
         log.error(err);
       }
