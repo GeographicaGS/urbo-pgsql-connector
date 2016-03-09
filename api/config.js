@@ -88,6 +88,14 @@ function Config(){
     return logParams;
   }
 
+  this.getSubs = function(){
+    return this._data.subscriptions;
+  };
+
+  this.cdbActiveFields = function(sub){
+    return _.contains(_.pluck(sub.attributes, 'cartodb'),true);
+  }
+
   this.getSubServiceAuth = function(subserv){
     return {user: this._data.subservices[subserv].auth.user,
         password: this._data.subservices[subserv].auth.password,
@@ -127,10 +135,6 @@ function Config(){
         return null
     }
   }
-
-  this.getSubs = function(){
-    return this._data.subscriptions;
-  };
 
 }
 
