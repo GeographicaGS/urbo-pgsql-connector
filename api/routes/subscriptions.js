@@ -7,6 +7,7 @@ var SubscriptionsCartoDBModel = require('../models/subscriptionscartodbmodel');
 var token;
 var config;
 
+
 function getAuthToken(subserv, cb){
   var subservAuth = JSON.parse(JSON.stringify(config.getSubServiceAuth(subserv)));
   var data = {
@@ -29,7 +30,7 @@ function getAuthToken(subserv, cb){
   };
 
   var options = {
-    'url': config.getData().contextBrokerUrls.urlAuthtk,
+    'url': config.getCtxBrUrls('authtk'),
     'method': 'POST',
     'rejectUnauthorized': false,
     'json': data
@@ -117,7 +118,7 @@ function newOrionSubscription(sub, cfgData){
   };
 
   var options = {
-    'url': cfgData.contextBrokerUrls.urlSbc,
+    'url': config.getCtxBrUrls('subscr'),
     'method': 'POST',
     'rejectUnauthorized': false,
     'headers': headers,
@@ -165,7 +166,7 @@ function updateOrionSubscription(sub, cfgData, subs_id){
     }
 
     var options = {
-      'url': cfgData.contextBrokerUrls.urlSbcUpdate,
+      'url': config.getCtxBrUrls('subscr'),
       'method': 'POST',
       'rejectUnauthorized': false,
       'headers': headers,

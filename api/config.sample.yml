@@ -18,19 +18,17 @@ cartodb:
 
 # Orion Context Broker API URLs
 contextBrokerUrls:
-  urlAuthtk: https://XXX/v3/auth/tokens
-  urlQry: https://XXX/NGSI10/queryContext
-  urlUdt: https://XXX/NGSI10/updateContext
-  urlSbc: https://XXX/NGSI10/subscribeContext
-  urlSbcUpdate: https://XXX/NGSI10/updateContextSubscription
+  portAuthtk: XXXXX
+  portCtxApi: XXXXX
+  urlCtxBrBase: https://xxx.xxx.xxx.xxx
 
 # Fiware subservices catalog.
 subservices:
   - # Internal id of subservice. It must be a string without spaces or special characters. Only [a-z][A-Z]
     id: id_subservice
-    # Fiware service name 
+    # Fiware service name
     service: XXX
-    # Fiware subservice name 
+    # Fiware subservice name
     subservice: XXX
     # Credentiales
     auth:
@@ -69,8 +67,3 @@ subscriptions:
         type: ISO8601
       - name: valor_01
         type: string
-
-
-
-      
-
