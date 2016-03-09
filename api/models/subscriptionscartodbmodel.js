@@ -1,10 +1,10 @@
-var util = require('util'),
-    CartoDBModel = require('./cartodbmodel.js'),
-    utils = require('./utils'),
-    _ = require('underscore'),
-    log = require('log4js').getLogger();
+var util = require('util');
+var CartoDBModel = require('./cartodbmodel.js');
+var utils = require('./utils');
+var _ = require('underscore');
 
-log.setLevel(process.env.LOG_LEVEL || 'INFO');
+var logParams = require('../config.js').getLogOpt();
+var log = require('log4js').getLogger(logParams.output);
 
 function SubscriptionsCartoDBModel(cfg) {
   CartoDBModel.call(this,cfg);
@@ -77,8 +77,8 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
 
         if (toremove.length){
           // TODO: REMOVE element.
-          console.log('TOREMOVE CDB');
-          console.log(toremove);
+          log.debug('TOREMOVE CDB');
+          log.debug(toremove);
         }
 
         // Add element
@@ -117,7 +117,8 @@ SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(sub, obj, o
           SET id_entity='dispositivo_k01',
               value='18',
               timeinstant='2016-03-04T16:09:54.01',
-              position=ST_SetSRID(ST_MakePoint(-4.45,37.09),4326)
+              position=ST_SetSRID(ST_MakePoint(-4.45,37.09),4326),
+              updated_at=now()
           WHERE cartodb_id=(SELECT MAX(cartodb_id) FROM dev_agua WHERE id_entity='dispositivo_k01')
           RETURNING *
       )
@@ -125,7 +126,8 @@ SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(sub, obj, o
       SELECT 'dispositivo_k01' AS id_entity,
              '0.234' AS value,
              '2015-03-04T16:09:54.01' AS timeinstant,
-             ST_SetSRID(ST_MakePoint(-4.45,37.09),4326) AS position
+             ST_SetSRID(ST_MakePoint(-4.45,37.09),4326) AS position,
+             now() AS updated_at
       WHERE NOT EXISTS (SELECT * FROM upsert);
   */
 
@@ -164,7 +166,7 @@ SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(sub, obj, o
   var q = sql.join(' ')
   this.query({ 'query' : q}, null, function(err, r){
     if (err)
-      return console.error('Cannot execute upsert query - CartoDB');
+      return log.error('Cannot execute upsert query - CartoDB');
   });
 }
 

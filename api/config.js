@@ -1,5 +1,6 @@
 var yaml = require('js-yaml');
-var fs   = require('fs');
+var fs = require('fs');
+var _ = require('underscore');
 
 /*
 FIWARE NGSI APIv1
@@ -18,6 +19,74 @@ function Config(){
   this.getData = function(){
     return this._data;
   };
+
+  this.createLogFolderSync = function(folder){
+    // Synchronous creation of logs folder
+    try {
+      fs.statSync(folder)
+    } catch(e) {
+      fs.mkdirSync(folder);
+    }
+  }
+
+  this.getLogOpt = function(){
+    var logLevels = ['INFO','ERROR','DEBUG'];
+    var logOutputs = ['console','file'];
+    var logsFolder = './logs';
+    var logAppenderConsole = [{ type: "console" }]
+    var logAppenderFile = [
+      { type: "console" },
+      {
+        type: "clustered",
+        appenders: [
+          {
+            type: "dateFile",
+            filename: "logs/lastmonth/connector-time",
+            pattern: "-dd.log",
+            alwaysIncludePattern: true
+          },
+          {
+            type: "file",
+            filename: "logs/connector-all.log",
+            maxLogSize: 20971520,
+            numBackups: 3
+          },
+          {
+            type: "logLevelFilter",
+            level: "ERROR",
+            appender: {
+              type: "file",
+              filename: "logs/connector-errors.log",
+              layout: {
+                        type: "pattern",
+                        pattern: "[%d{ISO8601}] [%p] (PID-%x{tk1}) - %c - %m",
+                        tokens: {tk1: process.pid}
+                    }
+            }
+          }
+        ]
+      }
+    ]
+    var logParams = {
+                      level: logLevels[0],
+                      output: logOutputs[0],
+                      logappenders: logAppenderConsole
+                    }
+
+    if ('logging' in this._data){
+      var _logging = this._data.logging;
+      if ('level' in _logging && _.contains(logLevels,_logging.level))
+        logParams.level = _logging.level;
+      if ('output' in _logging && _logging.output == 'file'){
+        this.createLogFolderSync(logsFolder);
+        this.createLogFolderSync(logsFolder + '/lastmonth');
+        logParams.output = _logging.output;
+        logParams.logappenders = logAppenderFile;
+      }
+    }
+
+    return logParams;
+  }
 
   this.getSubServiceAuth = function(subserv){
     return {user: this._data.subservices[subserv].auth.user,

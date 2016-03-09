@@ -1,7 +1,7 @@
-var log = require('log4js').getLogger();
-log.setLevel(process.env.LOG_LEVEL || 'INFO');
-
 var CartoDB = require('cartodb');
+
+var logParams = require('../config.js').getLogOpt();
+var log = require('log4js').getLogger(logParams.output);
 
 function CartoDBModel(cfg){
   this._user = cfg.user;
@@ -34,7 +34,7 @@ CartoDBModel.prototype.query = function(opts,cb){
         // console.log('On DONE');
         // console.log(self._sql.sql_api_url);
         // console.log(opts.query);
-        if (cb) cb(null,data);        
+        if (cb) cb(null,data);
       })
       .error(function(err){
         // console.log('here');
@@ -47,7 +47,7 @@ CartoDBModel.prototype.query = function(opts,cb){
 }
 
 CartoDBModel.prototype.insert = function(table,data,dontquotedata,cb){
-  
+
   var constructor = this._squel.insert().into(table);
 
   for (var i in data){

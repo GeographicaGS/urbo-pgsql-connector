@@ -4,6 +4,10 @@ var request = require('request');
 var _ = require('underscore');
 var SubscriptionsModel = require('../models/subscriptionsmodel');
 var SubscriptionsCartoDBModel = require('../models/subscriptionscartodbmodel');
+
+var logParams = require('../config.js').getLogOpt();
+var log = require('log4js').getLogger(logParams.output);
+
 var token;
 var config;
 
@@ -53,7 +57,7 @@ function createSubscription(sub){
 
   createTable(sub,function(err){
     if (err)
-      return console.error('Cannot create table for subscription');
+      return log.error('Cannot create table for subscription');
 
     registerSubscription(sub);
   });
@@ -68,7 +72,7 @@ function registerSubscription(sub){
 
   model.getSubscription(sub.id,function(err,d){
     if (err){
-      return console.log('Error getting subscription');
+      return log.error('Error getting subscription');
     }
     else if (d){
       updateOrionSubscription(sub, cfgData,d.subs_id);
@@ -93,7 +97,7 @@ function newOrionSubscription(sub, cfgData){
 
   var srv = config.getSubService(sub.subservice_id);
 
-  console.log('CALLBACK: ' + cfgData.baseURL + '/subscriptions/' + sub.id);
+  log.info('CALLBACK: ' + cfgData.baseURL + '/subscriptions/' + sub.id);
 
   var data = {
     'entities': entities,
@@ -136,14 +140,14 @@ function newOrionSubscription(sub, cfgData){
       model = new SubscriptionsModel(config.getData().pgsql);
       model.handleSubscriptionsTable({'subs_id': subscritionID, 'id_name': sub.id},function(err){
         if (err){
-          console.error('Error handiling subscription');
-          return console.error(err);
+          log.error('Error handiling subscription');
+          return log.error(err);
         }
       });
     }
     else{
-      console.error('Something went wrong')
-      console.log('Request error: ' + error);
+      log.error('Something went wrong')
+      log.log('Request error: ' + error);
     }
   });
 
@@ -178,17 +182,17 @@ function updateOrionSubscription(sub, cfgData, subs_id){
     request(options, function (error, response, body) {
       if (!error && response.statusCode == 200) {
         var resp = JSON.parse(JSON.stringify(response));
-        console.log('Updated subscription: ' + sub.id);
+        log.info('Updated subscription: ' + sub.id);
       }
       else{
-        console.error('Something went wrong')
-        console.log('Request error: ' + error);
+        log.error('Something went wrong')
+        log.error('Request error: ' + error);
       }
     });
 }
 
 function createSubscriptionCallback(sub){
-  console.log('Set router: ' + sub.id);
+  log.info('Set router: ' + sub.id);
 
   router.post('/' + sub.id,function(req,res,next){
 
@@ -207,15 +211,15 @@ function createTable(sub,cb){
   model = new SubscriptionsModel(config.getData().pgsql);
   model.createTable(sub,function(err){
     if (err){
-      console.error('Error creating table');
+      log.error('Error creating table');
       return cb(err)
     }
     cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
     cdbmodel.createTable(sub,function(err){
       if (err)
-        console.error('Error creating table at CartoDB');
+        log.error('Error creating table at CartoDB');
       else
-        console.log('Create table at CartoDB completed');
+        log.info('Create table at CartoDB completed');
       cb(err);
      });
   });
@@ -229,8 +233,8 @@ function initialize(cfg,cb){
     var sub = subscriptions[i];
     getAuthToken(i, function(error,t){
       if (error){
-        console.error('Cannot get access token');
-        return console.error(error);
+        log.error('Cannot get access token');
+        return log.error(error);
       }
       token = t;
       createSubscription(sub,config);

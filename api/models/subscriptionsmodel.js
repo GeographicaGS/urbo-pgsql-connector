@@ -1,10 +1,10 @@
-var util = require('util'),
-    PGSQLModel = require('./pgsqlmodel.js'),
-    utils = require('./utils'),
-    _ = require('underscore'),
-    log = require('log4js').getLogger();
+var util = require('util');
+var PGSQLModel = require('./pgsqlmodel.js');
+var utils = require('./utils');
+var _ = require('underscore');
 
-log.setLevel(process.env.LOG_LEVEL || 'INFO');
+var logParams = require('../config.js').getLogOpt();
+var log = require('log4js').getLogger(logParams.output);
 
 function SubscriptionsModel(cfg) {
   PGSQLModel.call(this,cfg);
@@ -29,15 +29,18 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
         var attr = sub.attributes[i];
         fields.push(attr.name + ' ' + utils.getPostgresType(attr.type));
       }
+
       var q = [
         'CREATE TABLE ' + sub.id + ' ( id bigserial  CONSTRAINT ' + sub.id + '_pk PRIMARY KEY,',
           fields.join(','),
           ",id_entity varchar(64) not null",
           ",created_at timestamp without time zone default (now() at time zone 'utc')",
+          ",updated_at timestamp without time zone default (now() at time zone 'utc')",
           ')'];
+
       that.query(q.join(' '),null,function(err,data){
         if (err)
-          console.log(err);
+          log.error(err);
         else
           cb();
       });
@@ -54,14 +57,14 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           return cb(err,null)
         }
         var current = _.pluck(data.rows,'column_name');
-        var needed = _.pluck(sub.attributes,'name').concat('id','created_at','id_entity');
+        var needed = _.pluck(sub.attributes,'name').concat('id','created_at','updated_at','id_entity');
         var toadd = _.difference(needed,current);
         var toremove = _.difference(current,needed);
 
         if (toremove.length){
           // TODO: REMOVE element.
-          console.log('TOREMOVE');
-          console.log(toremove);
+          log.debug('TOREMOVE');
+          log.debug(toremove);
         }
 
         // Add element
@@ -74,6 +77,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
             }
           }
           sql = 'ALTER TABLE ' + sub.id + ' ' + fields.join(',');
+
           that.query(sql,null,function(err,data){
             if (err){
               log.error('Error altering table ' + sub.id);
@@ -100,7 +104,7 @@ SubscriptionsModel.prototype.getSubscription = function(id,cb){
 
   this.query(q,[id],function(err,d){
     if (err){
-      console.error('Cannot execute sql query');
+      log.error('Cannot execute sql query');
       cb(err);
     }
     else if (!d.rows.length){
@@ -119,7 +123,7 @@ SubscriptionsModel.prototype.handleSubscriptionsTable = function(data, cb){
   var self = this;
   this.query(sql, [data.id_name], function(err, r){
     if (err)
-      return console.error('Cannot execute sql query');
+      return log.error('Cannot execute sql query');
 
     if (!r.rows[0].n == '0') {
       self.insertBatch(table,[data],cb);
@@ -165,6 +169,10 @@ SubscriptionsModel.prototype.upsertSubscriptedData = function(sub, obj, objdq){
       updtConstructor.set(i,objdq[i],{dontQuote: true});
       slConstructor.field(objdq[i],i,{dontQuote: true});
   }
+
+  updtConstructor.set("updated_at","now()");
+  slConstructor.field("now()","updated_at");
+
   var slMaxid = sqpg.select()
                   .field('MAX(id)')
                   .from(sub.id)
@@ -178,6 +186,7 @@ SubscriptionsModel.prototype.upsertSubscriptedData = function(sub, obj, objdq){
   var slCon = slConstructor.from("").where("NOT EXISTS ?", slUpsrt);
 
   var dataKeys = _.keys(_.extend(obj, objdq));
+  dataKeys.push("updated_at");
   var insQry = this._squel.insert()
                  .into(sub.id)
                  .fromQuery(dataKeys, slCon)
@@ -187,7 +196,7 @@ SubscriptionsModel.prototype.upsertSubscriptedData = function(sub, obj, objdq){
   var q = sql.join(' ')
   this.query(q, null, function(err, r){
     if (err)
-      return console.error('Cannot execute upsert query');
+      return log.error('Cannot execute upsert query');
   });
 }
 
