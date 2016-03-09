@@ -14,13 +14,13 @@ util.inherits(SubscriptionsCartoDBModel, CartoDBModel);
 
 SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
 
-  var sql = ['SELECT count(*) as n FROM information_schema.tables',
-       " WHERE table_schema = '{{user}}' AND table_name = '{{table}}'"];
+  var sql = ['SELECT count(*) as n FROM CDB_UserTables()',
+             " WHERE cdb_usertables = '{{table}}'"];
 
   var that = this;
   this.query({
       'query': sql.join(' '),
-      'params' : { 'user' : this._user, 'table': sub.id}
+      'params' : { 'table': sub.id}
     },function(err,data){
 
     if (err){
@@ -42,8 +42,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
       var q = [
         'CREATE TABLE ' + that._user + '.' + sub.id + ' (',
           fields.join(','),
-
-          ');',
+          ",created_at timestamp without time zone default (now() at time zone 'utc'));",
           "SELECT cdb_cartodbfytable('" +that._user + "','" + sub.id +"')" ];
 
       that.query({ 'query' : q.join(' ') },function(err,data){
@@ -61,15 +60,15 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
       // get table info. Apply alter table is needed. NEVER DROP COLUMNS except if config says it
 
       that.query({
-        'query': "select column_name from INFORMATION_SCHEMA.COLUMNS where table_schema = '{{user}}' AND table_name = '{{table}}'",
-        'params' : { 'user' : that._user, 'table': sub.id}
+        'query': "SELECT CDB_ColumnNames('{{table}}')",
+        'params' : { 'table': sub.id }
       },function(err,data){
         if (err){
           log.error('Error getting fields information')
           return cb(err,null)
         }
 
-        var current = _.pluck(data.rows,'column_name');
+        var current = _.pluck(data.rows,'cdb_columnnames');
         var attributes = _.filter(sub.attributes, function(attr){ return attr.cartodb && attr.type!='coords'; });
         var needed = _.pluck(attributes,'name').concat('cartodb_id','the_geom','the_geom_webmercator');
         var toadd = _.difference(needed,current);

@@ -199,9 +199,12 @@ function createSubscriptionCallback(sub){
     psqlmodel = new SubscriptionsModel(config.getData().pgsql);
     psqlmodel.storeData(sub,req.body.contextResponses,config.getData().cartodb);
 
-    cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
-    cdbmodel.storeData(sub,req.body.contextResponses);
-
+    var cdbActiveFields = config.cdbActiveFields(sub);
+    var cdbActive = config.getData().cartodb.active;
+    if (cdbActive && cdbActiveFields){
+      cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
+      cdbmodel.storeData(sub,req.body.contextResponses);
+    }
     res.json(req.body);
   });
 
@@ -214,14 +217,25 @@ function createTable(sub,cb){
       log.error('Error creating table');
       return cb(err)
     }
-    cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
-    cdbmodel.createTable(sub,function(err){
-      if (err)
-        log.error('Error creating table at CartoDB');
-      else
-        log.info('Create table at CartoDB completed');
-      cb(err);
-     });
+    else{
+      log.info('Create table at PostgreSQL completed')
+    }
+
+    var cdbActiveFields = config.cdbActiveFields(sub);
+    var cdbActive = config.getData().cartodb.active;
+    if (cdbActive && cdbActiveFields){
+      cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
+      cdbmodel.createTable(sub,function(err){
+        if (err)
+          log.error('Error creating table at CartoDB');
+        else
+          log.info('Create table at CartoDB completed');
+        cb(err);
+       });
+    }
+    else{
+      log.info('CartoDB is disabled')
+    }
   });
 }
 
