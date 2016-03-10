@@ -1,8 +1,7 @@
-
-var log = require('log4js').getLogger();
-log.setLevel(process.env.LOG_LEVEL || 'INFO');
-
 var pg = require('pg');
+
+var logParams = require('../config.js').getLogOpt();
+var log = require('log4js').getLogger(logParams.output);
 
 function PGSQLModel(cfg){
   this._cfg = cfg;
@@ -23,7 +22,7 @@ PGSQLModel.prototype.insertBatch = function(table,data,cb){
     client.query(sql,function(err,r){
       done();
       if (err){
-        console.log(sql);
+        log.error(sql);
         log.error('Error when inserting data');
         log.error(err);
       }
@@ -50,7 +49,7 @@ PGSQLModel.prototype.insert = function(table,data,dontquotedata,cb){
     client.query(sql,function(err,r){
       done();
       if (err){
-        console.log(sql);
+        log.error(sql);
         log.error('Error when inserting data');
         log.error(err);
       }
@@ -69,13 +68,11 @@ PGSQLModel.prototype.update = function(table,data,cb){
               .table(table)
               .setFields(data)
               .toString();
-  console.log(sql);
 
   this._connect(function(err,client,done){
     client.query(sql,function(err,r){
       done();
       if (err){
-        console.log(err);
         log.error('Error when updating data');
         log.error(err);
       }
@@ -91,7 +88,7 @@ PGSQLModel.prototype._connect = function(cb){
 PGSQLModel.prototype.query = function(sql,bindings,cb){
   this._connect(function(err,client,done){
     if (err){
-      console.log(err);
+      log.error(err);
       return;
     }
     client.query(sql,bindings,function(err,r){

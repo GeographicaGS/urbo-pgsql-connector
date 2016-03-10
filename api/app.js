@@ -12,6 +12,20 @@ var users = require('./routes/users');
 
 var app = express();
 
+var log4js = require('log4js');
+
+
+// Loading logging configuration
+var logParams = config.getLogOpt();
+log4js.configure({
+  appenders: logParams.logappenders,
+  replaceConsole: true
+});
+var log = log4js.getLogger(logParams.output);
+log.setLevel(logParams.level);
+app.use(log4js.connectLogger(log, { level: logParams.level}));
+log.info('Logger successfully started');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');

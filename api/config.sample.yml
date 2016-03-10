@@ -3,6 +3,13 @@
 # BASE URL
 baseURL: http://mother.geographica.gs:8082
 
+# Logging configuration parameters
+logging:
+  # Level options: INFO|ERROR|DEBUG. Default: INFO
+  level: INFO
+  # Output options: console|file. Default: console
+  output: console
+
 # PostgreSQL configuration parameters
 pgsql:
   host: XXX
