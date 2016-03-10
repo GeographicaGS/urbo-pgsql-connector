@@ -44,8 +44,10 @@ function getAuthToken(subserv, cb){
 
     if (!error) {
       var resp = JSON.parse(JSON.stringify(response));
-      // console.log(resp);
-      cb(null,resp.headers['x-subject-token']);
+      // log.debug(JSON.stringify(body));
+      token = resp.headers['x-subject-token'];
+      createSubscription(subserv,config);
+      cb(null,token);
     }
     else{
       cb(error,null);
@@ -129,9 +131,6 @@ function newOrionSubscription(sub, cfgData){
     'json': data
   };
 
-  // console.log(config);
-  // console.log(JSON.stringify(options));
-
   request(options, function (error, response, body) {
     if (!error && response.statusCode == 200) {
 
@@ -147,7 +146,7 @@ function newOrionSubscription(sub, cfgData){
     }
     else{
       log.error('Something went wrong')
-      log.log('Request error: ' + error);
+      log.error('Request error: ' + JSON.stringify(response));
     }
   });
 
@@ -176,8 +175,6 @@ function updateOrionSubscription(sub, cfgData, subs_id){
       'headers': headers,
       'json': data
     };
-    // console.log(config);
-    // console.log(JSON.stringify(options));
 
     request(options, function (error, response, body) {
       if (!error && response.statusCode == 200) {
@@ -245,13 +242,11 @@ function initialize(cfg,cb){
   var subscriptions = config.getSubs();
   for (var i=0;i<subscriptions.length;i++){
     var sub = subscriptions[i];
-    getAuthToken(i, function(error,t){
+    getAuthToken(sub, function(error,t){
       if (error){
         log.error('Cannot get access token');
         return log.error(error);
       }
-      token = t;
-      createSubscription(sub,config);
     });
   }
 

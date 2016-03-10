@@ -23,6 +23,17 @@ import requests
 import json
 from datetime import datetime
 
+try:
+    """
+    Remove InsecureRequestWarning for unverified HTTPS requests.
+    For Requests library version < 2.4 an error raise in this import.
+    """
+    from requests.packages.urllib3.exceptions import InsecureRequestWarning
+    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+except ImportError as err:
+    # raise ImportError("{}\nYou need to upgrade Requests Library".format(err))
+    pass
+
 
 def getAuthToken(url_authtk, fl_fw_auth, ssl=False):
     try:

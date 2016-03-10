@@ -13,6 +13,13 @@ var URL_UDT = '/NGSI10/updateContext'
 var URL_SBC = '/NGSI10/subscribeContext'
 var URL_SBC_UPDATE = '/NGSI10/updateContextSubscription'
 
+/*
+Logs params
+*/
+var LOG_LEVELS = ['INFO','ERROR','DEBUG'];
+var LOG_OUTPUTS = ['console','file'];
+var LOG_FOLDER = './logs';
+
 function Config(){
 
   this._data = yaml.safeLoad(fs.readFileSync('config.yml', 'utf8'));
@@ -30,9 +37,6 @@ function Config(){
   }
 
   this.getLogOpt = function(){
-    var logLevels = ['INFO','ERROR','DEBUG'];
-    var logOutputs = ['console','file'];
-    var logsFolder = './logs';
     var logAppenderConsole = [{ type: "console" }]
     var logAppenderFile = [
       { type: "console" },
@@ -68,18 +72,18 @@ function Config(){
       }
     ]
     var logParams = {
-                      level: logLevels[0],
-                      output: logOutputs[0],
+                      level: LOG_LEVELS[0],
+                      output: LOG_OUTPUTS[0],
                       logappenders: logAppenderConsole
                     }
 
     if ('logging' in this._data){
       var _logging = this._data.logging;
-      if ('level' in _logging && _.contains(logLevels,_logging.level))
+      if ('level' in _logging && _.contains(LOG_LEVELS,_logging.level))
         logParams.level = _logging.level;
       if ('output' in _logging && _logging.output == 'file'){
-        this.createLogFolderSync(logsFolder);
-        this.createLogFolderSync(logsFolder + '/lastmonth');
+        this.createLogFolderSync(LOG_FOLDER);
+        this.createLogFolderSync(LOG_FOLDER + '/lastmonth');
         logParams.output = _logging.output;
         logParams.logappenders = logAppenderFile;
       }
@@ -97,11 +101,12 @@ function Config(){
   }
 
   this.getSubServiceAuth = function(subserv){
-    return {user: this._data.subservices[subserv].auth.user,
-        password: this._data.subservices[subserv].auth.password,
-        service: this._data.subservices[subserv].service
-      };
-    }
+    var subServAuth = this.getSubService(subserv.subservice_id);
+    return {user: subServAuth.auth.user,
+            password: subServAuth.auth.password,
+            service: subServAuth.service
+          };
+  }
 
   this.getSubService = function(id){
     for (var i=0;i<this._data.subservices.length;i++){
