@@ -22,6 +22,7 @@ pgsql:
 cartodb:
   apiKey: XXX
   user: XXX
+  active: true
 
 # Orion Context Broker API URLs
 contextBrokerUrls:

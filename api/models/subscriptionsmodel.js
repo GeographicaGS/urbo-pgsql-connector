@@ -34,8 +34,8 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
         'CREATE TABLE ' + sub.id + ' ( id bigserial  CONSTRAINT ' + sub.id + '_pk PRIMARY KEY,',
           fields.join(','),
           ",id_entity varchar(64) not null",
-          ",created_at timestamp without time zone default (now() at time zone 'utc')",
-          ",updated_at timestamp without time zone default (now() at time zone 'utc')",
+          ",created_at timestamp without time zone DEFAULT (now() at time zone 'utc')",
+          ",updated_at timestamp without time zone DEFAULT (now() at time zone 'utc')",
           ')'];
 
       that.query(q.join(' '),null,function(err,data){
@@ -194,6 +194,7 @@ SubscriptionsModel.prototype.upsertSubscriptedData = function(sub, obj, objdq){
 
   var sql = ["WITH upsert AS ",utils.wrapStrings(udtQry,["(",")"]),insQry]
   var q = sql.join(' ')
+
   this.query(q, null, function(err, r){
     if (err)
       return log.error('Cannot execute upsert query');
