@@ -42,8 +42,10 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
       var q = [
         'CREATE TABLE ' + that._user + '.' + sub.id + ' (',
           fields.join(','),
-          ",created_at timestamp without time zone default (now() at time zone 'utc'));",
-          "SELECT cdb_cartodbfytable('" +that._user + "','" + sub.id +"')" ];
+          ");",
+          "SELECT CDB_Cartodbfytable('" +that._user + "','" + sub.id +"');",
+          "ALTER TABLE "+sub.id + " ADD COLUMN created_at timestamp without time zone DEFAULT (now() at time zone 'utc');",
+          "ALTER TABLE "+sub.id + " ADD COLUMN updated_at timestamp without time zone DEFAULT (now() at time zone 'utc');" ];
 
       that.query({ 'query' : q.join(' ') },function(err,data){
         if (err){
@@ -143,6 +145,10 @@ SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(sub, obj, o
       updtConstructor.set(i,objdq[i],{dontQuote: true});
       slConstructor.field(objdq[i],i,{dontQuote: true});
   }
+
+  updtConstructor.set("updated_at","now()");
+  slConstructor.field("now()","updated_at");
+
   var slMaxid = sqpg.select()
                   .field('MAX(cartodb_id)')
                   .from(sub.id)
@@ -156,6 +162,7 @@ SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(sub, obj, o
   var slCon = slConstructor.from("").where("NOT EXISTS ?", slUpsrt);
 
   var dataKeys = _.keys(_.extend(obj, objdq));
+  dataKeys.push("updated_at");
   var insQry = this._squel.insert()
                  .into(sub.id)
                  .fromQuery(dataKeys, slCon)
