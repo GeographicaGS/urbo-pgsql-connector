@@ -149,7 +149,6 @@ function newOrionSubscription(sub, cfgData){
       log.error('Request error: ' + JSON.stringify(response));
     }
   });
-
 }
 
 function updateOrionSubscription(sub, cfgData, subs_id){
@@ -227,12 +226,12 @@ function createTable(sub,cb){
           log.error('Error creating table at CartoDB');
         else
           log.info('Create table at CartoDB completed');
-        cb(err);
        });
     }
     else{
       log.info('CartoDB is disabled')
     }
+    cb(err)
   });
 }
 
