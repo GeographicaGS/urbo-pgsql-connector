@@ -44,12 +44,14 @@ function getAuthToken(subserv, cb){
 
     if (!error) {
       var resp = JSON.parse(JSON.stringify(response));
-      // log.debug(JSON.stringify(body));
+      log.debug(JSON.stringify(body));
+      log.debug(resp);
       token = resp.headers['x-subject-token'];
       createSubscription(subserv,config);
       cb(null,token);
     }
     else{
+      log.error();
       cb(error,null);
     }
   });
@@ -135,6 +137,7 @@ function newOrionSubscription(sub, cfgData){
     if (!error && response.statusCode == 200) {
 
       var resp = JSON.parse(JSON.stringify(response));
+      log.debug(resp);
       var subscritionID = resp.body.subscribeResponse.subscriptionId;
       model = new SubscriptionsModel(config.getData().pgsql);
       model.handleSubscriptionsTable({'subs_id': subscritionID, 'id_name': sub.id},function(err){
@@ -168,7 +171,7 @@ function updateOrionSubscription(sub, cfgData, subs_id){
     }
 
     var options = {
-      'url': config.getCtxBrUrls('subscr'),
+      'url': config.getCtxBrUrls('updsbscr'),
       'method': 'POST',
       'rejectUnauthorized': false,
       'headers': headers,
@@ -178,6 +181,8 @@ function updateOrionSubscription(sub, cfgData, subs_id){
     request(options, function (error, response, body) {
       if (!error && response.statusCode == 200) {
         var resp = JSON.parse(JSON.stringify(response));
+        log.debug(JSON.stringify(body))
+        log.debug(resp);
         log.info('Updated subscription: ' + sub.id);
       }
       else{

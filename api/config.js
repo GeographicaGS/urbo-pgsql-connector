@@ -134,7 +134,7 @@ function Config(){
         return apiBase + URL_SBC_UPDATE;
       else if (optype == 'update')
         return apiBase + URL_UDT;
-      else if (optype == 'updsbscr')
+      else if (optype == 'query')
         return apiBase + URL_QRY;
       else
         return null
