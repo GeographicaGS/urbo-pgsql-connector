@@ -6,16 +6,21 @@ module.exports.getPostgresType = function(type){
     return 'geometry(Point,4326)';
   else if (type == 'string')
     return 'text'
+  else if (type == 'integer')
+    return 'integer'
+  else if (type == 'float')
+    return 'double precision'
   else if (type == 'ISO8601')
     return 'timestamp without time zone';
 }
 
 module.exports.getValueForType = function(value,type){
+  console.log(value, type);
   if (type=='coords'){
     var s = value.split(',');
     return 'ST_SetSRID(ST_MakePoint(' + s[1] + ',' + s[0] + '),4326)';
   }
-  else if (type == 'string' || type == 'ISO8601')
+  else if (type == 'string' || type == 'ISO8601' || type == 'integer' || type == 'float')
     return value;
   else{
     log.error('Unknown type: ' + type);
@@ -24,7 +29,7 @@ module.exports.getValueForType = function(value,type){
 }
 
 module.exports.isTypeQuoted = function(type){
-  if (type=='coords')
+  if (type=='coords' || type == 'integer' || type == 'float')
     return false;
   else if (type == 'string' || type == 'ISO8601')
     return true;
