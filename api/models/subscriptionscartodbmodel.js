@@ -39,11 +39,17 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
         }
       }
 
+      var tableName = that._enterprise ? that._user + '.' + sub.id : sub.id;
+      var cartodbfy = that._enterprise ? 
+            "SELECT CDB_Cartodbfytable('" +that._user + "','" + sub.id +"');"
+            :
+            "SELECT CDB_Cartodbfytable('" + sub.id +"');";
+
       var q = [
-        'CREATE TABLE ' + that._user + '.' + sub.id + ' (',
+        'CREATE TABLE ' + tableName + ' (',
           fields.join(','),
           ");",
-          "SELECT CDB_Cartodbfytable('" +that._user + "','" + sub.id +"');",
+          cartodbfy,
           "ALTER TABLE "+sub.id + " ADD COLUMN created_at timestamp without time zone DEFAULT (now() at time zone 'utc');",
           "ALTER TABLE "+sub.id + " ADD COLUMN updated_at timestamp without time zone DEFAULT (now() at time zone 'utc');" ];
 

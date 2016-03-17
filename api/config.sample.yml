@@ -23,6 +23,8 @@ cartodb:
   apiKey: XXX
   user: XXX
   active: true
+  # Optional. Default to false. If you've an enterprise account at CartoDB you must set this param to True
+  enterprise: false
 
 # Orion Context Broker API URLs
 contextBrokerUrls:
