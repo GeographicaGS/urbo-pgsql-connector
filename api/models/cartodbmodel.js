@@ -6,6 +6,7 @@ var log = require('log4js').getLogger(logParams.output);
 function CartoDBModel(cfg){
   this._user = cfg.user;
   this._apiKey = cfg.apiKey;
+  this._enterprise = cfg.enterprise;
   this._sql = new CartoDB.SQL({user: cfg.user,api_key: cfg.apiKey});
   this._squel = require('squel');
 };

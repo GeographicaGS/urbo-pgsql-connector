@@ -23,6 +23,19 @@ var LOG_FOLDER = './logs';
 function Config(){
 
   this._data = yaml.safeLoad(fs.readFileSync('config.yml', 'utf8'));
+
+  // Set default params
+  var cdb = this._data.cartodb;
+  if (cdb){
+    // Set default params for cartodb
+    if (!cdb.hasOwnProperty('active')){
+      cdb.active = true;
+    }
+    if (!cdb.hasOwnProperty('enterprise')){
+      cdb.enterprise = false;
+    }
+  }
+
   this.getData = function(){
     return this._data;
   };
