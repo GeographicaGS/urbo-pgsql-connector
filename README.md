@@ -56,7 +56,7 @@ docker-compose -f docker-compose.dev.yml build
 ```
 Install node packages on sources directory
 ```
-docker run --rm -it -v $(pwd)/api:/usr/src/app fiwarepgsqlconnector_api npm install --no-bin-links
+docker run --rm -it -v $(pwd)/api:/usr/src/app node:5.9.0-onbuild npm install
 ```
 
 PostGIS
