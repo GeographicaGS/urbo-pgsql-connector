@@ -7,7 +7,7 @@ var SubscriptionsCartoDBModel = require('../models/subscriptionscartodbmodel');
 
 var logParams = require('../config.js').getLogOpt();
 var log = require('log4js').getLogger(logParams.output);
-
+var util = require('util');
 var token;
 var config;
 
@@ -44,14 +44,13 @@ function getAuthToken(subserv, cb){
 
     if (!error) {
       var resp = JSON.parse(JSON.stringify(response));
-      log.debug(JSON.stringify(body));
-      log.debug(resp);
+      //log.debug(JSON.stringify(body));
+      //log.debug(resp);
       token = resp.headers['x-subject-token'];
       createSubscription(subserv,config);
       cb(null,token);
     }
     else{
-      log.error();
       cb(error,null);
     }
   });
@@ -68,6 +67,10 @@ function createSubscription(sub){
 
 }
 
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function registerSubscription(sub){
 
   var cfgData = config.getData();
@@ -82,7 +85,10 @@ function registerSubscription(sub){
       updateOrionSubscription(sub, cfgData,d.subs_id);
     }
     else{
-      newOrionSubscription(sub, cfgData);
+      setTimeout(function(){
+        newOrionSubscription(sub, cfgData);  
+      },getRandomInt(0,20)*1000);
+      
     }
   });
 }
@@ -137,7 +143,6 @@ function newOrionSubscription(sub, cfgData){
     if (!error && response.statusCode == 200) {
 
       var resp = JSON.parse(JSON.stringify(response));
-      log.debug(resp);
       var subscritionID = resp.body.subscribeResponse.subscriptionId;
       model = new SubscriptionsModel(config.getData().pgsql);
       model.handleSubscriptionsTable({'subs_id': subscritionID, 'id_name': sub.id},function(err){
@@ -146,9 +151,10 @@ function newOrionSubscription(sub, cfgData){
           return log.error(err);
         }
       });
+      log.info(util.format('New subscription [%s] created successfully',sub.id));
     }
     else{
-      log.error('Something went wrong')
+      log.error(util.format('New subscription [%s] cannot be created',sub.id));
       log.error('Request error: ' + JSON.stringify(response));
     }
   });
@@ -181,13 +187,12 @@ function updateOrionSubscription(sub, cfgData, subs_id){
     request(options, function (error, response, body) {
       if (!error && response.statusCode == 200) {
         var resp = JSON.parse(JSON.stringify(response));
-        log.debug(JSON.stringify(body))
-        log.debug(resp);
-        log.info('Updated subscription: ' + sub.id);
+        log.info(util.format('Updated subscription [%s] completed successfully',sub.id));
       }
       else{
-        log.error('Something went wrong')
+        log.error(util.format('Subscription [%s] cannot be updated',sub.id));
         log.error('Request error: ' + error);
+        log.debug(resp);
       }
     });
 }

@@ -15,7 +15,6 @@ module.exports.getPostgresType = function(type){
 }
 
 module.exports.getValueForType = function(value,type){
-  console.log(value, type);
   if (type=='coords'){
     var s = value.split(',');
     return 'ST_SetSRID(ST_MakePoint(' + s[1] + ',' + s[0] + '),4326)';

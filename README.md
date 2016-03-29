@@ -46,7 +46,6 @@ Now, you can edit this file using your favourite text editor.
 docker-compose up
 ```
 
-
 ## Development
 ### First time
 
@@ -79,3 +78,6 @@ docker exec -i tmp_fiware_pgsql psql -U postgres -d fiware < <dumpfile.sql>
 ```
 docker-compose -f docker-compose.dev.yml up
 ```
+
+
+

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "debug": "node-debug --web-host 0.0.0.0 ./bin/www"
+    "debug": "node --debug --web-host 0.0.0.0 ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.13.2",
