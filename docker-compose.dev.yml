@@ -1,7 +1,7 @@
 postgis:
   image: geographica/postgis:postgresql-9.4.5-postgis-2.2.0-gdal-2.0.1-patched-es_ES
   volumes_from:
-    - fiwarepgsqlconnector_pgdata
+    - fiwaredashboard_pgdata
 api:
   build: api
   ports:
@@ -13,11 +13,11 @@ api:
   volumes:
     - ./api:/usr/src/app
   #For debugging mode:
-  command: npm run-script debug
+  # command: npm run-script debug
   # ... then go to http://127.0.0.1:8080/?port=5858
 
   #Standard mode:
   # command: npm run-script start
 
   #Nodemon Mode
-  #command: nodemon -L
+  command: nodemon -L
