@@ -27,7 +27,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
       var fields = [];
       for (var i=0;i<sub.attributes.length;i++){
         var attr = sub.attributes[i];
-        fields.push(attr.name + ' ' + utils.getPostgresType(attr.type));
+        fields.push(utils.wrapStrings(attr.name,['"']) + ' ' + utils.getPostgresType(attr.type));
       }
 
       var q = [
@@ -48,8 +48,8 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
     else{
       // get table info. Apply alter table is needed. NEVER DROP COLUMNS except if config says it
       // TODO: Create metadata table.
-      sql = ['select column_name, data_type, character_maximum_length',
-              ' from INFORMATION_SCHEMA.COLUMNS where table_name = $1'];
+      sql = ['SELECT column_name, data_type, character_maximum_length',
+              ' FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = $1'];
 
       that.query(sql.join(' '),[sub.id],function(err,data){
         if (err){
@@ -73,7 +73,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           for (var i=0;i<sub.attributes.length;i++){
             var attr = sub.attributes[i];
             if (toadd.indexOf(attr.name)!=-1){
-              fields.push('ADD COLUMN ' + attr.name + ' ' + utils.getPostgresType(attr.type));
+              fields.push('ADD COLUMN ' + utils.wrapStrings(attr.name,['"']) + ' ' + utils.getPostgresType(attr.type));
             }
           }
           sql = 'ALTER TABLE ' + sub.id + ' ' + fields.join(',');
@@ -162,11 +162,11 @@ SubscriptionsModel.prototype.upsertSubscriptedData = function(sub, obj, objdq){
   var slConstructor = this._squel.select();
 
   for (var i in obj){
-      updtConstructor.set(i,obj[i]);
+      updtConstructor.set(utils.wrapStrings(i,['"']),obj[i]);
       slConstructor.field(utils.wrapStrings(obj[i],["'"]),i);
   }
   for (var i in objdq){
-      updtConstructor.set(i,objdq[i],{dontQuote: true});
+      updtConstructor.set(utils.wrapStrings(i,['"']),objdq[i],{dontQuote: true});
       slConstructor.field(objdq[i],i,{dontQuote: true});
   }
 
@@ -187,6 +187,8 @@ SubscriptionsModel.prototype.upsertSubscriptedData = function(sub, obj, objdq){
 
   var dataKeys = _.keys(_.extend(obj, objdq));
   dataKeys.push("updated_at");
+  dataKeys = _.map(dataKeys, function(dkey){return utils.wrapStrings(dkey,['"']);});
+
   var insQry = this._squel.insert()
                  .into(sub.id)
                  .fromQuery(dataKeys, slCon)
@@ -197,7 +199,7 @@ SubscriptionsModel.prototype.upsertSubscriptedData = function(sub, obj, objdq){
 
   this.query(q, null, function(err, r){
     if (err)
-      return log.error('Cannot execute upsert query');
+      return log.error('Cannot execute upsert query: ' + q);
   });
 }
 

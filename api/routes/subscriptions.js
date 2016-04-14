@@ -86,9 +86,9 @@ function registerSubscription(sub){
     }
     else{
       setTimeout(function(){
-        newOrionSubscription(sub, cfgData);  
+        newOrionSubscription(sub, cfgData);
       },getRandomInt(0,20)*1000);
-      
+
     }
   });
 }
