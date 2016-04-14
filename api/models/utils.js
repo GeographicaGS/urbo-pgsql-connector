@@ -17,7 +17,7 @@ module.exports.getPostgresType = function(type){
 module.exports.getValueForType = function(value,type){
   if (type=='coords'){
     var s = value.split(',');
-    return 'ST_SetSRID(ST_MakePoint(' + s[1] + ',' + s[0] + '),4326)';
+    return 'ST_SetSRID(ST_MakePoint(' + s[1].trim() + ',' + s[0].trim() + '),4326)';
   }
   else if (type == 'string' || type == 'ISO8601' || type == 'integer' || type == 'float')
     return value;
