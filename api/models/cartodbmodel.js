@@ -1,5 +1,7 @@
 var CartoDB = require('cartodb');
 
+var utils = require('./utils');
+
 var logParams = require('../config.js').getLogOpt();
 var log = require('log4js').getLogger(logParams.output);
 
@@ -52,11 +54,11 @@ CartoDBModel.prototype.insert = function(table,data,dontquotedata,cb){
   var constructor = this._squel.insert().into(table);
 
   for (var i in data){
-    constructor.set(i,data[i]);
+    constructor.set(utils.wrapStrings(i,['"']),data[i]);
   }
 
   for (var i in dontquotedata){
-    constructor.set(i,dontquotedata[i],{dontQuote: true});
+    constructor.set(utils.wrapStrings(i,['"']),dontquotedata[i],{dontQuote: true});
   }
 
   var sql = constructor.toString();

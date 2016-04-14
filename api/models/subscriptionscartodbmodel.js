@@ -35,12 +35,12 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
         var attr = sub.attributes[i];
         if (attr.cartodb){
           var name = attr.type=='coords' ? 'the_geom' : attr.name;
-          fields.push(name + ' ' + utils.getPostgresType(attr.type));
+          fields.push(utils.wrapStrings(name,['"']) + ' ' + utils.getPostgresType(attr.type));
         }
       }
 
       var tableName = that._enterprise ? that._user + '.' + sub.id : sub.id;
-      var cartodbfy = that._enterprise ? 
+      var cartodbfy = that._enterprise ?
             "SELECT CDB_Cartodbfytable('" +that._user + "','" + sub.id +"');"
             :
             "SELECT CDB_Cartodbfytable('" + sub.id +"');";
@@ -94,7 +94,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
           for (var i=0;i<attributes.length;i++){
             var attr = attributes[i];
             if (toadd.indexOf(attr.name)!=-1){
-              fields.push('ADD COLUMN ' + attr.name + ' ' + utils.getPostgresType(attr.type));
+              fields.push('ADD COLUMN ' + utils.wrapStrings(attr.name,['"']) + ' ' + utils.getPostgresType(attr.type));
             }
           }
           sql = 'ALTER TABLE ' + sub.id + ' ' + fields.join(',');
@@ -144,11 +144,11 @@ SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(sub, obj, o
   var slConstructor = this._squel.select();
 
   for (var i in obj){
-      updtConstructor.set(i,obj[i]);
+      updtConstructor.set(utils.wrapStrings(i,['"']),obj[i]);
       slConstructor.field(utils.wrapStrings(obj[i],["'"]),i);
   }
   for (var i in objdq){
-      updtConstructor.set(i,objdq[i],{dontQuote: true});
+      updtConstructor.set(utils.wrapStrings(i,['"']),objdq[i],{dontQuote: true});
       slConstructor.field(objdq[i],i,{dontQuote: true});
   }
 
@@ -169,6 +169,8 @@ SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(sub, obj, o
 
   var dataKeys = _.keys(_.extend(obj, objdq));
   dataKeys.push("updated_at");
+  dataKeys = _.map(dataKeys, function(dkey){return utils.wrapStrings(dkey,['"']);});
+
   var insQry = this._squel.insert()
                  .into(sub.id)
                  .fromQuery(dataKeys, slCon)
