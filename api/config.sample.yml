@@ -61,8 +61,10 @@ subscriptions:
     mode: append
     # List of attributes. It defined the attributes of the subcription and how they're mapped into the PostgreSQL database and CartoDB
     attributes:
-      - # Attribute name
+      - # Attribute name (Fiware attribute name)
         name: name
+        # Database attribute name (If it does not exist "name" is used)
+        namedb: name
         # Type of attribute: Currently supported: 'coords','string','float','integer','ISO8601|timestamp'. Todo: geojson.
         type: string
         # Optional. Default to false. If set to true, the attribute will be synced at CartoDB
