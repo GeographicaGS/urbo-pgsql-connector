@@ -1,30 +1,30 @@
-curl -X POST http://localhost:3000/subscriptions/dev_agua --header 'Content-Type: application/json' --header 'Accept: application/json' -d '
+curl -X POST http://localhost:3000/subscriptions/osuna_contadores --header 'Content-Type: application/json' --header 'Accept: application/json' -d '
 {
-    "subscriptionId": "56d9ad2ae06ac88adfde83eb",
+    "subscriptionId": "5710ac18c6085dbaf482790a",
     "originator": "localhost",
     "contextResponses": [
         {
             "contextElement": {
                 "attributes": [
                     {
-                        "name": "value",
+                        "name": "position",
                         "type": "string",
-                        "value": "1.75"
+                        "value": "37.2422, -5.1093"
                     },
                     {
-                        "name": "timeinstant",
+                        "name": "TimeInstant",
                         "type": "ISO8601",
                         "value": "2016-03-04T16:09:33.28"
                     },
                     {
-                        "name": "position",
-                        "type": "coords",
-                        "value": "37.09,-4.45"
+                        "name": "l",
+                        "type": "string",
+                        "value": "500"
                     }
                 ],
-                "type": "water_dev",
+                "type": "watering.sosteco.watermetering",
                 "isPattern": "false",
-                "id": "dispositivo_k01"
+                "id": "watering.sosteco.watermetering:sac"
             },
             "statusCode": {
                 "code": "200",
