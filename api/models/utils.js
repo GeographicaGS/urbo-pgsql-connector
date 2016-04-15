@@ -2,7 +2,7 @@ var logParams = require('../config.js').getLogOpt();
 var log = require('log4js').getLogger(logParams.output);
 
 module.exports.getPostgresType = function(type){
-  if (type=='coords')
+  if (type =='coords')
     return 'geometry(Point,4326)';
   else if (type == 'string')
     return 'text'
@@ -10,7 +10,7 @@ module.exports.getPostgresType = function(type){
     return 'integer'
   else if (type == 'float')
     return 'double precision'
-  else if (type == 'ISO8601')
+  else if (type == 'ISO8601' || type == 'timestamp')
     return 'timestamp without time zone';
 }
 
@@ -19,7 +19,7 @@ module.exports.getValueForType = function(value,type){
     var s = value.split(',');
     return 'ST_SetSRID(ST_MakePoint(' + s[1].trim() + ',' + s[0].trim() + '),4326)';
   }
-  else if (type == 'string' || type == 'ISO8601' || type == 'integer' || type == 'float')
+  else if (type == 'string' || type == 'ISO8601' || type == 'integer' || type == 'float' || type == 'timestamp')
     return value;
   else{
     log.error('Unknown type: ' + type);
@@ -30,7 +30,7 @@ module.exports.getValueForType = function(value,type){
 module.exports.isTypeQuoted = function(type){
   if (type=='coords' || type == 'integer' || type == 'float')
     return false;
-  else if (type == 'string' || type == 'ISO8601')
+  else if (type == 'string' || type == 'ISO8601' || type == 'timestamp')
     return true;
   else{
     log.error('Unknown type: ' + type);
