@@ -27,7 +27,8 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
       var fields = [];
       for (var i=0;i<sub.attributes.length;i++){
         var attr = sub.attributes[i];
-        fields.push(utils.wrapStrings(attr.name,['"']) + ' ' + utils.getPostgresType(attr.type));
+        var attrName = "namedb" in attr ? attr.namedb : attr.name;
+        fields.push(utils.wrapStrings(attrName,['"']) + ' ' + utils.getPostgresType(attr.type));
       }
 
       var q = [
@@ -57,7 +58,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           return cb(err,null)
         }
         var current = _.pluck(data.rows,'column_name');
-        var needed = _.pluck(sub.attributes,'name').concat('id','created_at','updated_at','id_entity');
+        var needed = _.map(attributes, function(at){return at.namedb || at.name;}).concat('id','created_at','updated_at','id_entity');
         var toadd = _.difference(needed,current);
         var toremove = _.difference(current,needed);
 
@@ -209,12 +210,14 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
     obj['id_entity'] = contextResponses[i].contextElement.id;
 
     _.each(contextResponses[i].contextElement.attributes,function(attr){
-      var attrType = _.findWhere(sub.attributes, {'name': attr.name}).type;
+      var attrSub = _.findWhere(sub.attributes, {'name': attr.name});
+      var attrName = "namedb" in attrSub ? attrSub.namedb : attr.name;
+      var attrType = attrSub.type;
       var v = utils.getValueForType(attr.value, attrType);
       if (utils.isTypeQuoted(attrType))
-        obj[attr.name] = v;
+        obj[attrName] = v;
       else
-        objdq[attr.name] = v;
+        objdq[attrName] = v;
     });
 
     if ("mode" in sub && sub.mode == "update")
