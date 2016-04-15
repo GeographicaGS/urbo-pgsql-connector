@@ -34,7 +34,13 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
       for (var i=0;i<sub.attributes.length;i++){
         var attr = sub.attributes[i];
         if (attr.cartodb){
-          var name = attr.type=='coords' ? 'the_geom' : attr.name;
+          var name;
+          if (attr.type == 'coords')
+            name = 'the_geom';
+          else if ("namedb" in attr)
+            name = attr.namedb;
+          else
+            name = attr.name;
           fields.push(utils.wrapStrings(name,['"']) + ' ' + utils.getPostgresType(attr.type));
         }
       }
@@ -78,7 +84,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
 
         var current = _.pluck(data.rows,'cdb_columnnames');
         var attributes = _.filter(sub.attributes, function(attr){ return attr.cartodb && attr.type!='coords'; });
-        var needed = _.pluck(attributes,'name').concat('cartodb_id','the_geom','the_geom_webmercator');
+        var needed = _.map(attributes, function(at){return at.namedb || at.name;}).concat('cartodb_id','the_geom','the_geom_webmercator');
         var toadd = _.difference(needed,current);
         var toremove = _.difference(current,needed);
 
@@ -192,10 +198,12 @@ SubscriptionsCartoDBModel.prototype.storeData = function(sub,contextResponses){
     obj['id_entity'] = contextResponses[i].contextElement.id;
 
     _.each(contextResponses[i].contextElement.attributes,function(attr){
-      var attrType = _.findWhere(sub.attributes, {'name': attr.name}).type;
+      var attrSub = _.findWhere(sub.attributes, {'name': attr.name});
+      var attrName = "namedb" in attrSub ? attrSub.namedb : attr.name;
+      var attrType = attrSub.type;
       if (valid_attrs.indexOf(attr.name)!=-1){
         var v = utils.getValueForType(attr.value,attrType);
-        var name = attrType!='coords' ? attr.name : 'the_geom';
+        var name = attrType!='coords' ? attrName : 'the_geom';
         if (utils.isTypeQuoted(attrType))
           obj[name] = v;
         else
