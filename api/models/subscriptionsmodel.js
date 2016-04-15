@@ -209,8 +209,10 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
     obj['id_entity'] = contextResponses[i].contextElement.id;
 
     _.each(contextResponses[i].contextElement.attributes,function(attr){
-      var v = utils.getValueForType(attr.value,attr.type);
-      if (utils.isTypeQuoted(attr.type))
+      var attrType = _.findWhere(sub.attributes, {'name': attr.name}).type;
+      var v = utils.getValueForType(attr.value, attrType);
+      console.log(v);
+      if (utils.isTypeQuoted(attrType))
         obj[attr.name] = v;
       else
         objdq[attr.name] = v;
