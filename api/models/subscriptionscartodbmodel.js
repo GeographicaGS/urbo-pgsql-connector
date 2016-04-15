@@ -192,10 +192,11 @@ SubscriptionsCartoDBModel.prototype.storeData = function(sub,contextResponses){
     obj['id_entity'] = contextResponses[i].contextElement.id;
 
     _.each(contextResponses[i].contextElement.attributes,function(attr){
+      var attrType = _.findWhere(sub.attributes, {'name': attr.name}).type;
       if (valid_attrs.indexOf(attr.name)!=-1){
-        var v = utils.getValueForType(attr.value,attr.type);
-        var name = attr.type!='coords' ? attr.name : 'the_geom';
-        if (utils.isTypeQuoted(attr.type))
+        var v = utils.getValueForType(attr.value,attrType);
+        var name = attrType!='coords' ? attr.name : 'the_geom';
+        if (utils.isTypeQuoted(attrType))
           obj[name] = v;
         else
           objdq[name] = v;
