@@ -58,7 +58,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           return cb(err,null)
         }
         var current = _.pluck(data.rows,'column_name');
-        var needed = _.map(attributes, function(at){return at.namedb || at.name;}).concat('id','created_at','updated_at','id_entity');
+        var needed = _.map(sub.attributes, function(at){return at.namedb || at.name;}).concat('id','created_at','updated_at','id_entity');
         var toadd = _.difference(needed,current);
         var toremove = _.difference(current,needed);
 
