@@ -45,7 +45,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
         }
       }
 
-      var tableName = that._enterprise ? that._user + '.' + sub.id : sub.id;
+      var tableName = that._enterprise ? utils.wrapStrings(that._user,['"']) + '.' + sub.id : sub.id;
       var cartodbfy = that._enterprise ?
             "SELECT CDB_Cartodbfytable('" +that._user + "','" + sub.id +"');"
             :
