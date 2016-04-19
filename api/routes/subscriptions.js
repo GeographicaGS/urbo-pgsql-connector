@@ -182,28 +182,28 @@ function getDataLargeSubscriptions(sub, headers, qrylimit, qryoffset){
 
   request(options, function (error, response, body) {
     !response.body.contextResponses
-    if (!error && response.statusCode == 200 && response.body.errorCode.code == "200") {
+    if (!error && response.statusCode == 200) {
+      if (response.body.errorCode.code == "200"){
+        var resp = JSON.parse(JSON.stringify(response));
 
-      var resp = JSON.parse(JSON.stringify(response));
-      console.log(JSON.stringify(resp.body));
+        psqlmodel = new SubscriptionsModel(config.getData().pgsql);
+        psqlmodel.storeData(sub,resp.body.contextResponses,config.getData().cartodb);
 
-      psqlmodel = new SubscriptionsModel(config.getData().pgsql);
-
-      psqlmodel.storeData(sub,resp.body.contextResponses,config.getData().cartodb);
-
-      var cdbActiveFields = config.cdbActiveFields(sub);
-      var cdbActive = config.getData().cartodb.active;
-      if (cdbActive && cdbActiveFields){
-        cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
-        cdbmodel.storeData(sub,resp.body.contextResponses);
+        var cdbActiveFields = config.cdbActiveFields(sub);
+        var cdbActive = config.getData().cartodb.active;
+        if (cdbActive && cdbActiveFields){
+          cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
+          cdbmodel.storeData(sub,resp.body.contextResponses);
+        }
+        log.info(util.format('Large subscription (> 20 entities) for [%s]. New data added.',sub.id));
       }
-
-      log.info(util.format('New data added [%s] (>20 entities)',sub.id));
-
+      else{
+        log.info(util.format('Regular subscription (< 20 entities) for [%s].',sub.id));
+      }
     }
     else{
-      log.info(util.format('< 20 entities. No more data added...',sub.id));
-      log.info(JSON.parse(JSON.stringify(response)));
+      log.error('Request error: ' + error);
+      log.debug(resp);
     }
   });
 }
