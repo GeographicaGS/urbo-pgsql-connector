@@ -127,7 +127,7 @@ function newOrionSubscription(sub, cfgData){
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     'Fiware-Service': srv.service,
-    'Fiware-ServicePath': '/' + srv.subservice,
+    'Fiware-ServicePath': srv.subservice,
     'x-auth-token': token
   };
 
@@ -220,7 +220,7 @@ function updateOrionSubscription(sub, cfgData, subs_id){
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'Fiware-Service': srv.service,
-      'Fiware-ServicePath': '/' + srv.subservice,
+      'Fiware-ServicePath': srv.subservice,
       'x-auth-token': token
     }
 

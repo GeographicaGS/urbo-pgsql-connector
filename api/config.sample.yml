@@ -38,8 +38,8 @@ subservices:
     id: id_subservice
     # Fiware service name
     service: XXX
-    # Fiware subservice name
-    subservice: XXX
+    # Fiware subservice name (slash must be added)
+    subservice: /XXX
     # Credentiales
     auth:
       user: XXX
