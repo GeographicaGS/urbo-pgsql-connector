@@ -13,14 +13,15 @@ function SubscriptionsCartoDBModel(cfg) {
 util.inherits(SubscriptionsCartoDBModel, CartoDBModel);
 
 SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
-
+  var schemaName = sub.schemaname;
+  var schemaTable = schemaName+'_'+sub.id;
   var sql = ['SELECT count(*) as n FROM CDB_UserTables()',
              " WHERE cdb_usertables = '{{table}}'"];
 
   var that = this;
   this.query({
       'query': sql.join(' '),
-      'params' : { 'table': sub.id}
+      'params' : { 'table': schemaTable}
     },function(err,data){
 
     if (err){
@@ -45,19 +46,19 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
         }
       }
 
-      var tableName = that._enterprise ? utils.wrapStrings(that._user,['"']) + '.' + sub.id : sub.id;
+      var tableName = that._enterprise ? utils.wrapStrings(that._user,['"']) + '.' + schemaTable : schemaTable;
       var cartodbfy = that._enterprise ?
-            "SELECT CDB_Cartodbfytable('" +that._user + "','" + sub.id +"');"
+            "SELECT CDB_Cartodbfytable('" +that._user + "','" + schemaTable +"');"
             :
-            "SELECT CDB_Cartodbfytable('" + sub.id +"');";
+            "SELECT CDB_Cartodbfytable('" + schemaTable +"');";
 
       var q = [
         'CREATE TABLE ' + tableName + ' (',
           fields.join(','),
           ");",
           cartodbfy,
-          "ALTER TABLE "+sub.id + " ADD COLUMN created_at timestamp without time zone DEFAULT (now() at time zone 'utc');",
-          "ALTER TABLE "+sub.id + " ADD COLUMN updated_at timestamp without time zone DEFAULT (now() at time zone 'utc');" ];
+          'ALTER TABLE '+tableName + " ADD COLUMN created_at timestamp without time zone DEFAULT (now() at time zone 'utc');",
+          'ALTER TABLE '+tableName + " ADD COLUMN updated_at timestamp without time zone DEFAULT (now() at time zone 'utc');" ];
 
       that.query({ 'query' : q.join(' ') },function(err,data){
         if (err){
@@ -66,6 +67,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
           cb(err);
         }
         else{
+          log.info('Create table at CartoDB completed');
           cb();
         }
       });
@@ -75,7 +77,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
 
       that.query({
         'query': "SELECT CDB_ColumnNames('{{table}}')",
-        'params' : { 'table': sub.id }
+        'params' : { 'table': schemaTable }
       },function(err,data){
         if (err){
           log.error('Error getting fields information')
@@ -103,12 +105,13 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
               fields.push('ADD COLUMN ' + utils.wrapStrings(attr.name,['"']) + ' ' + utils.getPostgresType(attr.type));
             }
           }
-          sql = 'ALTER TABLE ' + sub.id + ' ' + fields.join(',');
+          sql = 'ALTER TABLE ' + schemaTable + ' ' + fields.join(',');
           that.query({query: sql},function(err,data){
             if (err){
-              log.error('Error altering table ' + sub.id);
+              log.error('Error altering table ' + schemaTable);
               return cb(err,null);
             }
+            log.info('Updated table [%s] at CartoDB completed',sub.id);
             cb();
           });
         }
@@ -120,7 +123,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
   });
 }
 
-SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(sub, obj, objdq){
+SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(table, obj, objdq){
   /*
   Upsert SQL example:
 
@@ -146,7 +149,7 @@ SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(sub, obj, o
 
   var sqpg = this._squel.useFlavour('postgres');
 
-  var updtConstructor = sqpg.update().table(sub.id);
+  var updtConstructor = sqpg.update().table(table);
   var slConstructor = this._squel.select();
 
   for (var i in obj){
@@ -163,7 +166,7 @@ SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(sub, obj, o
 
   var slMaxid = sqpg.select()
                   .field('MAX(cartodb_id)')
-                  .from(sub.id)
+                  .from(table)
                   .where("id_entity = ?",obj.id_entity)
 
   var udtQry = updtConstructor.where('cartodb_id = ?', slMaxid)
@@ -178,7 +181,7 @@ SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(sub, obj, o
   dataKeys = _.map(dataKeys, function(dkey){return utils.wrapStrings(dkey,['"']);});
 
   var insQry = this._squel.insert()
-                 .into(sub.id)
+                 .into(table)
                  .fromQuery(dataKeys, slCon)
                  .toString();
 
@@ -186,7 +189,7 @@ SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(sub, obj, o
   var q = sql.join(' ')
   this.query({ 'query' : q}, null, function(err, r){
     if (err)
-      return log.error('Cannot execute upsert query - CartoDB');
+      return log.error('Cannot execute upsert query for table [%s] - CartoDB',table);
   });
 }
 
@@ -211,10 +214,13 @@ SubscriptionsCartoDBModel.prototype.storeData = function(sub,contextResponses){
       }
     });
 
+    var schemaName = sub.schemaname;
+    var schemaTable = schemaName+'_'+sub.id;
+
     if ("mode" in sub && sub.mode == "update")
-      this.upsertSubscriptedData(sub,obj,objdq);
+      this.upsertSubscriptedData(schemaTable,obj,objdq);
     else
-      this.insert(sub.id,obj,objdq);
+      this.insert(schemaTable,obj,objdq);
 
   }
 }

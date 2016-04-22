@@ -12,13 +12,40 @@ function SubscriptionsModel(cfg) {
 
 util.inherits(SubscriptionsModel, PGSQLModel);
 
-SubscriptionsModel.prototype.createTable = function(sub,cb){
-
-  var sql = ['SELECT * FROM information_schema.tables',
-       " WHERE table_schema = 'public' AND table_name = $1"]
+SubscriptionsModel.prototype.createSchema = function(schema, cb){
+  var sql = ['SELECT * FROM information_schema.schemata',
+             'WHERE schema_name = $1']
 
   var that = this;
-  this.query(sql.join(' '),[sub.id],function(err,data){
+  this.query(sql.join(' '),[schema],function(err,data){
+    if (err){
+      log.error('Error getting database schema information')
+      return cb(err,null);
+    }
+    if (!data.rows.length){
+      var q = ['CREATE SCHEMA',schema,'AUTHORIZATION fiware_admin'];
+      that.query(q.join(' '),null,function(err,data){
+        if (err)
+          log.error('Error creating schema: '+schema+' Error: '+err);
+          return cb(err,null);
+        log.info('Created database schema: '+schema);
+      });
+    } else{
+      log.info('Schema [%s] already exists: nothing is done', schema)
+    }
+  });
+  cb(null);
+}
+
+SubscriptionsModel.prototype.createTable = function(sub,cb){
+
+  var schemaName = sub.schemaname;
+
+  var sql = ['SELECT * FROM information_schema.tables',
+             "WHERE table_schema = $1 AND table_name = $2"]
+
+  var that = this;
+  this.query(sql.join(' '),[schemaName, sub.id],function(err,data){
     if (err){
       log.error('Error getting table information')
       return cb(err,null)
@@ -27,12 +54,12 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
       var fields = [];
       for (var i=0;i<sub.attributes.length;i++){
         var attr = sub.attributes[i];
-        var attrName = "namedb" in attr ? attr.namedb : attr.name;
+        var attrName = attr.namedb || attr.name;
         fields.push(utils.wrapStrings(attrName,['"']) + ' ' + utils.getPostgresType(attr.type));
       }
-
       var q = [
-        'CREATE TABLE ' + sub.id + ' ( id bigserial  CONSTRAINT ' + sub.id + '_pk PRIMARY KEY,',
+        'CREATE TABLE',schemaName+'.'+sub.id,
+          '( id bigserial CONSTRAINT',sub.id+'2_pk PRIMARY KEY,',
           fields.join(','),
           ",id_entity varchar(64) not null",
           ",created_at timestamp without time zone DEFAULT (now() at time zone 'utc')",
@@ -42,17 +69,18 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
       that.query(q.join(' '),null,function(err,data){
         if (err)
           log.error(err);
-        else
-          cb();
       });
+      log.info('Create table [%s] at PostgreSQL completed',sub.id)
+      cb();
     }
     else{
       // get table info. Apply alter table is needed. NEVER DROP COLUMNS except if config says it
       // TODO: Create metadata table.
       sql = ['SELECT column_name, data_type, character_maximum_length',
-              ' FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = $1'];
+             'FROM information_schema.columns',
+             'WHERE table_schema = $1 AND table_name = $2'];
 
-      that.query(sql.join(' '),[sub.id],function(err,data){
+      that.query(sql.join(' '),[schemaName,sub.id],function(err,data){
         if (err){
           log.error('Error getting fields information')
           return cb(err,null)
@@ -74,20 +102,20 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           for (var i=0;i<sub.attributes.length;i++){
             var attr = sub.attributes[i];
             if (toadd.indexOf(attr.name)!=-1){
-              fields.push('ADD COLUMN ' + utils.wrapStrings(attr.name,['"']) + ' ' + utils.getPostgresType(attr.type));
+              fields.push('ADD COLUMN '+utils.wrapStrings(attr.name,['"']) +' '+utils.getPostgresType(attr.type));
             }
           }
-          sql = 'ALTER TABLE ' + sub.id + ' ' + fields.join(',');
+          sql = 'ALTER TABLE '+schemaName+'.'+sub.id+' ' + fields.join(',');
 
           that.query(sql,null,function(err,data){
             if (err){
-              log.error('Error altering table ' + sub.id);
+              log.error('Error altering table '+schemaName+'.'+sub.id);
               return cb(err,null)
             }
+            log.info('Updated table [%s] at PostgreSQL completed',sub.id)
             cb();
           });
         }
-
         else{
           cb();
         }
@@ -135,7 +163,7 @@ SubscriptionsModel.prototype.handleSubscriptionsTable = function(data, cb){
   });
 }
 
-SubscriptionsModel.prototype.upsertSubscriptedData = function(sub, obj, objdq){
+SubscriptionsModel.prototype.upsertSubscriptedData = function(table, obj, objdq){
   /*
   Upsert SQL example:
 
@@ -159,7 +187,7 @@ SubscriptionsModel.prototype.upsertSubscriptedData = function(sub, obj, objdq){
 
   var sqpg = this._squel.useFlavour('postgres');
 
-  var updtConstructor = sqpg.update().table(sub.id);
+  var updtConstructor = sqpg.update().table(table);
   var slConstructor = this._squel.select();
 
   for (var i in obj){
@@ -176,7 +204,7 @@ SubscriptionsModel.prototype.upsertSubscriptedData = function(sub, obj, objdq){
 
   var slMaxid = sqpg.select()
                   .field('MAX(id)')
-                  .from(sub.id)
+                  .from(table)
                   .where("id_entity = ?",obj.id_entity)
 
   var udtQry = updtConstructor.where('id = ?', slMaxid)
@@ -191,7 +219,7 @@ SubscriptionsModel.prototype.upsertSubscriptedData = function(sub, obj, objdq){
   dataKeys = _.map(dataKeys, function(dkey){return utils.wrapStrings(dkey,['"']);});
 
   var insQry = this._squel.insert()
-                 .into(sub.id)
+                 .into(table)
                  .fromQuery(dataKeys, slCon)
                  .toString();
 
@@ -200,7 +228,7 @@ SubscriptionsModel.prototype.upsertSubscriptedData = function(sub, obj, objdq){
 
   this.query(q, null, function(err, r){
     if (err)
-      return log.error('Cannot execute upsert query: ' + q);
+      return log.error('Cannot execute upsert query:' + q);
   });
 }
 
@@ -211,7 +239,7 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
 
     _.each(contextResponses[i].contextElement.attributes,function(attr){
       var attrSub = _.findWhere(sub.attributes, {'name': attr.name});
-      var attrName = "namedb" in attrSub ? attrSub.namedb : attr.name;
+      var attrName = attrSub.namedb || attr.name;
       var attrType = attrSub.type;
       var v = utils.getValueForType(attr.value, attrType);
       if (utils.isTypeQuoted(attrType))
@@ -220,10 +248,12 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
         objdq[attrName] = v;
     });
 
+    var schemaName = sub.schemaname;
+    var schemaTable = schemaName+'.'+sub.id
     if ("mode" in sub && sub.mode == "update")
-      this.upsertSubscriptedData(sub,obj,objdq);
+      this.upsertSubscriptedData(schemaTable,obj,objdq);
     else
-      this.insert(sub.id,obj,objdq);
+      this.insert(schemaTable,obj,objdq);
 
   }
 }

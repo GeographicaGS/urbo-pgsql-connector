@@ -34,8 +34,8 @@ contextBrokerUrls:
 
 # Fiware subservices catalog.
 subservices:
-  - # Internal id of subservice. It must be a string without spaces or special characters. Only [a-z][A-Z]
-    id: id_subservice
+    # Internal id of subservice. It must be a string without spaces or special characters. Only [a-z][A-Z]
+  - id: id_subservice
     # Fiware service name
     service: XXX
     # Fiware subservice name (slash must be added)
@@ -47,14 +47,15 @@ subservices:
 
 # List of subscriptions
 subscriptions:
-  - # Mandatory: Internal ID for the subscription
-    id: subscription_id
+    # Mandatory: Internal ID for the subscription
+  - id: subscription_id
     # Mandatory: ID of subservice at subservices catalog.
     subservice_id: id_subservice
+    # Mandatory: schema to store data.
+    schema: schemaname
     # Mandatory: Fiware entities to be subscribed.
     entityTypes:
       - geoEntTest
-
     # Optional: Table name for PGSQL and CartoDB. If not provided default to ID.
     tablename: subscription_id
     # Optional: Subscription model. Posible values are append|update. Default to append
@@ -71,7 +72,6 @@ subscriptions:
         cartodb: true
         # Optional. Default to false. If true a index will be created at PostgreSQL.
         index: true
-
       - name: position
         type: coords
         cartodb: true

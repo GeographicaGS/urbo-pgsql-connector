@@ -57,14 +57,11 @@ function getAuthToken(subserv, cb){
 }
 
 function createSubscription(sub){
-
   createTable(sub,function(err){
     if (err)
-      return log.error('Cannot create table for subscription');
-
+      return log.error('Cannot create table for subscription [%s]',sub.id);
     registerSubscription(sub);
   });
-
 }
 
 function getRandomInt(min, max) {
@@ -79,7 +76,7 @@ function registerSubscription(sub){
 
   model.getSubscription(sub.id,function(err,d){
     if (err){
-      return log.error('Error getting subscription');
+      return log.error('Error getting subscription: [%s]',sub.id);
     }
     else if (d){
       updateOrionSubscription(sub, cfgData,d.subs_id);
@@ -264,15 +261,29 @@ function createSubscriptionCallback(sub){
 
 }
 
+function createSchemas(schemanames, cb){
+  for (var i=0; i<schemanames.length;i++){
+    var sch = schemanames[i];
+    model = new SubscriptionsModel(config.getData().pgsql);
+    model.createSchema(sch,function(err){
+      if (err){
+         log.error('Cannot create schema [%s]',sch);
+         return cb(err);
+      }
+      cb(null)
+    });
+  }
+}
+
 function createTable(sub,cb){
   model = new SubscriptionsModel(config.getData().pgsql);
   model.createTable(sub,function(err){
     if (err){
       log.error('Error creating table');
-      return cb(err)
+      return cb(err);
     }
     else{
-      log.info('Create table at PostgreSQL completed')
+      log.info('Subscriptions table [%s] at PostgreSQL: successfully checked', sub.id)
     }
 
     var cdbActiveFields = config.cdbActiveFields(sub);
@@ -283,7 +294,7 @@ function createTable(sub,cb){
         if (err)
           log.error('Error creating table at CartoDB');
         else
-          log.info('Create table at CartoDB completed');
+          log.info('Subscriptions table [%s] at CartoDB: successfully checked', sub.id)
        });
     }
     else{
@@ -297,16 +308,20 @@ function initialize(cfg,cb){
   config = cfg;
 
   var subscriptions = config.getSubs();
-  for (var i=0;i<subscriptions.length;i++){
-    var sub = subscriptions[i];
-    getAuthToken(sub, function(error,t){
-      if (error){
-        log.error('Cannot get access token');
-        return log.error(error);
-      }
-    });
-  }
-
+  var schemas = _.uniq(_.pluck(subscriptions,'schemaname'));
+  createSchemas(schemas,function(error){
+    if (error)
+      log.error('Error:'+error);
+    for (var i=0;i<subscriptions.length;i++){
+      var sub = subscriptions[i];
+      getAuthToken(sub, function(error,t){
+        if (error){
+          log.error('Cannot get access token');
+          return log.error(error);
+        }
+      });
+    }
+  });
 }
 
 function routes(cfg){

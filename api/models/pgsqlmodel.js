@@ -96,7 +96,7 @@ PGSQLModel.prototype.query = function(sql,bindings,cb){
     client.query(sql,bindings,function(err,r){
       done();
       if (err){
-        log.error('Error executing query');
+        log.error('Error executing query: '+sql);
         log.error(err);
       }
       if (cb) cb(err,r);
