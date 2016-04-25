@@ -5,9 +5,9 @@
 --
 
 BEGIN;
-\i scopes.sql
-\i categories.sql
-\i entities.sql
-\i variables.sql
-\i scopes_entities.sql
+\i db/scopes.sql
+\i db/categories.sql
+\i db/entities.sql
+\i db/variables.sql
+\i db/scopes_entities.sql
 COMMIT;
