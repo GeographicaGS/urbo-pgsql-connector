@@ -7,7 +7,7 @@
 CREATE TABLE public.dashboard_scopesentities
 (
   id_scope character varying(255),
-  id_entity character varying(255),
+  id_entity character varying(255)
 )
 WITH (
   OIDS=FALSE
