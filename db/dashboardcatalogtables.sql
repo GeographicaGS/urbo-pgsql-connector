@@ -9,4 +9,5 @@ BEGIN;
 \i categories.sql
 \i entities.sql
 \i variables.sql
+\i scopes_entities.sql
 COMMIT;

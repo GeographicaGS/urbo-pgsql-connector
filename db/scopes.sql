@@ -11,6 +11,7 @@ CREATE TABLE public.dashboard_scopes
   geom geometry(Point,4326),
   zoom smallint,
   dbschema character varying(255),
+  devices_map boolean default TRUE,
   CONSTRAINT id_scope_pkey PRIMARY KEY (id_scope)
 )
 WITH (
