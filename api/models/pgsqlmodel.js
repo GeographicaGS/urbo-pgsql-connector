@@ -1,7 +1,9 @@
 var pg = require('pg');
+var utils = require('./utils');
 
 var logParams = require('../config.js').getLogOpt();
 var log = require('log4js').getLogger(logParams.output);
+
 
 function PGSQLModel(cfg){
   this._cfg = cfg;
@@ -36,11 +38,11 @@ PGSQLModel.prototype.insert = function(table,data,dontquotedata,cb){
   var constructor = this._squel.insert().into(table);
 
   for (var i in data){
-    constructor.set(i,data[i]);
+    constructor.set(utils.wrapStrings(i,['"']),data[i]);
   }
 
   for (var i in dontquotedata){
-    constructor.set(i,dontquotedata[i],{dontQuote: true});
+    constructor.set(utils.wrapStrings(i,['"']),dontquotedata[i],{dontQuote: true});
   }
 
   var sql = constructor.toString();
@@ -94,7 +96,7 @@ PGSQLModel.prototype.query = function(sql,bindings,cb){
     client.query(sql,bindings,function(err,r){
       done();
       if (err){
-        log.error('Error executing query');
+        log.error('Error executing query: '+sql);
         log.error(err);
       }
       if (cb) cb(err,r);

@@ -57,14 +57,11 @@ function getAuthToken(subserv, cb){
 }
 
 function createSubscription(sub){
-
   createTable(sub,function(err){
     if (err)
-      return log.error('Cannot create table for subscription');
-
+      return log.error('Cannot create table for subscription [%s]',sub.id);
     registerSubscription(sub);
   });
-
 }
 
 function getRandomInt(min, max) {
@@ -79,16 +76,16 @@ function registerSubscription(sub){
 
   model.getSubscription(sub.id,function(err,d){
     if (err){
-      return log.error('Error getting subscription');
+      return log.error('Error getting subscription: [%s]',sub.id);
     }
     else if (d){
       updateOrionSubscription(sub, cfgData,d.subs_id);
     }
     else{
       setTimeout(function(){
-        newOrionSubscription(sub, cfgData);  
+        newOrionSubscription(sub, cfgData);
       },getRandomInt(0,20)*1000);
-      
+
     }
   });
 }
@@ -127,7 +124,7 @@ function newOrionSubscription(sub, cfgData){
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     'Fiware-Service': srv.service,
-    'Fiware-ServicePath': '/' + srv.subservice,
+    'Fiware-ServicePath': srv.subservice,
     'x-auth-token': token
   };
 
@@ -147,15 +144,63 @@ function newOrionSubscription(sub, cfgData){
       model = new SubscriptionsModel(config.getData().pgsql);
       model.handleSubscriptionsTable({'subs_id': subscritionID, 'id_name': sub.id},function(err){
         if (err){
-          log.error('Error handiling subscription');
+          log.error('Error handling subscription');
           return log.error(err);
         }
+        getDataLargeSubscriptions(sub, headers, 1000, 20);
       });
       log.info(util.format('New subscription [%s] created successfully',sub.id));
     }
     else{
       log.error(util.format('New subscription [%s] cannot be created',sub.id));
       log.error('Request error: ' + JSON.stringify(response));
+    }
+  });
+}
+
+function getDataLargeSubscriptions(sub, headers, qrylimit, qryoffset){
+  var entities =  _.map(sub.entityTypes,function(type){
+    return {
+      'type': type,
+      'isPattern' : 'true',
+      'id': '.*'
+    };
+  });
+
+  var data = {'entities': entities};
+
+  var options = {
+    'url': config.getCtxBrUrls('query')+'?details=on&limit='+qrylimit+'&offset='+qryoffset,
+    'method': 'POST',
+    'rejectUnauthorized': false,
+    'headers': headers,
+    'json': data
+  };
+
+  request(options, function (error, response, body) {
+    !response.body.contextResponses
+    if (!error && response.statusCode == 200) {
+      if (response.body.errorCode.code == "200"){
+        var resp = JSON.parse(JSON.stringify(response));
+
+        psqlmodel = new SubscriptionsModel(config.getData().pgsql);
+        psqlmodel.storeData(sub,resp.body.contextResponses,config.getData().cartodb);
+
+        var cdbActiveFields = config.cdbActiveFields(sub);
+        var cdbActive = config.getData().cartodb.active;
+        if (cdbActive && cdbActiveFields){
+          cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
+          cdbmodel.storeData(sub,resp.body.contextResponses);
+        }
+        log.info(util.format('Large subscription (> 20 entities) for [%s]. New data added.',sub.id));
+      }
+      else{
+        log.info(util.format('Regular subscription (< 20 entities) for [%s].',sub.id));
+      }
+    }
+    else{
+      log.error('Request error: ' + error);
+      log.debug(resp);
     }
   });
 }
@@ -172,7 +217,7 @@ function updateOrionSubscription(sub, cfgData, subs_id){
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'Fiware-Service': srv.service,
-      'Fiware-ServicePath': '/' + srv.subservice,
+      'Fiware-ServicePath': srv.subservice,
       'x-auth-token': token
     }
 
@@ -216,15 +261,29 @@ function createSubscriptionCallback(sub){
 
 }
 
+function createSchemas(schemanames, cb){
+  for (var i=0; i<schemanames.length;i++){
+    var sch = schemanames[i];
+    model = new SubscriptionsModel(config.getData().pgsql);
+    model.createSchema(sch,function(err){
+      if (err){
+         log.error('Cannot create schema [%s]',sch);
+         return cb(err);
+      }
+    });
+  }
+  cb();
+}
+
 function createTable(sub,cb){
   model = new SubscriptionsModel(config.getData().pgsql);
   model.createTable(sub,function(err){
     if (err){
       log.error('Error creating table');
-      return cb(err)
+      return cb(err);
     }
     else{
-      log.info('Create table at PostgreSQL completed')
+      log.info('Subscriptions table [%s] at PostgreSQL: successfully checked', sub.id)
     }
 
     var cdbActiveFields = config.cdbActiveFields(sub);
@@ -235,13 +294,13 @@ function createTable(sub,cb){
         if (err)
           log.error('Error creating table at CartoDB');
         else
-          log.info('Create table at CartoDB completed');
+          log.info('Subscriptions table [%s] at CartoDB: successfully checked', sub.id)
        });
     }
     else{
       log.info('CartoDB is disabled')
     }
-    cb(err)
+    cb()
   });
 }
 
@@ -249,16 +308,20 @@ function initialize(cfg,cb){
   config = cfg;
 
   var subscriptions = config.getSubs();
-  for (var i=0;i<subscriptions.length;i++){
-    var sub = subscriptions[i];
-    getAuthToken(sub, function(error,t){
-      if (error){
-        log.error('Cannot get access token');
-        return log.error(error);
-      }
-    });
-  }
-
+  var schemas = _.uniq(_.pluck(subscriptions,'schemaname'));
+  createSchemas(schemas,function(error){
+    if (error)
+      log.error('Error:'+error);
+    for (var i=0;i<subscriptions.length;i++){
+      var sub = subscriptions[i];
+      getAuthToken(sub, function(error,t){
+        if (error){
+          log.error('Cannot get access token');
+          return log.error(error);
+        }
+      });
+    }
+  });
 }
 
 function routes(cfg){
