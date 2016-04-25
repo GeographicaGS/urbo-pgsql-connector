@@ -270,9 +270,9 @@ function createSchemas(schemanames, cb){
          log.error('Cannot create schema [%s]',sch);
          return cb(err);
       }
-      cb(null)
     });
   }
+  cb();
 }
 
 function createTable(sub,cb){
@@ -300,7 +300,7 @@ function createTable(sub,cb){
     else{
       log.info('CartoDB is disabled')
     }
-    cb(err)
+    cb()
   });
 }
 
