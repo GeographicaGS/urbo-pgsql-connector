@@ -25,4 +25,7 @@ andalucia	Andalucía	SRID=4326;POINT(-5.11 37.34)	9	andalucia	FALSE
 COPY dashboard_scopesentities (id_scope, id_entity) FROM stdin;
 andalucia	GINTUR_ACTIVITY_LOCALITY
 andalucia	GINTUR_ACTIVITY_TYPE
+osuna	watering.sosteco.sensor
+osuna	watering.sosteco.watermetering
+osuna	watering.sosteco.weatherstation
 \.
