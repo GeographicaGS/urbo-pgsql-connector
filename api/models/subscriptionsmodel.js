@@ -27,14 +27,14 @@ SubscriptionsModel.prototype.createSchema = function(schema, cb){
       that.query(q.join(' '),null,function(err,data){
         if (err)
           log.error('Error creating schema: '+schema+' Error: '+err);
-          return cb(err,null);
+          // return cb(err,null);
         log.info('Created database schema: '+schema);
       });
     } else{
       log.info('Schema [%s] already exists: nothing is done', schema)
     }
+    cb(null);
   });
-  cb(null);
 }
 
 SubscriptionsModel.prototype.createTable = function(sub,cb){
@@ -117,6 +117,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           });
         }
         else{
+          log.info('Updated_2 table [%s] at PostgreSQL completed',sub.id)
           cb();
         }
       });
