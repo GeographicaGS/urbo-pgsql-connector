@@ -27,7 +27,6 @@ CREATE TABLE public.dashboard_variables
   var_thresholds double precision ARRAY[3],
   var_tempalarmvalue integer,
   var_tempalarmactive boolean,
-  var_widget character varying(25),
   CONSTRAINT id_variable_pkey PRIMARY KEY (id_variable)
 )
 WITH (
