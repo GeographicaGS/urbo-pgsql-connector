@@ -3,7 +3,7 @@
 --
 -- SQL DUMP: DATA for DGT DEMO
 --
-BEGIN;
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -14,6 +14,8 @@ SET search_path = public, pg_catalog;
 SET default_tablespace = '';
 SET default_with_oids = false;
 
+
+BEGIN;
 --
 -- SCOPES DATA
 --
@@ -49,4 +51,4 @@ COPY dashboard_variables (id_variable, id_entity, entity_field, var_name, var_un
 level	DGT_SENSORS	level	Nivel	m	{0,100,150}	60	TRUE
 alarm	DGT_SENSORS	alarm	Alarma	m	{0,100,150}	60	TRUE
 \.
-END;
+COMMIT;
