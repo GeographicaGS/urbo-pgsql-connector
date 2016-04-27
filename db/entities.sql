@@ -39,6 +39,6 @@ COPY dashboard_entities (id_entity, entity_name, id_category, id_table, icon) FR
 watering.sosteco.sensor	Riego	watering	riego	SM_humedad_activo.svg
 watering.sosteco.watermetering	Contadores de agua	watering	contadores	SM_agua_activo.svg
 watering.sosteco.weatherstation	Estación meteorológica	watering	meteoestac	SM_meteo_activo.svg
-GINTUR_ACTIVITY_LOCALITY	Localidades turísticas	tourism	activity_locality	null	
+GINTUR_ACTIVITY_LOCALITY	Localidades turísticas	tourism	activity_locality	null
 GINTUR_ACTIVITY_TYPE	Tipos de actividades turísticas	tourism	activity_type	null
 \.
