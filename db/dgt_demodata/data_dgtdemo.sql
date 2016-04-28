@@ -20,35 +20,37 @@ BEGIN;
 -- SCOPES DATA
 --
 COPY dashboard_scopes (id_scope, scope_name, geom, zoom, dbschema, devices_map) FROM stdin;
-dgt	Dirección General de Tráfico (DGT)	SRID=4326;POINT(-5.11 37.34)	6	dgt	TRUE
+dgt	Dirección General de Tráfico (DGT)	SRID=4326;POINT(-3.0 40.5)	6	dgt	TRUE
 \.
 
 --
 -- SCOPES/ENTITIES DATA
 --
 COPY dashboard_scopesentities (id_scope, id_entity) FROM stdin;
-dgt	DGT_SENSORS
+dgt	dgt30.vehiculo
 \.
 
 --
 -- CATEGORIES DATA
 --
 COPY dashboard_categories (id_category, category_name, category_colour) FROM stdin;
-traffic	Tráfico	33cc99
+traffic	Tráfico	0062b4
 \.
 
 --
 -- ENTITIES DATA
 --
 COPY dashboard_entities (id_entity, entity_name, id_category, id_table, icon) FROM stdin;
-DGT_SENSORS	DGT Accidentes	traffic	dgt_sensors	dgt_sensors.svg
+dgt30.vehiculo	DGT vehículo	traffic	dgt_vehiculo	SC_vehiculo_activo.svg
 \.
 
 --
 -- VARIABLES DATA
 --
 COPY dashboard_variables (id_variable, id_entity, entity_field, var_name, var_units, var_thresholds, var_tempalarmvalue, var_tempalarmactive) FROM stdin;
-level	DGT_SENSORS	level	Nivel	m	{0,100,150}	60	TRUE
-alarm	DGT_SENSORS	alarm	Alarma	m	{0,100,150}	60	TRUE
+nivel_alerta	dgt30.vehiculo	nivel_alerta	Nivel de alerta	null	{0,1,2}	0	FALSE
+ecall	dgt30.vehiculo	ecall	Sistema eCall	null	{0,1,2}	0	FALSE
+texto_alerta	dgt30.vehiculo	texto_alerta	Mensaje de alerta	null	{0,1,2}	0	FALSE
+velocidad	dgt30.vehiculo	velocidad	Velocidad	null	{0,50,120}	0	FALSE
 \.
 COMMIT;
