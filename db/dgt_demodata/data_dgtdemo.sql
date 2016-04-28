@@ -20,7 +20,7 @@ BEGIN;
 -- SCOPES DATA
 --
 COPY dashboard_scopes (id_scope, scope_name, geom, zoom, dbschema, devices_map) FROM stdin;
-dgt	Dirección General de Tráfico (DGT)	SRID=4326;POINT(-3.0 40.5)	6	dgt	TRUE
+dgt	Dirección General de Tráfico (DGT)	SRID=4326;POINT(-3.5 40.5)	10	dgt	TRUE
 \.
 
 --
@@ -51,6 +51,6 @@ COPY dashboard_variables (id_variable, id_entity, entity_field, var_name, var_un
 nivel_alerta	dgt30.vehiculo	nivel_alerta	Nivel de alerta	null	{0,1,2}	0	FALSE
 ecall	dgt30.vehiculo	ecall	Sistema eCall	null	{0,1,2}	0	FALSE
 texto_alerta	dgt30.vehiculo	texto_alerta	Mensaje de alerta	null	{0,1,2}	0	FALSE
-velocidad	dgt30.vehiculo	velocidad	Velocidad	null	{0,50,120}	0	FALSE
+velocidad	dgt30.vehiculo	velocidad	Velocidad	km/h	{0,50,120}	0	FALSE
 \.
 COMMIT;
