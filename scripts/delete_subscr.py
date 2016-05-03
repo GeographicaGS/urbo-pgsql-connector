@@ -72,36 +72,36 @@ def getAuthToken(url_authtk, fl_fw_auth, timeout=10, ssl=False):
 
 def deleteSubscriptions(subs, url_subs, fiw_serv, fiw_subsserv, authtoken,
                         pgconfig, timeout=10, ssl=False):
-    # try:
-    headers_authtk = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Fiware-Service': fiw_serv,
-        'Fiware-ServicePath': fiw_subsserv,
-        'x-auth-token': authtoken
-    }
-
-    for subs_id in subs:
-        json_data = {
-            "subscriptionId": subs_id[0]
+    try:
+        headers_authtk = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Fiware-Service': fiw_serv,
+            'Fiware-ServicePath': fiw_subsserv,
+            'x-auth-token': authtoken
         }
-        print(subs_id[0])
-        payload = json.dumps(json_data)
 
-        resp = requests.post(url_subs, headers=headers_authtk,
-                              data=payload, verify=ssl, timeout=timeout)
+        for subs_id in subs:
+            json_data = {
+                "subscriptionId": subs_id[0]
+            }
+            print(subs_id[0])
+            payload = json.dumps(json_data)
 
-        if resp.ok:
-            print("{0}. Deleted subscription: {1}".format(resp, subs_id[0]))
-        else:
-            print(resp)
-            raise DeleteSubscriptionException("Error: {}".format(resp.json()))
+            resp = requests.post(url_subs, headers=headers_authtk,
+                                  data=payload, verify=ssl, timeout=timeout)
 
-    subtables = [tb for tk,tb in subs]
-    deletePgSubscr(subtables, **pgconfig)
+            if resp.ok:
+                print("{0}. Deleted subscription: {1}".format(resp, subs_id[0]))
+            else:
+                print(resp)
+                raise DeleteSubscriptionException("Error: {}".format(resp.json()))
 
-    # except Exception as err:
-    #     print("Error: {}".format(err))
+        subtables = [tb for tk,tb in subs]
+        deletePgSubscr(subtables, **pgconfig)
+
+    except Exception as err:
+        print("Error: {}".format(err))
 
 def getPgSubscr(subs_table='subscriptions', **kwargs):
     try:
@@ -125,29 +125,29 @@ def getPgSubscr(subs_table='subscriptions', **kwargs):
         print("Error selecting subscriptions: {}".format(err))
 
 def deletePgSubscr(subtables, subs_table='subscriptions', **kwargs):
-    # try:
-    my_database = kwargs.get('database')
-    my_user = kwargs.get('user')
-    my_password = kwargs.get('password')
-    my_host = kwargs.get('host')
-    my_port = kwargs.get('port')
+    try:
+        my_database = kwargs.get('database')
+        my_user = kwargs.get('user')
+        my_password = kwargs.get('password')
+        my_host = kwargs.get('host')
+        my_port = kwargs.get('port')
 
-    conn = None
-    conn = psycopg2.connect(database=my_database, user=my_user,
-            password=my_password, host=my_host, port=my_port)
-    cur = conn.cursor()
-    print(subtables)
-    for tb in subtables:
-        # cur.execute("DROP TABLE {0};".format(tb))
-        cur.execute("DELETE FROM {0} WHERE id_name='{1}';".format(subs_table, tb))
+        conn = None
+        conn = psycopg2.connect(database=my_database, user=my_user,
+                password=my_password, host=my_host, port=my_port)
+        cur = conn.cursor()
+        print(subtables)
+        for tb in subtables:
+            # cur.execute("DROP TABLE {0};".format(tb))
+            cur.execute("DELETE FROM {0} WHERE id_name='{1}';".format(subs_table, tb))
 
 
-    conn.commit()
-    cur.close()
-    conn.close()
+        conn.commit()
+        cur.close()
+        conn.close()
 
-    # except Exception as err:
-    #     print("Error removing tables: {}".format(err))
+    except Exception as err:
+        print("Error removing tables: {}".format(err))
 
 def getConfig(pgconfig_file, pghost="localhost", pgport="5435",
                 pguser="postgres", pgpwd="postgres"):
