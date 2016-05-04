@@ -23,6 +23,7 @@ CREATE TABLE public.dashboard_entities
   entity_name character varying(255),
   id_category character varying(255),
   id_table character varying(255),
+  icon character varying(255),
   CONSTRAINT id_entity_pkey PRIMARY KEY (id_entity)
 )
 WITH (
@@ -34,10 +35,10 @@ ALTER TABLE public.dashboard_entities
 --
 -- ENTITIES DATA
 --
-COPY dashboard_entities (id_entity, entity_name, id_category, id_table) FROM stdin;
-watering.sosteco.sensor	Riego	watering	riego
-watering.sosteco.watermetering	Contadores de agua	watering	contadores
-watering.sosteco.weatherstation	Estación meteorológica	watering	meteoestac
-GINTUR_ACTIVITY_LOCALITY	Localidades turísticas	tourism	activity_locality
-GINTUR_ACTIVITY_TYPE	Tipos de actividades turísticas	tourism	activity_type
+COPY dashboard_entities (id_entity, entity_name, id_category, id_table, icon) FROM stdin;
+watering.sosteco.sensor	Riego	watering	riego	SM_humedad_activo.svg
+watering.sosteco.watermetering	Contadores de agua	watering	contadores	SM_agua_activo.svg
+watering.sosteco.weatherstation	Estación meteorológica	watering	meteoestac	SM_meteo_activo.svg
+GINTUR_ACTIVITY_LOCALITY	Localidades turísticas	tourism	activity_locality	null
+GINTUR_ACTIVITY_TYPE	Tipos de actividades turísticas	tourism	activity_type	null
 \.
