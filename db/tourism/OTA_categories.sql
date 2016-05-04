@@ -6,7 +6,7 @@
 CREATE TABLE public.ota_categories
 (
   codes character varying(255),
-  data jsonb
+  types jsonb
 )
 WITH (
   OIDS=FALSE
