@@ -10,8 +10,8 @@ var debug = require('debug')('api:server');
  * PGSQL connection retries config:
  */
 var pg = require('pg');
-var connect_retries = 3;
-var connect_retry_timeout = 3000;
+var connect_retries = 10;
+var connect_retry_timeout = 5000;
 var connect_count = 1;
 
 var startServer = function(){
@@ -62,10 +62,14 @@ var trydb = function(err, client, done) {
     }
   }
 }
+
+var startTimeout = 15000;
 //Needs to wait the first time (db shutdown while initial error checking process):
 setTimeout(function(){
   pg.connect(config.getData().pgsql, trydb);
-}, connect_retry_timeout);
+}, startTimeout);
+
+console.log("Starting connector, please be patient");
 
 /**
  * Normalize a port into a number, string, or false.
