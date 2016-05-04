@@ -69,7 +69,7 @@ setTimeout(function(){
   pg.connect(config.getData().pgsql, trydb);
 }, startTimeout);
 
-console.log("Waiting to start connector " + startTimeout/1000 + " seconds");
+console.log("Starting connector, please be patient");
 
 /**
  * Normalize a port into a number, string, or false.
