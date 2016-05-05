@@ -21,7 +21,7 @@ CREATE TABLE public.dashboard_categories
 (
   id_category character varying(255) NOT NULL,
   category_name character varying(255),
-  category_colour character varying(255),
+  category_colour character varying(10),
   CONSTRAINT id_category_pkey PRIMARY KEY (id_category)
 )
 WITH (
