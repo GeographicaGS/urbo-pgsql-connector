@@ -18,8 +18,8 @@ SET default_with_oids = false;
 -- SCOPES DATA
 --
 COPY dashboard_scopes (id_scope, scope_name, geom, zoom, dbschema, devices_map) FROM stdin;
-osuna	Osuna	SRID=4326;POINT(-5.12 37.25)	15	osuna	TRUE
-andalucia	Andalucía	SRID=4326;POINT(-5.11 37.34)	9	andalucia	FALSE
+osuna	Osuna	SRID=4326;POINT (-5.103308 37.237364)	15	osuna	TRUE
+andalucia	Andalucía	SRID=4326;POINT(-5.11 37.34)	8	andalucia	FALSE
 \.
 
 COPY dashboard_scopesentities (id_scope, id_entity) FROM stdin;
