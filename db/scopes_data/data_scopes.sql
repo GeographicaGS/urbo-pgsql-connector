@@ -28,4 +28,5 @@ andalucia	GINTUR_ACTIVITY_TYPE
 osuna	watering.sosteco.sensor
 osuna	watering.sosteco.watermetering
 osuna	watering.sosteco.weatherstation
+osuna	watering.sosteco.solenoidvalve
 \.

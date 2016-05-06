@@ -42,12 +42,13 @@ ALTER TABLE public.dashboard_variables
 COPY dashboard_variables (id_variable, id_entity, entity_field, var_name, var_units, var_thresholds, var_tempalarmvalue, var_tempalarmactive, var_agg) FROM stdin;
 wm_waterconsumption	watering.sosteco.watermetering	l	Consumo de agua	l	{0,100,150}	60	TRUE	{'SUM','AVG','MIN','MAX'}
 wt_soilhumidity	watering.sosteco.sensor	h	Humedad del suelo	cb	{0,30,80}	30	TRUE	{'AVG','MIN','MAX'}
-wt_pressure	watering.sosteco.sensor	p	Presión	cb	{0,30,80}	30	TRUE	{'AVG','MIN','MAX'}
-wt_solaradiat	watering.sosteco.sensor	s	Radiación solar	W/m2	{0,0.4,0.8}	60	FALSE	{'AVG','MIN','MAX'}
-wt_temperature	watering.sosteco.sensor	t	Temperatura	°C	{-50,30,38}	60	TRUE	{'AVG','MIN','MAX'}
+wt_pressure	watering.sosteco.sensor	p	Presión	atm	{0,0.6,0.8}	30	TRUE	{'AVG','MIN','MAX'}
+wt_solaradiat	watering.sosteco.sensor	s	Radiación solar	pm	{0,0.4,0.8}	60	FALSE	{'AVG','MIN','MAX'}
+wt_temperature	watering.sosteco.sensor	t	Temperatura	°C	{-30,30,35}	60	TRUE	{'AVG','MIN','MAX'}
 mt_winddir	watering.sosteco.weatherstation	winddir	Dirección del viento	null	{null,null,null}	30	TRUE	{'MAX','MIN'}
 mt_windvel	watering.sosteco.weatherstation	windvel	Velocidad del viento	km/h	{0,39,62}	30	TRUE	{'AVG','MIN','MAX'}
 mt_pluvio	watering.sosteco.weatherstation	pluvio	Pluviometría	mm	{0,15,30}	60	TRUE	{'SUM','AVG','MIN','MAX'}
+ev_state	watering.sosteco.solenoidvalve	e	Estado	null	{null,null,null}	0	FALSE	{'SUM','AVG','MIN','MAX'}
 tu_activlocality	GINTUR_ACTIVITY_LOCALITY	activities	Oferta de actividades turísticas por localidad	null	{null,null,null}	0	FALSE	{'SUM','AVG','MIN','MAX'}
 tu_demandlocality	GINTUR_ACTIVITY_LOCALITY	demand	Demanda de actividades turísticas por localidad	null	{null,null,null}	0	FALSE	{'SUM','AVG','MIN','MAX'}
 tu_activtypes	GINTUR_ACTIVITY_TYPES	activities	Oferta de actividades turísticas por tipo	null	{null,null,null}	0	FALSE	{'SUM','AVG','MIN','MAX'}
