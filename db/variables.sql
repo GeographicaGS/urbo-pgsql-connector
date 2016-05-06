@@ -48,7 +48,7 @@ wt_temperature	watering.sosteco.sensor	t	Temperatura	°C	{-50,30,38}	60	TRUE	{'A
 mt_winddir	watering.sosteco.weatherstation	winddir	Dirección del viento	null	{null,null,null}	30	TRUE	{'MAX','MIN'}
 mt_windvel	watering.sosteco.weatherstation	windvel	Velocidad del viento	km/h	{0,39,62}	30	TRUE	{'AVG','MIN','MAX'}
 mt_pluvio	watering.sosteco.weatherstation	pluvio	Pluviometría	mm	{0,15,30}	60	TRUE	{'SUM','AVG','MIN','MAX'}
-ev_state	watering.sosteco.elecvalv	e	Estado	null	{null,null,null}	0	FALSE	{'SUM','AVG','MIN','MAX'}
+ev_state	watering.sosteco.solenoidvalve	e	Estado	null	{null,null,null}	0	FALSE	{'SUM','AVG','MIN','MAX'}
 tu_activlocality	GINTUR_ACTIVITY_LOCALITY	activities	Oferta de actividades turísticas por localidad	null	{null,null,null}	0	FALSE	{'SUM','AVG','MIN','MAX'}
 tu_demandlocality	GINTUR_ACTIVITY_LOCALITY	demand	Demanda de actividades turísticas por localidad	null	{null,null,null}	0	FALSE	{'SUM','AVG','MIN','MAX'}
 tu_activtypes	GINTUR_ACTIVITY_TYPES	activities	Oferta de actividades turísticas por tipo	null	{null,null,null}	0	FALSE	{'SUM','AVG','MIN','MAX'}
