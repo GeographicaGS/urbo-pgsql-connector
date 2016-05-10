@@ -202,15 +202,17 @@ SubscriptionsCartoDBModel.prototype.storeData = function(sub,contextResponses){
 
     _.each(contextResponses[i].contextElement.attributes,function(attr){
       var attrSub = _.findWhere(sub.attributes, {'name': attr.name});
-      var attrName = "namedb" in attrSub ? attrSub.namedb : attr.name;
-      var attrType = attrSub.type;
-      if (valid_attrs.indexOf(attr.name)!=-1){
-        var v = utils.getValueForType(attr.value,attrType);
-        var name = attrType!='coords' ? attrName : 'the_geom';
-        if (utils.isTypeQuoted(attrType))
-          obj[name] = v;
-        else
-          objdq[name] = v;
+      if (attrSub){
+        var attrName = "namedb" in attrSub ? attrSub.namedb : attr.name;
+        var attrType = attrSub.type;
+        if (valid_attrs.indexOf(attr.name)!=-1){
+          var v = utils.getValueForType(attr.value,attrType);
+          var name = attrType!='coords' ? attrName : 'the_geom';
+          if (utils.isTypeQuoted(attrType))
+            obj[name] = v;
+          else
+            objdq[name] = v;
+        }
       }
     });
 
