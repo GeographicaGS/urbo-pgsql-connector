@@ -92,11 +92,11 @@ function registerSubscription(sub){
 
 function newOrionSubscription(sub, cfgData){
 
-  var entities =  _.map(sub.entityTypes,function(type){
+  var entities =  _.map(sub.entityTypes,function(types){
     return {
-      'type': type,
+      'type': types.typeName,
       'isPattern' : 'true',
-      'id': '.*'
+      'id': types.typePattern || '.*'
     };
   });
 
@@ -159,11 +159,11 @@ function newOrionSubscription(sub, cfgData){
 }
 
 function getDataLargeSubscriptions(sub, headers, qrylimit, qryoffset){
-  var entities =  _.map(sub.entityTypes,function(type){
+  var entities =  _.map(sub.entityTypes,function(types){
     return {
-      'type': type,
+      'type': types.typeName,
       'isPattern' : 'true',
-      'id': '.*'
+      'id': types.typePattern || '.*'
     };
   });
 
