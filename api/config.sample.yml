@@ -63,13 +63,13 @@ subscriptions:
     tablename: subscription_id
     # Optional: Subscription mode. Posible values are append|update. Default: append
     mode: append
-    # List of attributes. It defined the attributes of the subcription and how they're mapped into the PostgreSQL database and CartoDB
+    # List of attributes. These are the attributes of the subscription and how they're mapped into the PostgreSQL database and CartoDB
     attributes:
       - # Attribute name (Fiware attribute name)
         name: name
         # Database attribute name (If it does not exist "name" is used)
         namedb: name
-        # Type of attribute: Currently supported: 'coords','string','float','integer','ISO8601|timestamp'. Todo: geojson.
+        # Mandatory: Type of attribute: Currently supported: 'coords','string','float','integer','ISO8601|timestamp'. Todo: geojson.
         type: string
         # Optional. Default to false. If set to true, the attribute will be synced at CartoDB
         cartodb: true
@@ -82,3 +82,6 @@ subscriptions:
         type: ISO8601
       - name: valor_01
         type: string
+    # Mandatory: List of trigger attributes. A notification will be sent by Context Broker when the value of one of the following attributes change.
+    trigger_attributes:
+      - timeinstant
