@@ -101,6 +101,7 @@ function newOrionSubscription(sub, cfgData){
   });
 
   var attributes = _.pluck(sub.attributes,'name');
+  var triggerAttributes = sub.trigger_attributes;
 
   var srv = config.getSubService(sub.subservice_id);
 
@@ -110,11 +111,11 @@ function newOrionSubscription(sub, cfgData){
     'entities': entities,
     'attributes': attributes,
     'reference': cfgData.baseURL + '/subscriptions/' + sub.id,
-    'duration': 'P1M',
+    'duration': 'P2M',
     'notifyConditions': [
         {
             'type': 'ONCHANGE',
-            'condValues': attributes
+            'condValues': triggerAttributes
         }
     ],
     'throttling': 'PT0S'
@@ -210,7 +211,7 @@ function updateOrionSubscription(sub, cfgData, subs_id){
 
     var data = {
        'subscriptionId': subs_id,
-       'duration': 'P1M'
+       'duration': 'P2M'
     };
 
     var headers = {
