@@ -48,7 +48,7 @@ MOBA	Contenedores de residuos	waste_ct	guadal_contenedores_definitivo	SM_contene
 -- VARIABLES DATA
 --
 COPY dashboard_variables (id_variable, id_entity, entity_field, var_name, var_units, var_thresholds, var_tempalarmvalue, var_tempalarmactive, var_agg) FROM stdin;
-level	MOBA	level	Nivel de llenado	%	{0,80,100,150}	60	TRUE	{'AVG','MIN','MAX'}
+level	MOBA	level	Nivel de llenado	%	{0,80,90,100}	60	TRUE	{'AVG','MIN','MAX'}
 s_class	MOBA	s_class	Clase de sensor	null	{null,null,null}	0	FALSE	{'NOAGG'}
 sensorCode	MOBA	sensorCode	Código de sensor	null	{null,null,null}	0	FALSE	{'NOAGG'}
 \.
