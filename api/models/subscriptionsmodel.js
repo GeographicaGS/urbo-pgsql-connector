@@ -237,16 +237,17 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
   for (var i=0;i<contextResponses.length;i++){
     var obj = {}, objdq = {};
     obj['id_entity'] = contextResponses[i].contextElement.id;
-
     _.each(contextResponses[i].contextElement.attributes,function(attr){
       var attrSub = _.findWhere(sub.attributes, {'name': attr.name});
-      var attrName = attrSub.namedb || attr.name;
-      var attrType = attrSub.type;
-      var v = utils.getValueForType(attr.value, attrType);
-      if (utils.isTypeQuoted(attrType))
-        obj[attrName] = v;
-      else
-        objdq[attrName] = v;
+      if (attrSub){
+        var attrName = attrSub.namedb || attr.name;
+        var attrType = attrSub.type;
+        var v = utils.getValueForType(attr.value, attrType);
+        if (utils.isTypeQuoted(attrType))
+          obj[attrName] = v;
+        else
+          objdq[attrName] = v;
+      }
     });
 
     var schemaName = sub.schemaname;

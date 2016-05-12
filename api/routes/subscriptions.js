@@ -92,15 +92,16 @@ function registerSubscription(sub){
 
 function newOrionSubscription(sub, cfgData){
 
-  var entities =  _.map(sub.entityTypes,function(type){
+  var entities =  _.map(sub.entityTypes,function(types){
     return {
-      'type': type,
+      'type': types.typeName,
       'isPattern' : 'true',
-      'id': '.*'
+      'id': types.typePattern || '.*'
     };
   });
 
   var attributes = _.pluck(sub.attributes,'name');
+  var triggerAttributes = sub.trigger_attributes;
 
   var srv = config.getSubService(sub.subservice_id);
 
@@ -110,11 +111,11 @@ function newOrionSubscription(sub, cfgData){
     'entities': entities,
     'attributes': attributes,
     'reference': cfgData.baseURL + '/subscriptions/' + sub.id,
-    'duration': 'P1M',
+    'duration': 'P2M',
     'notifyConditions': [
         {
             'type': 'ONCHANGE',
-            'condValues': attributes
+            'condValues': triggerAttributes
         }
     ],
     'throttling': 'PT0S'
@@ -159,11 +160,11 @@ function newOrionSubscription(sub, cfgData){
 }
 
 function getDataLargeSubscriptions(sub, headers, qrylimit, qryoffset){
-  var entities =  _.map(sub.entityTypes,function(type){
+  var entities =  _.map(sub.entityTypes,function(types){
     return {
-      'type': type,
+      'type': types.typeName,
       'isPattern' : 'true',
-      'id': '.*'
+      'id': types.typePattern || '.*'
     };
   });
 
@@ -210,7 +211,7 @@ function updateOrionSubscription(sub, cfgData, subs_id){
 
     var data = {
        'subscriptionId': subs_id,
-       'duration': 'P1M'
+       'duration': 'P2M'
     };
 
     var headers = {
