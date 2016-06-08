@@ -15,9 +15,9 @@ You need the following dependencies to run this project:
 ### 1. Prepare the database.
 ```
 // Create data container
-docker create --name fiwarepgsqlconnector_pgdata -v /data debian /bin/true
+docker create --name fiwaredashboard_pgdata -v /data debian /bin/true
 // Start the db
-docker run --rm --name tmp_fiware_pgsql -it -e "POSTGRES_PASSWD=postgres" --volumes-from fiwarepgsqlconnector_pgdata geographica/postgis:postgresql-9.4.5-postgis-2.2.0-gdal-2.0.1-patched-es_ES
+docker run --rm --name tmp_fiware_pgsql -it -e "POSTGRES_PASSWD=postgres" --volumes-from fiwaredashboard_pgdata geographica/postgis:postgresql-9.4.5-postgis-2.2.0-gdal-2.0.1-patched
 ```
 
 Now from another terminal in the project folder:
@@ -78,6 +78,3 @@ docker exec -i tmp_fiware_pgsql psql -U postgres -d fiware < <dumpfile.sql>
 ```
 docker-compose -f docker-compose.dev.yml up
 ```
-
-
-
