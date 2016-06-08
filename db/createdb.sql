@@ -1,2 +1,3 @@
-CREATE USER fiware_admin with password 'fiware23geoSTC';
-CREATE DATABASE fiware with owner fiware_admin;
+--CREATE USER fiware_admin with password :password;
+CREATE USER :owner with password :'password';
+CREATE DATABASE :dbname with owner :owner;
