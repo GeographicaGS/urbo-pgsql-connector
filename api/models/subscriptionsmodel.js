@@ -117,7 +117,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           });
         }
         else{
-          log.info('Updated_2 table [%s] at PostgreSQL completed',sub.id)
+          log.info('Updated table [%s] at PostgreSQL completed',sub.id)
           cb();
         }
       });
