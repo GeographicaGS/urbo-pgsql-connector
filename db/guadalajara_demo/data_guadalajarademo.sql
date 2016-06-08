@@ -34,21 +34,21 @@ guadalajara	MOBA
 -- CATEGORIES DATA
 --
 COPY dashboard_categories (id_category, category_name, category_colour) FROM stdin;
-waste_ct	Residuos	0062b4
+waste_ct	Residuos	3BB078
 \.
 
 --
 -- ENTITIES DATA
 --
 COPY dashboard_entities (id_entity, entity_name, id_category, id_table, icon) FROM stdin;
-MOBA	Contenedores de residuos	waste_ct	guadal_contenedores_definitivo	SC_vehiculo_activo.svg
+MOBA	Contenedores de residuos	waste_ct	guadal_contenedores_definitivo	SM_contenedor_activo.svg
 \.
 
 --
 -- VARIABLES DATA
 --
 COPY dashboard_variables (id_variable, id_entity, entity_field, var_name, var_units, var_thresholds, var_tempalarmvalue, var_tempalarmactive, var_agg) FROM stdin;
-level	MOBA	level	Nivel de llenado	%	{0,80,100,150}	60	TRUE	{'AVG','MIN','MAX'}
+level	MOBA	level	Nivel de llenado	%	{0,80,90,100}	60	TRUE	{'AVG','MIN','MAX'}
 s_class	MOBA	s_class	Clase de sensor	null	{null,null,null}	0	FALSE	{'NOAGG'}
 sensorCode	MOBA	sensorCode	Código de sensor	null	{null,null,null}	0	FALSE	{'NOAGG'}
 \.
