@@ -1,7 +1,7 @@
-# FIWARE SMART CITIES DASHBOARD CONFIGURATION FILE
+# FIWARE-PGSQL/CartoDB CONNECTOR CONFIGURATION FILE
 
 # BASE URL
-baseURL: http://mother.geographica.gs:8082
+baseURL: http://url:port
 
 # Logging configuration parameters
 logging:
@@ -16,21 +16,21 @@ pgsql:
   user: XXX
   password: XXX
   database: XXX
-  port: 5432
+  port: XXX
 
 # CartoDB configuration parameters
 cartodb:
   apiKey: XXX
   user: XXX
   active: true
-  # Optional. Default to false. If you've an enterprise account at CartoDB you must set this param to True
+  # Optional. Default to false. If you've an enterprise account at CartoDB you must set this param to true
   enterprise: false
 
 # Orion Context Broker API URLs
 contextBrokerUrls:
   portAuthtk: XXXXX
   portCtxApi: XXXXX
-  urlCtxBrBase: https://xxx.xxx.xxx.xxx
+  urlCtxBrBase: https://url
 
 # Fiware subservices catalog.
 subservices:
@@ -55,7 +55,7 @@ subscriptions:
     schema: schemaname
     # Fiware entities to be subscribed.
     # Mandatory: typeName - entity types
-    # Optional: typePattern - custom regular expressions to get entitites. Default pattern (get all entities): .*
+    # Optional: typePattern - custom regular expressions to get entitites. Default pattern (get all entities from type): .*
     entityTypes:
       - typeName: type
         typePattern: .*
