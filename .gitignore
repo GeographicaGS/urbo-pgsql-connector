@@ -37,8 +37,8 @@ Icon
 
 #environment parameters
 config.env
-fiware_auth.json
+fiware_auth.json*
 fiware-dashboard-config.yml
 
 nginx_dev/
-config.yml
+config.yml*

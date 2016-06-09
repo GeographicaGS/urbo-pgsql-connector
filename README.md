@@ -11,7 +11,6 @@ You need the following dependencies to run this project:
 * Docker: https://docs.docker.com/engine/installation/
 * Docker-compose: https://docs.docker.com/compose
 
-
 ### 1. Prepare the database.
 ```
 // Create data container

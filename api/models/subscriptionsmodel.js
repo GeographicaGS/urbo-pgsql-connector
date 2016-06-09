@@ -117,7 +117,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           });
         }
         else{
-          log.info('Updated_2 table [%s] at PostgreSQL completed',sub.id)
+          log.info('Updated table [%s] at PostgreSQL completed',sub.id)
           cb();
         }
       });
@@ -237,10 +237,10 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
   for (var i=0;i<contextResponses.length;i++){
     var obj = {}, objdq = {};
     obj['id_entity'] = contextResponses[i].contextElement.id;
-
     _.each(contextResponses[i].contextElement.attributes,function(attr){
 
       var attrSub = _.findWhere(sub.attributes, {'name': attr.name});
+<<<<<<< HEAD
 
       if (!attrSub){
         return log.debug('Ignoring attribute %s which is not defined at subscription',attr.name);
@@ -253,6 +253,17 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
         obj[attrName] = v;
       else
         objdq[attrName] = v;
+=======
+      if (attrSub){
+        var attrName = attrSub.namedb || attr.name;
+        var attrType = attrSub.type;
+        var v = utils.getValueForType(attr.value, attrType);
+        if (utils.isTypeQuoted(attrType))
+          obj[attrName] = v;
+        else
+          objdq[attrName] = v;
+      }
+>>>>>>> ce8ae6c9e46dd44745e0d6b1aa1a00cd4bd68617
     });
 
     var schemaName = sub.schemaname;

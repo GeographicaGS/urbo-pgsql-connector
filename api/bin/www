@@ -63,13 +63,13 @@ var trydb = function(err, client, done) {
   }
 }
 
-var startTimeout = 15000;
+var startTimeout = 5000;
 //Needs to wait the first time (db shutdown while initial error checking process):
 setTimeout(function(){
   pg.connect(config.getData().pgsql, trydb);
 }, startTimeout);
 
-console.log("Starting connector, please be patient");
+console.log("Starting connector...");
 
 /**
  * Normalize a port into a number, string, or false.
