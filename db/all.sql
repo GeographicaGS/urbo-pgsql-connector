@@ -1,6 +1,6 @@
-\set dbname fiware
-\set password fiware
-\set owner fiware_admin
+\set dbname urbo
+\set password urbo
+\set owner urbo_admin
 
 \ir createdb.sql
 \c :dbname

@@ -1,4 +1,4 @@
-# Fiware dashboard
+# URBO PGSQL connector
 This project is a connector between Fiware and PostgreSQL. It supports spatial features with PostGIS and CartoDB.
 
 You choose which part of Fiware do you want to listen to, you specify how to map the information and you'll get this information ready on a PostgreSQL database. Furthermore, if you want to have great maps you can also have this information at CartoDB, it's up to you.
@@ -15,7 +15,7 @@ You need the following dependencies to run this project:
 ### 1. Prepare the database.
 ```
 // Create data container
-docker create --name fiwaredashboard_pgdata -v /data debian /bin/true
+docker create --name urbo_pgdata -v /data debian /bin/true
 // Start the db
 docker-compose up -d postgis
 // Create the database and execute the start scripts, for connector
@@ -57,7 +57,7 @@ dcp run api  npm install
 Database
 ```
 // Create data container
-docker create --name fiwaredashboard_pgdata -v /data debian /bin/true
+docker create --name urbo_pgdata -v /data debian /bin/true
 // Start the db
 dcp up -d postgis
 // Create the database and execute the start scripts, for connector

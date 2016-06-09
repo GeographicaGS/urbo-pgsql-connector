@@ -3,7 +3,7 @@ postgis:
   ports: #only for Development
     - "5435:5432"
   volumes_from:
-     - fiwaredashboard_pgdata
+     - urbo_pgdata
   volumes:
     - ./:/usr/src
 
