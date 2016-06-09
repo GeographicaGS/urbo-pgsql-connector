@@ -240,20 +240,7 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
     _.each(contextResponses[i].contextElement.attributes,function(attr){
 
       var attrSub = _.findWhere(sub.attributes, {'name': attr.name});
-<<<<<<< HEAD
 
-      if (!attrSub){
-        return log.debug('Ignoring attribute %s which is not defined at subscription',attr.name);
-      }
-      
-      var attrName = attrSub.namedb || attr.name;
-      var attrType = attrSub.type;
-      var v = utils.getValueForType(attr.value, attrType);
-      if (utils.isTypeQuoted(attrType))
-        obj[attrName] = v;
-      else
-        objdq[attrName] = v;
-=======
       if (attrSub){
         var attrName = attrSub.namedb || attr.name;
         var attrType = attrSub.type;
@@ -263,7 +250,7 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
         else
           objdq[attrName] = v;
       }
->>>>>>> ce8ae6c9e46dd44745e0d6b1aa1a00cd4bd68617
+      
     });
 
     var schemaName = sub.schemaname;
