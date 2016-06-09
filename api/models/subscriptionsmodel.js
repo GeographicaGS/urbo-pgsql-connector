@@ -23,7 +23,7 @@ SubscriptionsModel.prototype.createSchema = function(schema, cb){
       return cb(err,null);
     }
     if (!data.rows.length){
-      var q = ['CREATE SCHEMA',schema,'AUTHORIZATION fiware_admin'];
+      var q = ['CREATE SCHEMA',schema,'AUTHORIZATION ' + that._cfg.user];
       that.query(q.join(' '),null,function(err,data){
         if (err)
           log.error('Error creating schema: '+schema+' Error: '+err);
@@ -239,7 +239,13 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
     obj['id_entity'] = contextResponses[i].contextElement.id;
 
     _.each(contextResponses[i].contextElement.attributes,function(attr){
+
       var attrSub = _.findWhere(sub.attributes, {'name': attr.name});
+
+      if (!attrSub){
+        return log.debug('Ignoring attribute %s which is not defined at subscription',attr.name);
+      }
+      
       var attrName = attrSub.namedb || attr.name;
       var attrType = attrSub.type;
       var v = utils.getValueForType(attr.value, attrType);
