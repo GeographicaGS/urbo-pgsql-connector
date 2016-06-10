@@ -77,10 +77,10 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           log.error(err);
 
         if (geomIndex)
-          createGeomIndexes(sub);
+          that.createGeomIndexes(sub);
 
         if (indexAttr.length > 0)
-          createAttrIndexes(sub,indexAttr);
+          that.createAttrIndexes(sub,indexAttr);
       });
       log.info('Create table [%s] at PostgreSQL completed',sub.id)
 
@@ -139,27 +139,28 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
 }
 
 SubscriptionsModel.prototype.createGeomIndexes = function(sub){
-  var q = ['CREATE INDEX'+sub.id+'_geometry_idx',
-           'ON',sub.schema+'.'+sub.id,'USING gist(position)'];
+  var q = ['CREATE INDEX',sub.id+'_geometry_idx',
+           'ON',sub.schemaname+'.'+sub.id,'USING gist(position)'];
 
   this.query(q.join(' '),null,function(err,d){
     if (err){
       log.error('Cannot execute geometry index creation');
     }
+    log.info('Geometry Index created on table %s',sub.id)
   });
 }
 
 SubscriptionsModel.prototype.createAttrIndexes = function(sub, attribs){
   var q;
   for (var i=0;i<attribs.length;i++){
-    q = ['CREATE INDEX'+sub.id+'_'+attribs[i]+'_idx',
-         'ON',sub.schema+'.'+sub.id,'USING btree('+attribs[i]+')'];
+    q = ['CREATE INDEX',sub.id+'_'+attribs[i]+'_idx',
+         'ON',sub.schemaname+'.'+sub.id,'USING btree('+utils.wrapStrings(attribs[i],['"'])+')'];
 
     this.query(q.join(' '),null,function(err,d){
       if (err){
-        log.error('Cannot execute attribute index creation on table %s for column %s',sub.id,attribs[i])
+        log.error('Cannot execute attribute index creation on table %s',sub.id)
       }
-      log.info('Index created on table %s for column %s',sub.id,attribs[i])
+      log.info('Index created on table %s',sub.id)
     });
   }
 }

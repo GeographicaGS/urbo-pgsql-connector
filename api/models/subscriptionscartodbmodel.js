@@ -43,8 +43,8 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
             name = attr.namedb;
           else
             name = attr.name;
-          if (attr.indexdb && attrName != 'position')
-            indexAttr.push(attrName)
+          if (attr.indexdb && name != 'position')
+            indexAttr.push(name)
           fields.push(utils.wrapStrings(name,['"']) + ' ' + utils.getPostgresType(attr.type));
         }
       }
@@ -73,7 +73,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
           log.info('Create table at CartoDB completed');
 
           if (indexAttr.length > 0)
-            createAttrIndexes(sub,indexAttr);
+            that.createAttrIndexes(sub,indexAttr);
 
           cb();
         }
@@ -134,16 +134,16 @@ SubscriptionsCartoDBModel.prototype.createAttrIndexes = function(sub, attribs){
   var q = [];
   var sq;
   for (var i=0;i<attribs.length;i++){
-    sq = ['CREATE INDEX'+sub.id+'_'+attribs[i]+'_idx',
-         'ON',sub.schema+'_'+sub.id,'USING btree('+attribs[i]+');'];
-    q.push(sq.join(' ');
+    sq = ['CREATE INDEX',sub.id+'_'+attribs[i]+'_idx',
+         'ON',sub.schemaname+'_'+sub.id,'USING btree('+utils.wrapStrings(attribs[i],['"'])+');'];
+    q.push(sq.join(' '));
   }
 
   this.query({ 'query' : q.join(' ')}, null, function(err, r){
     if (err){
-      log.error('Cannot execute CartoDB attribute index creation on table %s for column %s',sub.id,attribs[i])
+      log.error('Cannot execute CartoDB attribute index creation on table %s',sub.id)
     }
-    log.info('CartoDB index created on table %s for column %s',sub.id,attribs[i])
+    log.info('CartoDB index created on table %s',sub.id)
   });
 }
 
