@@ -1,4 +1,4 @@
-# Fiware dashboard
+# URBO PGSQL connector
 This project is a connector between Fiware and PostgreSQL. It supports spatial features with PostGIS and CartoDB.
 
 You choose which part of Fiware do you want to listen to, you specify how to map the information and you'll get this information ready on a PostgreSQL database. Furthermore, if you want to have great maps you can also have this information at CartoDB, it's up to you.
@@ -11,23 +11,14 @@ You need the following dependencies to run this project:
 * Docker: https://docs.docker.com/engine/installation/
 * Docker-compose: https://docs.docker.com/compose
 
-
 ### 1. Prepare the database.
 ```
 // Create data container
-docker create --name fiwaredashboard_pgdata -v /data debian /bin/true
+docker create --name urbo_pgdata -v /data debian /bin/true
 // Start the db
-docker run --rm --name tmp_fiware_pgsql -it -e "POSTGRES_PASSWD=postgres" --volumes-from fiwaredashboard_pgdata geographica/postgis:postgresql-9.4.5-postgis-2.2.0-gdal-2.0.1-patched
-```
-
-Now from another terminal in the project folder:
-```
-// Create the database and execute the start scripts (Edit the file db/createdb.sql with you database name, user and password)
-docker exec -i tmp_fiware_pgsql psql -U postgres < db/createdb.sql
-docker exec -i tmp_fiware_pgsql psql -U postgres -d fiware < db/createtables.sql
-
-// remove docker
-docker rm -f tmp_fiware_pgsql
+docker-compose up -d postgis
+// Create the database and execute the start scripts, for connector
+docker-compose exec -T  postgis psql -U postgres -f /usr/src/db/all.sql
 ```
 
 ### 2. Prepare your config file.
@@ -47,34 +38,38 @@ docker-compose up
 ```
 
 ## Development
+
+###Create an alias to docker-compose
+Let's call it dcp
+```
+echo "alias dcp='docker-compose -f docker-compose.dev.yml'" >> ~/.bash_profile
+source ~/.bash_profile
+```
+
 ### First time
 
-Build the images
-```Bash
-docker-compose -f docker-compose.dev.yml build
-```
 Install node packages on sources directory
 ```
-docker run --rm -it -v $(pwd)/api:/usr/src/app node:5.9.0-onbuild npm install
+dcp run api  npm install
 ```
 
-PostGIS
+Database
 ```
-// 1. Create data container
-docker create --name fiwarepgsqlconnector_pgdata -v /data debian /bin/true
-// 2. Start the db
-docker run --rm --name tmp_fiware_pgsql -it -e "POSTGRES_PASSWD=postgres" --volumes-from fiwarepgsqlconnector_pgdata geographica/postgis:postgresql-9.4.5-postgis-2.2.0-gdal-2.0.1-patched-es_ES
-// 3. Create the database and execute the start scripts (Edit the file with you database name, user and password)
-docker exec -i tmp_fiware_pgsql psql -U postgres < db/createdb.sql
-// Do either 4.1 or 4.2
-// 4.1 Create empty db
-docker exec -i tmp_fiware_pgsql psql -U postgres -d fiware < db/createtables.sql
-// 4.2 Import dabase dump
-docker exec -i tmp_fiware_pgsql psql -U postgres -d fiware < <dumpfile.sql>
-// 5. CTRL-C at terminal launched at point 2
+// Create data container
+docker create --name urbo_pgdata -v /data debian /bin/true
+// Start the db
+dcp up -d postgis
+// Create the database and execute the start scripts, for connector
+dcp exec -T  postgis psql -U postgres -f /usr/src/db/all.sql
+```
+
+Config file. Copy from sample and fill with your config
+```
+cp api/config.sample.yml api/config.yml
+
 ```
 
 ### Start
 ```
-docker-compose -f docker-compose.dev.yml up
+dcp up
 ```
