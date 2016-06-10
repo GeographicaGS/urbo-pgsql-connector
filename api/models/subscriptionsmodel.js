@@ -23,7 +23,7 @@ SubscriptionsModel.prototype.createSchema = function(schema, cb){
       return cb(err,null);
     }
     if (!data.rows.length){
-      var q = ['CREATE SCHEMA',schema,'AUTHORIZATION fiware_admin'];
+      var q = ['CREATE SCHEMA',schema,'AUTHORIZATION ' + that._cfg.user];
       that.query(q.join(' '),null,function(err,data){
         if (err)
           log.error('Error creating schema: '+schema+' Error: '+err);
@@ -278,7 +278,9 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
     var obj = {}, objdq = {};
     obj['id_entity'] = contextResponses[i].contextElement.id;
     _.each(contextResponses[i].contextElement.attributes,function(attr){
+
       var attrSub = _.findWhere(sub.attributes, {'name': attr.name});
+
       if (attrSub){
         var attrName = attrSub.namedb || attr.name;
         var attrType = attrSub.type;
@@ -288,6 +290,7 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
         else
           objdq[attrName] = v;
       }
+      
     });
 
     var schemaName = sub.schemaname;

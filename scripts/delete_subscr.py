@@ -149,7 +149,7 @@ def deletePgSubscr(subtables, subs_table='subscriptions', **kwargs):
     except Exception as err:
         print("Error removing tables: {}".format(err))
 
-def getConfig(pgconfig_file, pghost="localhost", pgport="5435",
+def getConfig(pgconfig_file, pghost="localhost", pgport="5432",
                 pguser="postgres", pgpwd="postgres"):
 
     with open(pgconfig_file, 'r') as stream:
