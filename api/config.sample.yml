@@ -74,7 +74,7 @@ subscriptions:
         # Optional. Default to false. If set to true, the attribute will be synced at CartoDB
         cartodb: true
         # Optional. Default to false. If true a index will be created at PostgreSQL.
-        index: true
+        indexdb: true
       - name: position
         type: coords
         cartodb: true
