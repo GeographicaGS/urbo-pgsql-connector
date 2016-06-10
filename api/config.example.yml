@@ -53,6 +53,10 @@ subscriptions:
     subservice_id: id_subservice
     # Mandatory: schema to store data.
     schema: schemaname
+    # Optional: Subscription duration. Default: P2M (two months)
+    subsduration: P2M
+    # Optional: Subscription Throttling. Default: PT0S (zero seconds)
+    substhrottling: PT0S
     # Fiware entities to be subscribed.
     # Mandatory: typeName - entity types
     # Optional: typePattern - custom regular expressions to get entitites. Default pattern (get all entities from type): .*
