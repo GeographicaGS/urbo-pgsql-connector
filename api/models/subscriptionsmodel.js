@@ -23,7 +23,7 @@ SubscriptionsModel.prototype.createSchema = function(schema, cb){
       return cb(err,null);
     }
     if (!data.rows.length){
-      var q = ['CREATE SCHEMA',schema,'AUTHORIZATION fiware_admin'];
+      var q = ['CREATE SCHEMA',schema,'AUTHORIZATION ' + that._cfg.user];
       that.query(q.join(' '),null,function(err,data){
         if (err)
           log.error('Error creating schema: '+schema+' Error: '+err);
@@ -50,11 +50,17 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
       log.error('Error getting table information')
       return cb(err,null)
     }
+    var geomIndex;
+    var indexAttr = [];
     if (!data.rows.length){
       var fields = [];
       for (var i=0;i<sub.attributes.length;i++){
         var attr = sub.attributes[i];
         var attrName = attr.namedb || attr.name;
+        if (attrName == 'position')
+          geomIndex = true;
+        else if (attr.indexdb)
+          indexAttr.push(attrName)
         fields.push(utils.wrapStrings(attrName,['"']) + ' ' + utils.getPostgresType(attr.type));
       }
       var q = [
@@ -69,8 +75,15 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
       that.query(q.join(' '),null,function(err,data){
         if (err)
           log.error(err);
+
+        if (geomIndex)
+          that.createGeomIndexes(sub);
+
+        if (indexAttr.length > 0)
+          that.createAttrIndexes(sub,indexAttr);
       });
       log.info('Create table [%s] at PostgreSQL completed',sub.id)
+
       cb();
     }
     else{
@@ -123,6 +136,33 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
       });
     }
   });
+}
+
+SubscriptionsModel.prototype.createGeomIndexes = function(sub){
+  var q = ['CREATE INDEX',sub.id+'_geometry_idx',
+           'ON',sub.schemaname+'.'+sub.id,'USING gist(position)'];
+
+  this.query(q.join(' '),null,function(err,d){
+    if (err){
+      log.error('Cannot execute geometry index creation');
+    }
+    log.info('Geometry Index created on table %s',sub.id)
+  });
+}
+
+SubscriptionsModel.prototype.createAttrIndexes = function(sub, attribs){
+  var q;
+  for (var i=0;i<attribs.length;i++){
+    q = ['CREATE INDEX',sub.id+'_'+attribs[i]+'_idx',
+         'ON',sub.schemaname+'.'+sub.id,'USING btree('+utils.wrapStrings(attribs[i],['"'])+')'];
+
+    this.query(q.join(' '),null,function(err,d){
+      if (err){
+        log.error('Cannot execute attribute index creation on table %s',sub.id)
+      }
+      log.info('Index created on table %s',sub.id)
+    });
+  }
 }
 
 SubscriptionsModel.prototype.queryData = function(sql,bindings,cb){
@@ -238,7 +278,9 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
     var obj = {}, objdq = {};
     obj['id_entity'] = contextResponses[i].contextElement.id;
     _.each(contextResponses[i].contextElement.attributes,function(attr){
+
       var attrSub = _.findWhere(sub.attributes, {'name': attr.name});
+
       if (attrSub){
         var attrName = attrSub.namedb || attr.name;
         var attrType = attrSub.type;
@@ -248,6 +290,7 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
         else
           objdq[attrName] = v;
       }
+      
     });
 
     var schemaName = sub.schemaname;

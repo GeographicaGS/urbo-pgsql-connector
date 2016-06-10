@@ -1,2 +1,2 @@
-CREATE USER fiware_admin with password 'fiware_admin';
-CREATE DATABASE fiware with owner fiware_admin;
+CREATE USER :owner with password :'password';
+CREATE DATABASE :dbname with owner :owner;
