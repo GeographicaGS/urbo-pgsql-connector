@@ -53,9 +53,18 @@ subscriptions:
     subservice_id: id_subservice
     # Mandatory: schema to store data.
     schema: schemaname
-    # Optional: Subscription duration. Default: P2M (two months)
+    # Optional: Subscription duration (ISO8601 durations). Default: P2M
+    # Duration syntax examples: 3 days = P3D
+    #                           2 months = P2M
+    #                           2 weeks = P2W
+    #                           10 years = P10Y
+    #                           5 hours = PT05H
+    #                           30 minutes = PT30M
+    #                           30 seconds = PT30S
+    #                           3 months and 5 hours = P3MT05H
+    #                           2 years, 3 months, 5 days, 5 hours, 10 minutes and 5 seconds = P2Y3M5DT05H10M05S
     subsduration: P2M
-    # Optional: Subscription Throttling. Default: PT0S (zero seconds)
+    # Optional: Subscription Throttling (ISO8601 durations). Default: PT0S (zero seconds)
     substhrottling: PT0S
     # Fiware entities to be subscribed.
     # Mandatory: typeName - entity types
