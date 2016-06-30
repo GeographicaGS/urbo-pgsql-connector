@@ -111,14 +111,14 @@ function newOrionSubscription(sub, cfgData){
     'entities': entities,
     'attributes': attributes,
     'reference': cfgData.baseURL + '/subscriptions/' + sub.id,
-    'duration': 'P2M',
+    'duration': sub.subsduration || 'P2M',
     'notifyConditions': [
         {
             'type': 'ONCHANGE',
             'condValues': triggerAttributes
         }
     ],
-    'throttling': 'PT0S'
+    'throttling': sub.substhrottling || 'PT0S'
   };
 
   var headers = {
@@ -211,7 +211,7 @@ function updateOrionSubscription(sub, cfgData, subs_id){
 
     var data = {
        'subscriptionId': subs_id,
-       'duration': 'P2M'
+       'duration': sub.subsduration || 'P2M'
     };
 
     var headers = {
