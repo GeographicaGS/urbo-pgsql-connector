@@ -6,13 +6,7 @@ var log = require('log4js').getLogger(logParams.output);
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
-
-router.post('/tsubscription',function(req,res,next){
-  log.info("Received request!");
-  log.info(req.body);
-  res.json(req.body);
+  res.json('URBO - PGSQL Connector');
 });
 
 module.exports = router;

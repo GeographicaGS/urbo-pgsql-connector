@@ -25,13 +25,17 @@ SubscriptionsModel.prototype.createSchema = function(schema, cb){
     if (!data.rows.length){
       var q = ['CREATE SCHEMA',schema,'AUTHORIZATION ' + that._cfg.user];
       that.query(q.join(' '),null,function(err,data){
-        if (err)
+        if (err){
           log.error('Error creating schema: '+schema+' Error: '+err);
           return cb(err,null);
+        }
         log.info('Created database schema: '+schema);
+        cb(null);
       });
-    } else{
-      log.info('Schema [%s] already exists: nothing is done', schema)
+    }
+    else{
+      log.info('Schema [%s] already exists: nothing is done', schema);
+      cb(null);
     }
   });
   // cb();
@@ -73,18 +77,19 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           ')'];
 
       that.query(q.join(' '),null,function(err,data){
-        if (err)
+        if (err){
           log.error(err);
+          return cb(err);
+        }
 
         if (geomIndex)
           that.createGeomIndexes(sub);
 
         if (indexAttr.length > 0)
           that.createAttrIndexes(sub,indexAttr);
+        cb();
       });
-      log.info('Create table [%s] at PostgreSQL completed',sub.id)
 
-      cb();
     }
     else{
       // get table info. Apply alter table is needed. NEVER DROP COLUMNS except if config says it
@@ -105,8 +110,8 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
 
         if (toremove.length){
           // TODO: REMOVE element.
-          log.debug('TOREMOVE');
-          log.debug(toremove);
+          // log.debug('TOREMOVE');
+          // log.debug(toremove);
         }
 
         // Add element
@@ -290,7 +295,7 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
         else
           objdq[attrName] = v;
       }
-      
+
     });
 
     var schemaName = sub.schemaname;
