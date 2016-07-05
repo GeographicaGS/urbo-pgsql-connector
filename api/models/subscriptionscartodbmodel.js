@@ -99,8 +99,8 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
 
         if (toremove.length){
           // TODO: REMOVE element.
-          log.debug('TOREMOVE CDB');
-          log.debug(toremove);
+          // log.debug('TOREMOVE CDB');
+          // log.debug(toremove);
         }
 
         // Add element
