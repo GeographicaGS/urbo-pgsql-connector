@@ -8,6 +8,7 @@ postgis:
     - "5435:5432"
 api:
   build: api
+  dockerfile: Dockerfile.dev
   ports:
     - "3000:3000"
     #- "8080:8080"
