@@ -111,9 +111,9 @@ function newOrionSubscription(sub, cb){
   request(options, function (error, response, body) {
     if (!error && response.statusCode == 200) {
 
-      var subscritionID = response.body.subscribeResponse.subscriptionId;
+      var subscriptionID = response.body.subscribeResponse.subscriptionId;
       model = new SubscriptionsModel(config.getData().pgsql);
-      model.handleSubscriptionsTable({'subs_id': subscritionID, 'id_name': sub.id},function(err){
+      model.handleSubscriptionsTable({'subs_id': subscriptionID, 'id_name': sub.id},function(err){
         if (err){
           log.error('Error handling subscription');
           return cb(err);

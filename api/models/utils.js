@@ -1,5 +1,6 @@
 var logParams = require('../config.js').getLogOpt();
 var log = require('log4js').getLogger(logParams.output);
+var _ = require('underscore');
 
 module.exports.getPostgresType = function(type){
   if (type =='coords')
@@ -47,4 +48,13 @@ module.exports.wrapStrings = function(value,wrap) {
     log.error('Wrap length must be 1 or 2');
     throw Error('Wrap length must be 1 or 2');
   }
+}
+
+module.exports.parseLatLon = function(subattr) {
+  if (_.find(subattr,{namedb:'lat',type:'coords'}) && _.find(subattr,{namedb:'lon',type:'coords'}) &&
+      (!_.find(subattr,{name:'position',type:'coords'}) || !_.find(subattr,{namedb:'position',type:'coords'}))){
+        subattr.push({name:'position',type:'coords',cartodb:true});
+        subattr = _.without(subattr,_.find(subattr,{namedb:'lat'}),_.find(subattr,{namedb:'lon'}));
+  }
+  return subattr;
 }

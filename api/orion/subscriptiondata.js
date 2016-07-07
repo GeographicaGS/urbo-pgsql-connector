@@ -47,7 +47,6 @@ function getDataPage(sub, headers, page,cb){
         getDataPage(sub, headers, page+1,cb);
       }
       else{
-        //log.info(util.format('Regular subscription (< 20 entities) for [%s].',sub.id));
         cb(null);
       }
     }
