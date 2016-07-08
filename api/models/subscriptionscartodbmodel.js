@@ -33,8 +33,10 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
     if (!data.rows[0].n){
       var fields = ['id_entity varchar(64) not null'];
       var indexAttr = [];
-      for (var i=0;i<sub.attributes.length;i++){
-        var attr = sub.attributes[i];
+      var subAttr = utils.parseLatLon(sub.attributes.slice());
+
+      for (var i in subAttr){
+        var attr = subAttr[i];
         if (attr.cartodb){
           var name;
           if (attr.type == 'coords')
@@ -90,9 +92,10 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
           log.error('Error getting fields information')
           return cb(err,null)
         }
-
+        var subAttr = utils.parseLatLon(sub.attributes.slice());
+        
         var current = _.pluck(data.rows,'cdb_columnnames');
-        var attributes = _.filter(sub.attributes, function(attr){ return attr.cartodb && attr.type!='coords'; });
+        var attributes = _.filter(subAttr, function(attr){ return attr.cartodb && attr.type!='coords'; });
         var needed = _.map(attributes, function(at){return at.namedb || at.name;}).concat('cartodb_id','the_geom','the_geom_webmercator');
         var toadd = _.difference(needed,current);
         var toremove = _.difference(current,needed);
@@ -106,7 +109,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
         // Add element
         if (toadd.length){
           var fields = [];
-          for (var i=0;i<attributes.length;i++){
+          for (var i in attributes){
             var attr = attributes[i];
             if (toadd.indexOf(attr.name)!=-1){
               fields.push('ADD COLUMN ' + utils.wrapStrings(attr.name,['"']) + ' ' + utils.getPostgresType(attr.type));
@@ -218,14 +221,33 @@ SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(table, obj,
 }
 
 SubscriptionsCartoDBModel.prototype.storeData = function(sub,contextResponses){
-  var valid_attrs = _.pluck(_.filter(sub.attributes, function(attr){ return attr.cartodb || attr.type=='coords';}),'name');
 
-  for (var i=0;i<contextResponses.length;i++){
+  for (var i in contextResponses){
     var obj = {}, objdq = {};
     obj['id_entity'] = contextResponses[i].contextElement.id;
 
-    _.each(contextResponses[i].contextElement.attributes,function(attr){
-      var attrSub = _.findWhere(sub.attributes, {'name': attr.name});
+    var subAttr = sub.attributes.slice();
+    var crAttr = contextResponses[i].contextElement.attributes.slice();
+    if (_.find(subAttr,{namedb:'lat',type:'coords'}) && _.find(subAttr,{namedb:'lon',type:'coords'})){
+      var lat_name = _.find(subAttr,{namedb:'lat'}).name;
+      var lon_name = _.find(subAttr,{namedb:'lon'}).name;
+      var lat = _.find(crAttr,{name: lat_name});
+      var lon = _.find(crAttr,{name: lon_name});
+      if (lat && lon){
+        crAttr.push({
+          name: 'position',
+          type: 'coords',
+          value: util.format('%s, %s',lat.value,lon.value)
+        });
+      }
+      crAttr = _.without(crAttr,_.find(crAttr,{name:lat_name}),_.find(crAttr,{name:lon_name}));
+      subAttr.push({name:'position',type:'coords',cartodb:true});
+    }
+
+    var valid_attrs = _.pluck(_.filter(subAttr, function(attr){ return attr.cartodb || attr.type=='coords';}),'name');
+
+    _.each(crAttr,function(attr){
+      var attrSub = _.findWhere(subAttr, {'name': attr.name});
       if (attrSub){
         var attrName = "namedb" in attrSub ? attrSub.namedb : attr.name;
         var attrType = attrSub.type;
