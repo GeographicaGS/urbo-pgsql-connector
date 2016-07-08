@@ -4,21 +4,18 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "debug": "node --debug --web-host 0.0.0.0 ./bin/www"
+    "debug": "node-debug --web-host 0.0.0.0 ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.13.2",
     "cartodb": "^0.3.0",
-    "cookie-parser": "~1.3.5",
     "debug": "~2.2.0",
     "express": "~4.13.1",
-    "jade": "~1.11.0",
     "js-yaml": "^3.5.3",
     "log4js": "^0.6.32",
     "morgan": "~1.6.1",
     "mustache": "^2.2.1",
     "pg": "^4.5.1",
-    "serve-favicon": "~2.3.0",
     "squel": "^4.3.3",
     "underscore": "^1.8.3",
     "request": "^2.69.0"

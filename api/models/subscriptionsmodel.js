@@ -25,13 +25,17 @@ SubscriptionsModel.prototype.createSchema = function(schema, cb){
     if (!data.rows.length){
       var q = ['CREATE SCHEMA',schema,'AUTHORIZATION ' + that._cfg.user];
       that.query(q.join(' '),null,function(err,data){
-        if (err)
+        if (err){
           log.error('Error creating schema: '+schema+' Error: '+err);
           return cb(err,null);
+        }
         log.info('Created database schema: '+schema);
+        cb(null);
       });
-    } else{
-      log.info('Schema [%s] already exists: nothing is done', schema)
+    }
+    else{
+      log.info('Schema [%s] already exists: nothing is done', schema);
+      cb(null);
     }
   });
   // cb();
@@ -54,8 +58,10 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
     var indexAttr = [];
     if (!data.rows.length){
       var fields = [];
-      for (var i=0;i<sub.attributes.length;i++){
-        var attr = sub.attributes[i];
+      var subAttr = utils.parseLatLon(sub.attributes.slice());
+
+      for (var i in subAttr){
+        var attr = subAttr[i];
         var attrName = attr.namedb || attr.name;
         if (attrName == 'position')
           geomIndex = true;
@@ -73,18 +79,19 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           ')'];
 
       that.query(q.join(' '),null,function(err,data){
-        if (err)
+        if (err){
           log.error(err);
+          return cb(err);
+        }
 
         if (geomIndex)
           that.createGeomIndexes(sub);
 
         if (indexAttr.length > 0)
           that.createAttrIndexes(sub,indexAttr);
+        cb();
       });
-      log.info('Create table [%s] at PostgreSQL completed',sub.id)
 
-      cb();
     }
     else{
       // get table info. Apply alter table is needed. NEVER DROP COLUMNS except if config says it
@@ -98,22 +105,24 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           log.error('Error getting fields information')
           return cb(err,null)
         }
+        var subAttr = utils.parseLatLon(sub.attributes.slice());
+        
         var current = _.pluck(data.rows,'column_name');
-        var needed = _.map(sub.attributes, function(at){return at.namedb || at.name;}).concat('id','created_at','updated_at','id_entity');
+        var needed = _.map(subAttr, function(at){return at.namedb || at.name;}).concat('id','created_at','updated_at','id_entity');
         var toadd = _.difference(needed,current);
         var toremove = _.difference(current,needed);
 
         if (toremove.length){
           // TODO: REMOVE element.
-          log.debug('TOREMOVE');
-          log.debug(toremove);
+          // log.debug('TOREMOVE');
+          // log.debug(toremove);
         }
 
         // Add element
         if (toadd.length){
           var fields = [];
-          for (var i=0;i<sub.attributes.length;i++){
-            var attr = sub.attributes[i];
+          for (var i in subAttr){
+            var attr = subAttr[i];
             if (toadd.indexOf(attr.name)!=-1){
               fields.push('ADD COLUMN '+utils.wrapStrings(attr.name,['"']) +' '+utils.getPostgresType(attr.type));
             }
@@ -274,12 +283,31 @@ SubscriptionsModel.prototype.upsertSubscriptedData = function(table, obj, objdq)
 }
 
 SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
-  for (var i=0;i<contextResponses.length;i++){
+  for (var i in contextResponses){
     var obj = {}, objdq = {};
     obj['id_entity'] = contextResponses[i].contextElement.id;
-    _.each(contextResponses[i].contextElement.attributes,function(attr){
 
-      var attrSub = _.findWhere(sub.attributes, {'name': attr.name});
+    var subAttr = sub.attributes.slice();
+    var crAttr = contextResponses[i].contextElement.attributes.slice();
+    if (_.find(subAttr,{namedb:'lat',type:'coords'}) && _.find(subAttr,{namedb:'lon',type:'coords'})){
+      var lat_name = _.find(subAttr,{namedb:'lat'}).name;
+      var lon_name = _.find(subAttr,{namedb:'lon'}).name;
+      var lat = _.find(crAttr,{name: lat_name});
+      var lon = _.find(crAttr,{name: lon_name});
+      if (lat && lon){
+        crAttr.push({
+          name: 'position',
+          type: 'coords',
+          value: util.format('%s, %s',lat.value,lon.value)
+        });
+      }
+      crAttr = _.without(crAttr,_.find(crAttr,{name:lat_name}),_.find(crAttr,{name:lon_name}));
+      subAttr.push({name:'position',type:'coords',cartodb:true});
+    }
+
+    _.each(crAttr,function(attr){
+
+      var attrSub = _.findWhere(subAttr, {'name': attr.name});
 
       if (attrSub){
         var attrName = attrSub.namedb || attr.name;
@@ -290,7 +318,7 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
         else
           objdq[attrName] = v;
       }
-      
+
     });
 
     var schemaName = sub.schemaname;
