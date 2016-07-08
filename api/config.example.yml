@@ -73,9 +73,11 @@ subscriptions:
       - typeName: type
         typePattern: .*
     # Optional: Table name for PGSQL and CartoDB. If not provided default to ID.
-    \q: subscription_id
+    tablename: subscription_id
     # Optional: Subscription mode. Posible values are append|update. Default: append
     mode: append
+    # Default to false. IF set to true it fetches all the data from Fiware when the subscription is created the first time.
+    fetchDataOnCreated: false
     # List of attributes. These are the attributes of the subscription and how they're mapped into the PostgreSQL database and CartoDB
     attributes:
       - # Attribute name (Fiware attribute name)

@@ -11,7 +11,6 @@ var tokenManager = require('./tokenmanager.js');
 var servicesTokens;
 var subscriptionData = require('./subscriptiondata.js');
 
-
 function createSubscriptionSerial(idx,cb){
   var subscriptions = config.getSubs();
 
@@ -118,7 +117,10 @@ function newOrionSubscription(sub, cb){
           log.error('Error handling subscription');
           return cb(err);
         }
-        subscriptionData.getDataLargeSubscriptions(sub, headers,cb);
+        if (sub.fetchDataOnCreated)
+          subscriptionData.getDataLargeSubscriptions(sub, headers,cb);
+        else
+          cb();
       });
       log.info(util.format('New subscription [%s] created successfully',sub.id));
 
@@ -174,7 +176,6 @@ function createSubscriptionCallback(sub){
   log.info('Set router: ' + sub.id);
 
   router.post('/' + sub.id,function(req,res,next){
-
     psqlmodel = new SubscriptionsModel(config.getData().pgsql);
     psqlmodel.storeData(sub,req.body.contextResponses,config.getData().cartodb);
 
