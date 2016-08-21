@@ -9,7 +9,7 @@ function CartoDBModel(cfg){
   this._user = cfg.user;
   this._apiKey = cfg.apiKey;
   this._enterprise = cfg.enterprise;
-  this._sql = new CartoDB.SQL({user: cfg.user,api_key: cfg.apiKey});
+  this._sql = new CartoDB.SQL({user: cfg.user,api_key: cfg.apiKey, sql_api_url: 'https://'+ cfg.user+ '.carto.com/api/v2/sql'});
   this._squel = require('squel');
 };
 
