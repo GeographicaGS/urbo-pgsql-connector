@@ -3,41 +3,63 @@ var log = require('log4js').getLogger(logParams.output);
 var _ = require('underscore');
 
 module.exports.getPostgresType = function(type){
-  if (type =='coords')
+  if (type === 'coords' || type === 'geojson')
     return 'geometry(Point,4326)';
-  else if (type == 'string')
-    return 'text'
-  else if (type == 'integer')
-    return 'integer'
-  else if (type == 'float')
-    return 'double precision'
-  else if (type == 'ISO8601' || type == 'timestamp')
+  else if (type === 'string')
+    return 'text';
+  else if (type === 'integer')
+    return 'integer';
+  else if (type === 'float')
+    return 'double precision';
+  else if (type === 'ISO8601' || type === 'timestamp')
     return 'timestamp without time zone';
 }
 
 module.exports.getValueForType = function(value,type){
-  if (type=='coords'){
+  if (type === 'coords') {
     var s = value.split(',');
     return 'ST_SetSRID(ST_MakePoint(' + s[1].trim() + ',' + s[0].trim() + '),4326)';
-  }
-  else if (type == 'string' || type == 'ISO8601' || type == 'integer' || type == 'float' || type == 'timestamp')
+
+  } else if (type == 'geojson') {
+    if (typeof value !== 'object') {
+      value = JSON.parse(value);
+    }
+
+    if (!value.hasOwnProperty('type') ||
+        !value.hasOwnProperty('coordinates') ||
+        value.coordinates.constructor !== Array) {
+      log.error(type + 'isn\'t a valid GeoJSON');
+      throw Error(type + 'isn\'t a valid GeoJSON');
+    }
+
+    // Isn't worth it to check if they are floats...
+    value.coordinates[0] = parseFloat(value.coordinates[0]);
+    value.coordinates[1] = parseFloat(value.coordinates[1]);
+
+    value = JSON.stringify(value);
+    return 'ST_SetSRID(ST_GeomFromGeoJSON(\'' + value + '\'))';
+
+  } else if (type === 'string' || type === 'ISO8601' || type === 'integer' || type === 'float' || type === 'timestamp') {
     return value;
-  else{
+
+  } else {
     log.error('Unknown type: ' + type);
     throw Error('Unknown type: ' + type);
   }
-}
+};
 
 module.exports.isTypeQuoted = function(type){
-  if (type=='coords' || type == 'integer' || type == 'float')
+  if (type === 'coords' || type === 'geojson' || type === 'integer' || type === 'float') {
     return false;
-  else if (type == 'string' || type == 'ISO8601' || type == 'timestamp')
+
+  } else if (type === 'string' || type === 'ISO8601' || type === 'timestamp') {
     return true;
-  else{
+
+  } else {
     log.error('Unknown type: ' + type);
     throw Error('Unknown type: ' + type);
   }
-}
+};
 
 module.exports.wrapStrings = function(value,wrap) {
   if (wrap.length == 1)
