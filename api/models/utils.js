@@ -15,10 +15,10 @@ module.exports.getPostgresType = function(type){
     return 'timestamp without time zone';
 }
 
-module.exports.getValueForType = function(value,type){
+module.exports.getValueForType = function(value, type){
   if (type === 'coords') {
     var s = value.split(',');
-    return 'ST_SetSRID(ST_MakePoint(' + s[1].trim() + ',' + s[0].trim() + '),4326)';
+    return 'ST_SetSRID(ST_MakePoint(' + s[1].trim() + ',' + s[0].trim() + '), 4326)';
 
   } else if (type == 'geojson') {
     if (typeof value !== 'object') {
@@ -32,12 +32,9 @@ module.exports.getValueForType = function(value,type){
       throw Error(type + 'isn\'t a valid GeoJSON');
     }
 
-    // Isn't worth it to check if they are floats...
-    value.coordinates[0] = parseFloat(value.coordinates[0]);
-    value.coordinates[1] = parseFloat(value.coordinates[1]);
-
+    value.coordinates = this._parseGeoJSONCoordiantes(value.coordinates);
     value = JSON.stringify(value);
-    return 'ST_SetSRID(ST_GeomFromGeoJSON(\'' + value + '\'))';
+    return 'ST_SetSRID(ST_GeomFromGeoJSON(\'' + value + '\'), 4326)';
 
   } else if (type === 'string' || type === 'ISO8601' || type === 'integer' || type === 'float' || type === 'timestamp') {
     return value;
@@ -80,3 +77,16 @@ module.exports.parseLatLon = function(subattr) {
   }
   return subattr;
 }
+
+module.exports._parseGeoJSONCoordiantes = function(coordinates) {
+  var _this = this;
+
+  return coordinates.map(function(coordinate) {
+    if (coordinate.constructor === Array) {
+      return _this._parseGeoJSONCoordiantes(coordinate);
+    }
+
+    // Isn't worth it to check if they are floats...
+    return parseFloat(coordinate);
+  });
+};
