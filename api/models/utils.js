@@ -36,7 +36,15 @@ module.exports.getValueForType = function(value, type){
     value = JSON.stringify(value);
     return 'ST_SetSRID(ST_GeomFromGeoJSON(\'' + value + '\'), 4326)';
 
-  } else if (type === 'string' || type === 'ISO8601' || type === 'integer' || type === 'float' || type === 'timestamp') {
+  } else if (type === 'ISO8601' || type === 'timestamp') {
+    if (!value || value === '' || new Date(value) == 'Invalid Date'){
+      return null;
+    }
+    else {
+      return value;
+    }
+  
+  } else if (type === 'string' || type === 'integer' || type === 'float') {
     return value;
 
   } else {
