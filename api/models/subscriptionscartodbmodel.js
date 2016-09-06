@@ -33,6 +33,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
     if (!data.rows[0].n){
       var fields = ['id_entity varchar(64) not null'];
       var indexAttr = [];
+      var jsonAttr = [];
       var subAttr = utils.parseLatLon(sub.attributes.slice());
 
       for (var i in subAttr){
@@ -45,8 +46,12 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
             name = attr.namedb;
           else
             name = attr.name;
-          if (attr.indexdb && name != 'position')
-            indexAttr.push(name)
+          if (attr.indexdb && name != 'position'){
+            if (attr.type == 'json')
+              jsonAttr.push(name);
+            else
+              indexAttr.push(name);
+          }
           fields.push(utils.wrapStrings(name,['"']) + ' ' + utils.getPostgresType(attr.type));
         }
       }
@@ -73,6 +78,9 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
         }
         else{
           log.info('Create table at CartoDB completed');
+          
+          if (jsonAttr.length > 0)
+            that.createJSONIndexes(sub,jsonAttr);
 
           if (indexAttr.length > 0)
             that.createAttrIndexes(sub,indexAttr);
@@ -131,6 +139,21 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
       });
     }
   });
+}
+
+SubscriptionsCartoDBModel.prototype.createJSONIndexes = function(sub, attribs){
+  var q;
+  for (var i=0;i<attribs.length;i++){
+    q = ['CREATE INDEX',sub.id+'_'+attribs[i]+'_idx',
+         'ON',sub.schemaname+'_'+sub.id,'USING gin('+utils.wrapStrings(attribs[i],['"'])+')'];
+
+    this.query({ 'query' : q.join(' ')}, null, function(err, r){
+      if (err){
+        log.error('Cannot execute CartoDB JSON attribute index creation on table %s',sub.id)
+      }
+      log.info('Index created on table %s',sub.id)
+    });
+  }
 }
 
 SubscriptionsCartoDBModel.prototype.createAttrIndexes = function(sub, attribs){

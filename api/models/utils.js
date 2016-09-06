@@ -13,6 +13,8 @@ module.exports.getPostgresType = function(type){
     return 'double precision';
   else if (type === 'ISO8601' || type === 'timestamp')
     return 'timestamp without time zone';
+  else if (type === 'json')
+    return 'JSONB';
 }
 
 module.exports.getValueForType = function(value, type){
@@ -33,8 +35,8 @@ module.exports.getValueForType = function(value, type){
     }
 
     value.coordinates = this._parseGeoJSONCoordiantes(value.coordinates);
-    value = JSON.stringify(value);
-    return 'ST_SetSRID(ST_GeomFromGeoJSON(\'' + value + '\'), 4326)';
+    
+    return 'ST_SetSRID(ST_GeomFromGeoJSON(\'' + JSON.stringify(value) + '\'), 4326)';
 
   } else if (type === 'ISO8601' || type === 'timestamp') {
     if (!value || value === '' || new Date(value) == 'Invalid Date'){
@@ -47,6 +49,9 @@ module.exports.getValueForType = function(value, type){
   } else if (type === 'string' || type === 'integer' || type === 'float') {
     return value;
 
+  } else if (type === 'json') {
+    return JSON.stringify(value);
+
   } else {
     log.error('Unknown type: ' + type);
     throw Error('Unknown type: ' + type);
@@ -57,7 +62,7 @@ module.exports.isTypeQuoted = function(type){
   if (type === 'coords' || type === 'geojson' || type === 'integer' || type === 'float') {
     return false;
 
-  } else if (type === 'string' || type === 'ISO8601' || type === 'timestamp') {
+  } else if (type === 'string' || type === 'ISO8601' || type === 'timestamp' || type === 'json') {
     return true;
 
   } else {
