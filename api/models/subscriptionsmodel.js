@@ -51,10 +51,11 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
   var that = this;
   this.query(sql.join(' '),[schemaName, sub.id],function(err,data){
     if (err){
-      log.error('Error getting table information')
-      return cb(err,null)
+      log.error('Error getting table information');
+      return cb(err,null);
     }
     var geomIndex;
+    var jsonAttr = [];
     var indexAttr = [];
     if (!data.rows.length){
       var fields = [];
@@ -65,8 +66,12 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
         var attrName = attr.namedb || attr.name;
         if (attrName == 'position')
           geomIndex = true;
-        else if (attr.indexdb)
-          indexAttr.push(attrName)
+        else if (attr.indexdb){
+          if (attr.type == 'json')
+            jsonAttr.push(attrName);
+          else
+            indexAttr.push(attrName);
+        }
         fields.push(utils.wrapStrings(attrName,['"']) + ' ' + utils.getPostgresType(attr.type));
       }
       var q = [
@@ -86,6 +91,9 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
 
         if (geomIndex)
           that.createGeomIndexes(sub);
+
+        if (jsonAttr.length > 0)
+          that.createJSONIndexes(sub,jsonAttr);
 
         if (indexAttr.length > 0)
           that.createAttrIndexes(sub,indexAttr);
@@ -157,6 +165,21 @@ SubscriptionsModel.prototype.createGeomIndexes = function(sub){
     }
     log.info('Geometry Index created on table %s',sub.id)
   });
+}
+
+SubscriptionsModel.prototype.createJSONIndexes = function(sub, attribs){
+  var q;
+  for (var i=0;i<attribs.length;i++){
+    q = ['CREATE INDEX',sub.id+'_'+attribs[i]+'_idx',
+         'ON',sub.schemaname+'.'+sub.id,'USING gin('+utils.wrapStrings(attribs[i],['"'])+')'];
+
+    this.query(q.join(' '),null,function(err,d){
+      if (err){
+        log.error('Cannot execute JSON attribute index creation on table %s',sub.id)
+      }
+      log.info('Index created on table %s',sub.id)
+    });
+  }
 }
 
 SubscriptionsModel.prototype.createAttrIndexes = function(sub, attribs){

@@ -35,18 +35,19 @@ contextBrokerUrls:
 # Fiware subservices subscriptions configuration
 subservices:
   - id: waste_simulations
-    service: xxxxxxxxxxxxxxxxxxxxxxxx
-    subservice: /xxxxxxxxxxxxx
+    service: urbo
+    subservice: /geographica
     auth:
-      user: xxxxxxxxxxxxxxxxxxxxxxxx
-      password: xxxxxxxxxxxx
+      user: geographica_admin
+      password: S1m9l4d0r3s
 
 subscriptions:
-  - id: wastecontainer
+  - id: dumps_wastecontainer
     subservice_id: waste_simulations
-    schemaname: telefonicadistrict
+    schemaname: distrito_telefonica
     subsduration: P8M
     substhrottling: PT0S
+    fetchDataOnCreated: false
     entityTypes:
       - typeName: WasteContainer
     mode: append
@@ -76,6 +77,9 @@ subscriptions:
         indexdb: true
       - name: fillingLevel
         namedb: fillinglevel
+        type: float
+        cartodb: true
+      - name: weight
         type: float
         cartodb: true
       - name: temperature
@@ -124,11 +128,13 @@ subscriptions:
         cartodb: true
     trigger_attributes:
       - TimeInstant
-  - id: wastecontainer_lastdata
+
+  - id: dumps_wastecontainer_lastdata
     subservice_id: waste_simulations
-    schemaname: telefonicadistrict
+    schemaname: distrito_telefonica
     subsduration: P8M
     substhrottling: PT0S
+    fetchDataOnCreated: true
     entityTypes:
       - typeName: WasteContainer
     mode: update
@@ -160,6 +166,9 @@ subscriptions:
         namedb: fillinglevel
         type: float
         cartodb: true
+      - name: weight
+        type: float
+        cartodb: true
       - name: temperature
         namedb: temperature
         type: float
@@ -206,11 +215,13 @@ subscriptions:
         cartodb: true
     trigger_attributes:
       - TimeInstant
-  - id: wastecontainermodel
+
+  - id: dumps_wastecontainermodel
     subservice_id: waste_simulations
-    schemaname: telefonicadistrict
+    schemaname: distrito_telefonica
     subsduration: P8M
     substhrottling: PT0S
+    fetchDataOnCreated: true
     entityTypes:
       - typeName: WasteContainerModel
     mode: append
@@ -225,6 +236,7 @@ subscriptions:
         type: float
         cartodb: true
       - name: volumeStored
+        namedb: volumestored
         type: float
         cartodb: true
       - name: brandName
@@ -235,49 +247,76 @@ subscriptions:
         namedb: modelname
         type: string
         cartodb: true
-      - name: compliantWith
-        namedb: compliantwith
-        type: string
-        cartodb: true
+      # - name: compliantWith
+      #   namedb: compliantwith
+      #   type: string
+      #   cartodb: true
       - name: madeOf
         namedb: madeof
         type: string
         cartodb: true
-      - name: features
-        type: string
-        cartodb: true
-      - name: category
-        type: string
+      # - name: features
+      #   type: string
+      #   cartodb: true
+      # - name: category
+      #   type: string
+      #   cartodb: true
+      - name: maximumLoad
+        namedb: maximumload
+        type: float
         cartodb: true
     trigger_attributes:
-      - TimeInstant
-  - id: wastecontainerisle
+      - width
+      - height
+      - depth
+      - volumestored
+      - brandName
+      - modelName
+      # - compliantWith
+      - madeOf
+      # - features
+      # - category
+      - maximumLoad
+
+  - id: dumps_wastecontainerisle
     subservice_id: waste_simulations
-    schemaname: telefonicadistrict
+    schemaname: distrito_telefonica
     subsduration: P8M
     substhrottling: PT0S
+    fetchDataOnCreated: true
     entityTypes:
       - typeName: WasteContainerIsle
     mode: append
     attributes:
-      - name: location
-        namdb: position
-        type: geojson
-        cartodb: true
+      # - name: location
+      #   namdb: position
+      #   type: geojson
+      #   cartodb: true
       - name: name
         type: string
         cartodb: true
       - name: description
         type: string
         cartodb: true
-      - name: features
-        type: string
-        cartodb: true
+      # - name: features
+      #   type: string
+      #   cartodb: true
       - name: address
-        type: string
+        type: json
+        indexdb: true
         cartodb: true
-      - name: containers
+      # - name: containers
+      #   type: string
+      #   cartodb: true
+      - name: areaServed
+        namedb: areaserved
         type: string
         cartodb: true
     trigger_attributes:
-      - TimeInstant
+      # - location
+      - name
+      - description
+      # - features
+      - address
+      # - containers
+      - areaServed
