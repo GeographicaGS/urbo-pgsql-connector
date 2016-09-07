@@ -302,7 +302,7 @@ subscriptions:
       #   type: string
       #   cartodb: true
       - name: address
-        type: string
+        type: json
         indexdb: true
         cartodb: true
       # - name: containers
