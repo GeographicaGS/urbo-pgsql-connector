@@ -53,7 +53,7 @@ subscriptions:
     mode: append
     attributes:
       - name: location
-        namdb: position
+        namedb: position
         type: geojson
         cartodb: true
       - name: TimeInstant
@@ -140,7 +140,7 @@ subscriptions:
     mode: update
     attributes:
       - name: location
-        namdb: position
+        namedb: position
         type: geojson
         cartodb: true
       - name: TimeInstant
@@ -289,7 +289,7 @@ subscriptions:
     mode: append
     attributes:
       # - name: location
-      #   namdb: position
+      #   namedb: position
       #   type: geojson
       #   cartodb: true
       - name: name
