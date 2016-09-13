@@ -9,7 +9,7 @@ module.exports.getPostgresType = function(type){
     return 'text';
   else if (type === 'integer')
     return 'integer';
-  else if (type === 'float')
+  else if (type === 'float' || type === 'percent')
     return 'double precision';
   else if (type === 'ISO8601' || type === 'timestamp')
     return 'timestamp without time zone';
@@ -51,6 +51,9 @@ module.exports.getValueForType = function(value, type){
 
   } else if (type === 'json') {
     return JSON.stringify(value);
+  
+  } else if (type === 'percent') {
+    return value * 100;
 
   } else {
     log.error('Unknown type: ' + type);
@@ -59,7 +62,7 @@ module.exports.getValueForType = function(value, type){
 };
 
 module.exports.isTypeQuoted = function(type){
-  if (type === 'coords' || type === 'geojson' || type === 'integer' || type === 'float') {
+  if (type === 'coords' || type === 'geojson' || type === 'integer' || type === 'float' || type === 'percent') {
     return false;
 
   } else if (type === 'string' || type === 'ISO8601' || type === 'timestamp' || type === 'json') {

@@ -77,7 +77,7 @@ subscriptions:
         indexdb: true
       - name: fillingLevel
         namedb: fillinglevel
-        type: float
+        type: percent
         cartodb: true
       - name: weight
         type: float

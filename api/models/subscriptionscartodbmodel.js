@@ -103,7 +103,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
         var subAttr = utils.parseLatLon(sub.attributes.slice());
 
         var current = _.pluck(data.rows,'cdb_columnnames');
-        var attributes = _.filter(subAttr, function(attr){ return attr.cartodb && attr.type!='coords'; });
+        var attributes = _.filter(subAttr, function(attr){ return attr.cartodb && attr.type!='coords' && attr.type!='geojson'; });
         var needed = _.map(attributes, function(at){return at.namedb || at.name;}).concat('cartodb_id','the_geom','the_geom_webmercator');
         var toadd = _.difference(needed,current);
         var toremove = _.difference(current,needed);
