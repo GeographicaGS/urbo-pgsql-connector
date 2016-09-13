@@ -84,7 +84,8 @@ subscriptions:
         name: name
         # Database attribute name (If it does not exist "name" is used)
         namedb: name
-        # Mandatory: Type of attribute: Currently supported: 'coords','string','float','integer','ISO8601|timestamp'. Todo: geojson.
+        # Mandatory: Type of attribute: Currently supported: 'coords','string','float','integer',
+        #            'ISO8601|timestamp','percent','JSON','GeoJSON' (point). Todo: GeoJSON (poly, linestring).
         type: string
         # Optional. Default to false. If set to true, the attribute will be synced at CartoDB
         cartodb: true
