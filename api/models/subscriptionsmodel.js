@@ -265,11 +265,13 @@ SubscriptionsModel.prototype.upsertSubscriptedData = function(table, obj, objdq)
 
   for (var i in obj){
       updtConstructor.set(utils.wrapStrings(i,['"']),obj[i]);
+      if (i == "TimeInstant" && (!obj[i] || obj[i] == ''))
+        obj[i] = '1970-01-01T00:00Z';
       slConstructor.field(utils.wrapStrings(obj[i],["'"]),i);
   }
   for (var i in objdq){
       updtConstructor.set(utils.wrapStrings(i,['"']),objdq[i],{dontQuote: true});
-      slConstructor.field(objdq[i],i,{dontQuote: true});
+      slConstructor.field(String(objdq[i]),i,{dontQuote: true});
   }
 
   updtConstructor.set("updated_at","now()");
@@ -283,7 +285,6 @@ SubscriptionsModel.prototype.upsertSubscriptedData = function(table, obj, objdq)
   var udtQry = updtConstructor.where('id = ?', slMaxid)
                 .returning("*")
                 .toString();
-
   var slUpsrt = this._squel.select().from("upsert");
   var slCon = slConstructor.from("").where("NOT EXISTS ?", slUpsrt);
 
