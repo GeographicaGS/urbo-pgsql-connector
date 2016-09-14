@@ -1,0 +1,322 @@
+  # FIWARE URBO WASTE DASHBOARD CONFIGURATION FILE
+
+baseURL: http://url:port
+
+# debugAccessToken:
+
+# Logging configuration parameters
+logging:
+  # Level options: INFO|ERROR|DEBUG. Default: INFO
+  level: DEBUG
+  # Output options: console|file. Default: console
+  output: file
+
+# PostgreSQL configuration parameters
+pgsql:
+  host: postgis
+  user: xxxxx
+  password: xxxxx
+  database: xxxxx
+  port: 5432
+
+# CartoDB configuration parameters
+cartodb:
+  apiKey: xxxxxxxxxxxxxxxxxxxxxx
+  user: xxxxxxxxxxxxx
+  active: false
+  enterprise: true
+
+# Orion Context Broker API URLs
+contextBrokerUrls:
+  portAuthtk: xxxxxxxxxxxxx
+  portCtxApi: xxxxxxxxx
+  urlCtxBrBase: https://xxxxxxxxxxxxxxxxxxxxxxxx
+
+# Fiware subservices subscriptions configuration
+subservices:
+  - id: waste_simulations
+    service: urbo
+    subservice: /geographica
+    auth:
+      user: geographica_admin
+      password: S1m9l4d0r3s
+
+subscriptions:
+  - id: dumps_wastecontainer
+    subservice_id: waste_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: WasteContainer
+    mode: append
+    attributes:
+      - name: location
+        namedb: position
+        type: geojson
+        cartodb: true
+      - name: TimeInstant
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: dateUpdated
+        namedb: dateupdated
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: dateLastEmptying
+        namedb: datelastemptying
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: dateNextActuation
+        namedb: datenextactuation
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: fillingLevel
+        namedb: fillinglevel
+        type: percent
+        cartodb: true
+      - name: weight
+        type: float
+        cartodb: true
+      - name: temperature
+        namedb: temperature
+        type: float
+        cartodb: true
+      - name: methaneConcentration
+        namedb: methaneconcentration
+        type: float
+        cartodb: true
+      - name: refWasteContainerModel
+        namedb: refwastecontainermodel
+        type: string
+        cartodb: true
+      - name: containerIsle
+        namedb: containerisle
+        type: string
+        cartodb: true
+      - name: isleId
+        namedb: isleid
+        type: string
+        cartodb: true
+      - name: serialNumber
+        namedb: serialnumber
+        type: string
+        cartodb: true
+      - name: category
+        namedb: category
+        type: string
+        cartodb: true
+      - name: storedWasteOrigin
+        namedb: storedwasteorigin
+        type: string
+        cartodb: true
+      - name: storedWasteKind
+        namedb: storedwastekind
+        type: string
+        cartodb: true
+      - name: status
+        namedb: status
+        type: string
+        cartodb: true
+      - name: areaServed
+        namedb: areaserved
+        type: string
+        cartodb: true
+    trigger_attributes:
+      - TimeInstant
+
+  - id: dumps_wastecontainer_lastdata
+    subservice_id: waste_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: true
+    entityTypes:
+      - typeName: WasteContainer
+    mode: update
+    attributes:
+      - name: location
+        namedb: position
+        type: geojson
+        cartodb: true
+      - name: TimeInstant
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: dateUpdated
+        namedb: dateupdated
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: dateLastEmptying
+        namedb: datelastemptying
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: dateNextActuation
+        namedb: datenextactuation
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: fillingLevel
+        namedb: fillinglevel
+        type: float
+        cartodb: true
+      - name: weight
+        type: float
+        cartodb: true
+      - name: temperature
+        namedb: temperature
+        type: float
+        cartodb: true
+      - name: methaneConcentration
+        namedb: methaneconcentration
+        type: float
+        cartodb: true
+      - name: refWasteContainerModel
+        namedb: refwastecontainermodel
+        type: string
+        cartodb: true
+      - name: containerIsle
+        namedb: containerisle
+        type: string
+        cartodb: true
+      - name: isleId
+        namedb: isleid
+        type: string
+        cartodb: true
+      - name: serialNumber
+        namedb: serialnumber
+        type: string
+        cartodb: true
+      - name: category
+        namedb: category
+        type: string
+        cartodb: true
+      - name: storedWasteOrigin
+        namedb: storedwasteorigin
+        type: string
+        cartodb: true
+      - name: storedWasteKind
+        namedb: storedwastekind
+        type: string
+        cartodb: true
+      - name: status
+        namedb: status
+        type: string
+        cartodb: true
+      - name: areaServed
+        namedb: areaserved
+        type: string
+        cartodb: true
+    trigger_attributes:
+      - TimeInstant
+
+  - id: dumps_wastecontainermodel
+    subservice_id: waste_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: true
+    entityTypes:
+      - typeName: WasteContainerModel
+    mode: append
+    attributes:
+      - name: width
+        type: float
+        cartodb: true
+      - name: height
+        type: float
+        cartodb: true
+      - name: depth
+        type: float
+        cartodb: true
+      - name: volumeStored
+        namedb: volumestored
+        type: float
+        cartodb: true
+      - name: brandName
+        namedb: brandname
+        type: string
+        cartodb: true
+      - name: modelName
+        namedb: modelname
+        type: string
+        cartodb: true
+      # - name: compliantWith
+      #   namedb: compliantwith
+      #   type: string
+      #   cartodb: true
+      - name: madeOf
+        namedb: madeof
+        type: string
+        cartodb: true
+      # - name: features
+      #   type: string
+      #   cartodb: true
+      # - name: category
+      #   type: string
+      #   cartodb: true
+      - name: maximumLoad
+        namedb: maximumload
+        type: float
+        cartodb: true
+    trigger_attributes:
+      - width
+      - height
+      - depth
+      - volumestored
+      - brandName
+      - modelName
+      # - compliantWith
+      - madeOf
+      # - features
+      # - category
+      - maximumLoad
+
+  - id: dumps_wastecontainerisle
+    subservice_id: waste_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: true
+    entityTypes:
+      - typeName: WasteContainerIsle
+    mode: append
+    attributes:
+      # - name: location
+      #   namedb: position
+      #   type: geojson
+      #   cartodb: true
+      - name: name
+        type: string
+        cartodb: true
+      - name: description
+        type: string
+        cartodb: true
+      # - name: features
+      #   type: string
+      #   cartodb: true
+      - name: address
+        type: json
+        indexdb: true
+        cartodb: true
+      # - name: containers
+      #   type: string
+      #   cartodb: true
+      - name: areaServed
+        namedb: areaserved
+        type: string
+        cartodb: true
+    trigger_attributes:
+      # - location
+      - name
+      - description
+      # - features
+      - address
+      # - containers
+      - areaServed
