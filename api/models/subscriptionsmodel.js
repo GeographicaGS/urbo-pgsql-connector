@@ -114,7 +114,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           return cb(err,null)
         }
         var subAttr = utils.parseLatLon(sub.attributes.slice());
-        
+
         var current = _.pluck(data.rows,'column_name');
         var needed = _.map(subAttr, function(at){return at.namedb || at.name;}).concat('id','created_at','updated_at','id_entity');
         var toadd = _.difference(needed,current);

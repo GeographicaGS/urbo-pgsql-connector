@@ -84,8 +84,11 @@ subscriptions:
         name: name
         # Database attribute name (If it does not exist "name" is used)
         namedb: name
-        # Mandatory: Type of attribute: Currently supported: 'coords','string','float','integer',
-        #            'ISO8601|timestamp','percent','JSON','GeoJSON'.
+        # Mandatory: Type of attribute: Currently supported: 'coords', 'string', 'float', 'integer',
+        #            'ISO8601|timestamp', 'percent', 'json','geojson' (for all types oj GeoJSON),
+        #            'geojson-point', 'geojson-line', 'geojson-polygon', 'geojson-multipoint',
+        #            'geojson-multiline', 'geojson-multipolygon', 'list' (it cast its content to string),
+        #            'list-string', 'list-numeric'.
         type: string
         # Optional. Default to false. If set to true, the attribute will be synced at CartoDB
         cartodb: true

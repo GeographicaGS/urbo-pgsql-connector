@@ -13,11 +13,20 @@ module.exports.getPostgresType = function(type){
     return 'double precision';
   else if (type === 'ISO8601' || type === 'timestamp')
     return 'timestamp without time zone';
+  else if (type.startsWith('list'))
+    return this.getPostgresListType(type) + ' ARRAY';
   else if (type === 'json')
     return 'JSONB';
   else if (type.startsWith('geojson'))
     return 'geometry(' + this.getPostgresGeoJSONType(type) + ', 4326)';
 }
+
+module.exports.getPostgresListType = function(type) {
+  if (type === 'list' || type === 'list-string')
+    return 'text';
+  else if (type === 'list-numeric')
+    return 'numeric';
+};
 
 module.exports.getPostgresGeoJSONType = function(type) {
   if (type === 'geojson-point')
@@ -63,6 +72,24 @@ module.exports.getValueForType = function(value, type){
 
     return 'ST_SetSRID(ST_GeomFromGeoJSON(\'' + JSON.stringify(value) + '\'), 4326)';
 
+  } else if (type.startsWith('list')) {
+    if (value === '') {
+      value = [];
+    }
+
+    var sep = '';
+    var cast = '';  // Casting is necesary for empty arrays
+
+    if (type === 'list' || type === 'list-string') {
+      var sep = value.length ? '\'' : '';
+      var cast = 'text';
+
+    } else if (type === 'list-numeric') {
+      var cast = 'numeric';
+    }
+
+    return 'ARRAY[' + sep + value.join(sep + ', ' + sep) + sep + ']::' + cast + '[]';
+
   } else if (type === 'ISO8601' || type === 'timestamp') {
     if (!value || value === '' || new Date(value) == 'Invalid Date'){
       return null;
@@ -87,7 +114,7 @@ module.exports.getValueForType = function(value, type){
 };
 
 module.exports.isTypeQuoted = function(type){
-  if (type === 'coords' || type.startsWith('geojson') || type === 'integer' || type === 'float' || type === 'percent') {
+  if (type === 'coords' || type.startsWith('geojson') || type.startsWith('list') || type === 'integer' || type === 'float' || type === 'percent') {
     return false;
 
   } else if (type === 'string' || type === 'ISO8601' || type === 'timestamp' || type === 'json') {
