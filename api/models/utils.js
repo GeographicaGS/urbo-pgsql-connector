@@ -13,9 +13,18 @@ module.exports.getPostgresType = function(type){
     return 'double precision';
   else if (type === 'ISO8601' || type === 'timestamp')
     return 'timestamp without time zone';
+  else if (type.startsWith('list'))
+    return this.getPostgresListType(type) + ' ARRAY';
   else if (type === 'json')
     return 'JSONB';
 }
+
+module.exports.getPostgresListType = function(type) {
+  if (type === 'list' || type === 'list-string')
+    return 'text';
+  else if (type === 'list-numeric')
+    return 'numeric';
+};
 
 module.exports.getValueForType = function(value, type){
   if (type === 'coords') {
@@ -35,8 +44,26 @@ module.exports.getValueForType = function(value, type){
     }
 
     value.coordinates = this._parseGeoJSONCoordiantes(value.coordinates);
-    
+
     return 'ST_SetSRID(ST_GeomFromGeoJSON(\'' + JSON.stringify(value) + '\'), 4326)';
+
+  } else if (type.startsWith('list')) {
+    if (value === '') {
+      value = [];
+    }
+
+    var sep = '';
+    var cast = '';  // Casting is necesary for empty arrays
+
+    if (type === 'list' || type === 'list-string') {
+      var sep = value.length ? '\'' : '';
+      var cast = 'text';
+
+    } else if (type === 'list-numeric') {
+      var cast = 'numeric';
+    }
+
+    return 'ARRAY[' + sep + value.join(sep + ', ' + sep) + sep + ']::' + cast + '[]';
 
   } else if (type === 'ISO8601' || type === 'timestamp') {
     if (!value || value === '' || new Date(value) == 'Invalid Date'){
@@ -45,13 +72,13 @@ module.exports.getValueForType = function(value, type){
     else {
       return value;
     }
-  
+
   } else if (type === 'string' || type === 'integer' || type === 'float') {
     return value;
 
   } else if (type === 'json') {
     return JSON.stringify(value);
-  
+
   } else if (type === 'percent') {
     return value * 100;
 
@@ -62,7 +89,7 @@ module.exports.getValueForType = function(value, type){
 };
 
 module.exports.isTypeQuoted = function(type){
-  if (type === 'coords' || type === 'geojson' || type === 'integer' || type === 'float' || type === 'percent') {
+  if (type === 'coords' || type === 'geojson' || type.startsWith('list') || type === 'integer' || type === 'float' || type === 'percent') {
     return false;
 
   } else if (type === 'string' || type === 'ISO8601' || type === 'timestamp' || type === 'json') {
