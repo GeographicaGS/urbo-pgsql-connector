@@ -15,8 +15,8 @@ util.inherits(SubscriptionsCartoDBModel, CartoDBModel);
 SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
   var schemaName = sub.schemaname;
   var schemaTable = schemaName+'_'+sub.id;
-  var sql = ['SELECT count(*) as n FROM CDB_UserTables()',
-             " WHERE cdb_usertables = '{{table}}'"];
+  var sql = ["SELECT count(*) as n FROM urbo_get_user_tables('"+this._user+"')",
+             " WHERE urbo_get_user_tables = '{{table}}'"];
 
   var that = this;
   this.query({
