@@ -732,9 +732,6 @@ subscriptions:
       - name: status
         type: string
         cartodb: true
-      - name: name
-        type: string
-        cartodb: true
       - name: length
         type: float
         cartodb: true
