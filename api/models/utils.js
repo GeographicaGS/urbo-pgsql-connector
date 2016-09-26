@@ -73,7 +73,7 @@ module.exports.getValueForType = function(value, type){
     return 'ST_SetSRID(ST_GeomFromGeoJSON(\'' + JSON.stringify(value) + '\'), 4326)';
 
   } else if (type.startsWith('list')) {
-    if (value === '') {
+    if (!Array.isArray(value)) {
       value = [];
     }
 
