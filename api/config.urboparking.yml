@@ -182,7 +182,7 @@ subscriptions:
     trigger_attributes:
       - availableSpotNumber
 
-  - id: offstreetparking_catalog
+  - id: offstreetparking
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -426,7 +426,7 @@ subscriptions:
     trigger_attributes:
       - availableSpotNumber
 
-  - id: onstreetparking_catalog
+  - id: onstreetparking
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -635,7 +635,7 @@ subscriptions:
     trigger_attributes:
       - availableSpotNumber
 
-  - id: parkinggroup_catalog
+  - id: parkinggroup
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -763,9 +763,9 @@ subscriptions:
         type: string
         cartodb: true
     trigger_attributes:
-      - dateModified
+      - status
 
-  - id: parkingspot_catalog
+  - id: parkingspot
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
