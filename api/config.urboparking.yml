@@ -43,7 +43,7 @@ subservices:
 
 subscriptions:
   # OffStreetParking ######################
-  - id: offstreetparking_lastdata
+  - id: parking_offstreetparking_lastdata
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -138,7 +138,7 @@ subscriptions:
     trigger_attributes:
       - dateModified
 
-  - id: offstreetparking_status
+  - id: parking_offstreetparking_status
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -160,7 +160,7 @@ subscriptions:
     trigger_attributes:
       - status
 
-  - id: offstreetparking_availablespotnumber
+  - id: parking_offstreetparking_availablespotnumber
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -182,7 +182,7 @@ subscriptions:
     trigger_attributes:
       - availableSpotNumber
 
-  - id: offstreetparking
+  - id: parking_offstreetparking
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -287,7 +287,7 @@ subscriptions:
       - maximumallowedwidth
 
   # OnStreetParking ######################
-  - id: onstreetparking_lastdata
+  - id: parking_onstreetparking_lastdata
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -382,7 +382,7 @@ subscriptions:
     trigger_attributes:
       - dateModified
 
-  - id: onstreetparking_status
+  - id: parking_onstreetparking_status
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -404,7 +404,7 @@ subscriptions:
     trigger_attributes:
       - status
 
-  - id: onstreetparking_availablespotnumber
+  - id: parking_onstreetparking_availablespotnumber
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -426,7 +426,7 @@ subscriptions:
     trigger_attributes:
       - availableSpotNumber
 
-  - id: onstreetparking
+  - id: parking_onstreetparking
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -529,9 +529,9 @@ subscriptions:
       - lowestFloor
       - maximumallowedheight
       - maximumallowedwidth
-  
+
   # ParkingGroup ######################
-  - id: parkinggroup_lastdata
+  - id: parking_parkinggroup_lastdata
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -591,7 +591,7 @@ subscriptions:
     trigger_attributes:
       - dateModified
 
-  - id: parkinggroup_status
+  - id: parking_parkinggroup_status
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -613,7 +613,7 @@ subscriptions:
     trigger_attributes:
       - status
 
-  - id: parkinggroup_availablespotnumber
+  - id: parking_parkinggroup_availablespotnumber
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -635,7 +635,7 @@ subscriptions:
     trigger_attributes:
       - availableSpotNumber
 
-  - id: parkinggroup
+  - id: parking_parkinggroup
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -696,7 +696,7 @@ subscriptions:
       - totalSpotNumber
 
   # ParkingSpot #########################
-  - id: parkingspot_lastdata
+  - id: parking_parkingspot_lastdata
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -741,7 +741,7 @@ subscriptions:
     trigger_attributes:
       - dateModified
 
-  - id: parkingspot_status
+  - id: parking_parkingspot_status
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -762,7 +762,7 @@ subscriptions:
     trigger_attributes:
       - status
 
-  - id: parkingspot
+  - id: parking_parkingspot
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
