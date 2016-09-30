@@ -236,7 +236,7 @@ SubscriptionsModel.prototype.handleSubscriptionsTable = function(data, cb){
   });
 }
 
-SubscriptionsModel.prototype.upsertSubscriptedData = function(table, obj, objdq){
+SubscriptionsModel.prototype.upsertSubscriptedData = function(table, obj, objdq,cb){
   /*
   Upsert SQL example:
 
@@ -302,11 +302,14 @@ SubscriptionsModel.prototype.upsertSubscriptedData = function(table, obj, objdq)
 
   this.query(q, null, function(err, r){
     if (err)
-      return log.error('Cannot execute upsert query:' + q);
+      log.error('Cannot execute upsert query:' + q);
+
+    if (cb) cb(err);
+
   });
 }
 
-SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
+SubscriptionsModel.prototype.storeData = function(sub,contextResponses,cb){
   for (var i in contextResponses){
     var obj = {}, objdq = {};
     obj['id_entity'] = contextResponses[i].contextElement.id;
@@ -348,9 +351,9 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses){
     var schemaName = sub.schemaname;
     var schemaTable = schemaName+'.'+sub.id
     if ("mode" in sub && sub.mode == "update")
-      this.upsertSubscriptedData(schemaTable,obj,objdq);
+      this.upsertSubscriptedData(schemaTable,obj,objdq,cb);
     else
-      this.insert(schemaTable,obj,objdq);
+      this.insert(schemaTable,obj,objdq,cb);
 
   }
 }

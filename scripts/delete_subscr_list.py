@@ -92,6 +92,7 @@ def deleteSubscriptions(subs, url_subs, fiw_serv, fiw_subsserv, authtoken, timeo
                                   data=payload, verify=ssl, timeout=timeout)
 
             if resp.ok:
+                #print resp.json()
                 print("{0}. Deleted subscription: {1}".format(resp, subs_id))
             else:
                 print(resp)
@@ -111,7 +112,7 @@ def main():
     url_subs = 'https://195.235.93.224:10027/v1/unsubscribeContext'
     fiw_serv = 'urbo'
     fiw_subsserv = '/geographica'
-    subs = ['57eccf87fdc8301538a65932','57eccf8b4e11614a5cb4c3de','57ecd3f64e11614a5cb4c3df']
+    subs = ['57ecd8664e11614a5cb4c3e0','57ecd86cfdc8301538a65933','57ecd86f4e11614a5cb4c3e1','57ecdf0c4e11614a5cb4c3e2']
 
     deleteSubscriptions(subs, url_subs, fiw_serv, fiw_subsserv, auth_token)
 
