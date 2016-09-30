@@ -183,21 +183,25 @@ function createSubscriptionCallback(sub){
         log.warn('Ignoring data, not writting to Carto (alasarr idea)');
         return next(err);
       }
-
+      console.log("UNO");
       var cdbActiveFields = config.cdbActiveFields(sub);
       var cdbActive = config.getData().cartodb.active;
       if (cdbActive && cdbActiveFields){
         cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
-        cdbmodel.storeData(sub,req.body.contextResponses,function(err){
-          if (err){
+        console.log("DOS");
+	cdbmodel.storeData(sub,req.body.contextResponses,function(err){
+          console.log("TRES");
+	 if (err){
             log.error('Error inserting at PGSQL');
             log.warn('Ignoring data, not writting to Carto (alasarr idea)');
             return next(err);
           }
+	  console.log("CUATRO");
           res.json(true);
         });
       }
       else{
+	console.log("CINCO");
         res.json(true);
       }
     });
