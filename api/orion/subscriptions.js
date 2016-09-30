@@ -183,7 +183,6 @@ function createSubscriptionCallback(sub){
         log.warn('Ignoring data, not writting to Carto (alasarr idea)');
         return;
       }
-
       var cdbActiveFields = config.cdbActiveFields(sub);
       var cdbActive = config.getData().cartodb.active;
       if (cdbActive && cdbActiveFields){
