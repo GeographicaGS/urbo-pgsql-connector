@@ -239,7 +239,7 @@ SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(table, obj,
 
   var sql = ["WITH upsert AS ",utils.wrapStrings(udtQry,["(",")"]),insQry]
   var q = sql.join(' ')
-  this.query({ 'query' : q}, null, function(err, r){
+  this.query({ 'query' : q}, function(err, r){
     if (err)
       log.error('Cannot execute upsert query for table [%s] - CartoDB',table);
     if (cb) cb(err);

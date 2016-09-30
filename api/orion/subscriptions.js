@@ -181,7 +181,7 @@ function createSubscriptionCallback(sub){
       if (err){
         log.error('Error inserting at PGSQL');
         log.warn('Ignoring data, not writting to Carto (alasarr idea)');
-        return next(err);
+        return;
       }
 
       var cdbActiveFields = config.cdbActiveFields(sub);
@@ -189,18 +189,12 @@ function createSubscriptionCallback(sub){
       if (cdbActive && cdbActiveFields){
         cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
         cdbmodel.storeData(sub,req.body.contextResponses,function(err){
-          if (err){
+          if (err)
             log.error('Error inserting at PGSQL');
-            log.warn('Ignoring data, not writting to Carto (alasarr idea)');
-            return next(err);
-          }
-          res.json(true);
         });
       }
-      else{
-        res.json(true);
-      }
     });
+    res.json({ok:1});
   });
 }
 
