@@ -177,7 +177,7 @@ function createSubscriptionCallback(sub){
 
   router.post('/' + sub.id,function(req,res,next){
     psqlmodel = new SubscriptionsModel(config.getData().pgsql);
-    psqlmodel.storeData(sub,req.body.contextResponses,config.getData().cartodb,function(err){
+    psqlmodel.storeData(sub,req.body.contextResponses,function(err){
       if (err){
         log.error('Error inserting at PGSQL');
         log.warning('Ignoring data, not writting to Carto (alasarr idea)');

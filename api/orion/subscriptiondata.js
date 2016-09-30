@@ -34,7 +34,7 @@ function getDataPage(sub, headers, page,cb){
       if (response.body.errorCode.code == "200"){
 
         psqlmodel = new SubscriptionsModel(config.getData().pgsql);
-        psqlmodel.storeData(sub,response.body.contextResponses,config.getData().cartodb);
+        psqlmodel.storeData(sub,response.body.contextResponses);
 
         var cdbActiveFields = config.cdbActiveFields(sub);
         var cdbActive = config.getData().cartodb.active;
