@@ -197,6 +197,9 @@ function createSubscriptionCallback(sub){
           res.json(true);
         });
       }
+      else{
+        res.json(true);
+      }
     });
   });
 }
