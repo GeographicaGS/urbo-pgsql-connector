@@ -188,13 +188,16 @@ function createSubscriptionCallback(sub){
       var cdbActive = config.getData().cartodb.active;
       if (cdbActive && cdbActiveFields){
         cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
-        cdbmodel.storeData(sub,req.body.contextResponses);
+        cdbmodel.storeData(sub,req.body.contextResponses,function(err){
+          if (err){
+            log.error('Error inserting at PGSQL');
+            log.warn('Ignoring data, not writting to Carto (alasarr idea)');
+            return next(err);
+          }
+          res.json(true);
+        });
       }
-
-      res.json(true);
     });
-
-
   });
 }
 

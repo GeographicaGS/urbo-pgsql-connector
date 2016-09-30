@@ -173,7 +173,7 @@ SubscriptionsCartoDBModel.prototype.createAttrIndexes = function(sub, attribs){
   });
 }
 
-SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(table, obj, objdq){
+SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(table, obj, objdq,cb){
   /*
   Upsert SQL example:
 
@@ -241,11 +241,12 @@ SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(table, obj,
   var q = sql.join(' ')
   this.query({ 'query' : q}, null, function(err, r){
     if (err)
-      return log.error('Cannot execute upsert query for table [%s] - CartoDB',table);
+      log.error('Cannot execute upsert query for table [%s] - CartoDB',table);
+    if (cb) cb(err);
   });
 }
 
-SubscriptionsCartoDBModel.prototype.storeData = function(sub,contextResponses){
+SubscriptionsCartoDBModel.prototype.storeData = function(sub,contextResponses,cb){
 
   for (var i in contextResponses){
     var obj = {}, objdq = {};
@@ -291,9 +292,9 @@ SubscriptionsCartoDBModel.prototype.storeData = function(sub,contextResponses){
     var schemaTable = schemaName+'_'+sub.id;
 
     if ("mode" in sub && sub.mode == "update")
-      this.upsertSubscriptedData(schemaTable,obj,objdq);
+      this.upsertSubscriptedData(schemaTable,obj,objdq,cb);
     else
-      this.insert(schemaTable,obj,objdq);
+      this.insert(schemaTable,obj,objdq,cb);
 
   }
 }
