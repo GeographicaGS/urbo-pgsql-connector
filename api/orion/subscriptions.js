@@ -180,7 +180,7 @@ function createSubscriptionCallback(sub){
     psqlmodel.storeData(sub,req.body.contextResponses,function(err){
       if (err){
         log.error('Error inserting at PGSQL');
-        log.warning('Ignoring data, not writting to Carto (alasarr idea)');
+        log.warn('Ignoring data, not writting to Carto (alasarr idea)');
         return next(err);
       }
 
