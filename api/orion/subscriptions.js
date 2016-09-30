@@ -189,7 +189,7 @@ function createSubscriptionCallback(sub){
         cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
         cdbmodel.storeData(sub,req.body.contextResponses,function(err){
           if (err)
-            log.error('Error inserting at PGSQL');
+            log.error('Error inserting at CARTO');
         });
       }
     });
