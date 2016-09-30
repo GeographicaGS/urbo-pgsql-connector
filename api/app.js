@@ -17,7 +17,6 @@ log4js.configure({
 });
 var log = log4js.getLogger(logParams.output);
 log.setLevel(logParams.level);
-app.use(log4js.connectLogger(log, { level: logParams.level}));
 log.info('Logger successfully started');
 
 // uncomment after placing your favicon in /public

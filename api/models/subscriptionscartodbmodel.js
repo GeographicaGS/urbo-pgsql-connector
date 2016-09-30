@@ -15,8 +15,8 @@ util.inherits(SubscriptionsCartoDBModel, CartoDBModel);
 SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
   var schemaName = sub.schemaname;
   var schemaTable = schemaName+'_'+sub.id;
-  var sql = ['SELECT count(*) as n FROM CDB_UserTables()',
-             " WHERE cdb_usertables = '{{table}}'"];
+  var sql = ["SELECT count(*) as n FROM urbo_get_user_tables('"+this._user+"')",
+             " WHERE urbo_get_user_tables = '{{table}}'"];
 
   var that = this;
   this.query({
@@ -40,7 +40,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
         var attr = subAttr[i];
         if (attr.cartodb){
           var name;
-          if (attr.type === 'coords' || attr.type === 'geojson')
+          if (attr.type === 'coords' || attr.type.startsWith('geojson'))
             name = 'the_geom';
           else if ("namedb" in attr)
             name = attr.namedb;
@@ -78,7 +78,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
         }
         else{
           log.info('Create table at CartoDB completed');
-          
+
           if (jsonAttr.length > 0)
             that.createJSONIndexes(sub,jsonAttr);
 
@@ -103,7 +103,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
         var subAttr = utils.parseLatLon(sub.attributes.slice());
 
         var current = _.pluck(data.rows,'cdb_columnnames');
-        var attributes = _.filter(subAttr, function(attr){ return attr.cartodb && attr.type!='coords' && attr.type!='geojson'; });
+        var attributes = _.filter(subAttr, function(attr){ return attr.cartodb && attr.type!='coords' && !attr.type.startsWith('geojson'); });
         var needed = _.map(attributes, function(at){return at.namedb || at.name;}).concat('cartodb_id','the_geom','the_geom_webmercator');
         var toadd = _.difference(needed,current);
         var toremove = _.difference(current,needed);
@@ -269,7 +269,7 @@ SubscriptionsCartoDBModel.prototype.storeData = function(sub,contextResponses){
       subAttr.push({name:'position',type:'coords',cartodb:true});
     }
 
-    var valid_attrs = _.pluck(_.filter(subAttr, function(attr){ return attr.cartodb || attr.type=='coords';}),'name');
+    var valid_attrs = _.pluck(_.filter(subAttr, function(attr){ return attr.cartodb || attr.type=='coords' || attr.type.startsWith('geojson');}),'name');
 
     _.each(crAttr,function(attr){
       var attrSub = _.findWhere(subAttr, {'name': attr.name});
@@ -278,7 +278,7 @@ SubscriptionsCartoDBModel.prototype.storeData = function(sub,contextResponses){
         var attrType = attrSub.type;
         if (valid_attrs.indexOf(attr.name)!=-1){
           var v = utils.getValueForType(attr.value,attrType);
-          var name = (attrType !== 'coords' && attrType !== 'geojson') ? attrName : 'the_geom';
+          var name = (attrType !== 'coords' && !attrType.startsWith('geojson')) ? attrName : 'the_geom';
           if (utils.isTypeQuoted(attrType))
             obj[name] = v;
           else

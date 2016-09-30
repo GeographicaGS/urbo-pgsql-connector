@@ -21,6 +21,13 @@ PGSQLModel.prototype.insertBatch = function(table,data,cb){
   var sql = this._squel.insert().into(table).setFieldsRows(data).toString();
 
   this._connect(function(err,client,done){
+    if (err){
+      log.error("Cannot connect PLGPSQL");
+      log.error(err);
+      if (cb) cb(err);
+      return;
+    }
+
     client.query(sql,function(err,r){
       done();
       if (err){
@@ -48,6 +55,13 @@ PGSQLModel.prototype.insert = function(table,data,dontquotedata,cb){
   var sql = constructor.toString();
 
   this._connect(function(err,client,done){
+    if (err){
+      log.error("Cannot connect PLGPSQL");
+      log.error(err);
+      if (cb) cb(err);
+      return;
+    }
+
     client.query(sql,function(err,r){
       done();
       if (err){
@@ -72,6 +86,13 @@ PGSQLModel.prototype.update = function(table,data,cb){
               .toString();
 
   this._connect(function(err,client,done){
+    if (err){
+      log.error("Cannot connect PLGPSQL");
+      log.error(err);
+      if (cb) cb(err);
+      return;
+    }
+
     client.query(sql,function(err,r){
       done();
       if (err){
@@ -90,9 +111,12 @@ PGSQLModel.prototype._connect = function(cb){
 PGSQLModel.prototype.query = function(sql,bindings,cb){
   this._connect(function(err,client,done){
     if (err){
+      log.error("Cannot connect PLGPSQL");
       log.error(err);
+      if (cb) cb(err);
       return;
     }
+
     client.query(sql,bindings,function(err,r){
       done();
       if (err){

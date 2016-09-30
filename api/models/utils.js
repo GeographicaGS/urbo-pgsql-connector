@@ -3,7 +3,7 @@ var log = require('log4js').getLogger(logParams.output);
 var _ = require('underscore');
 
 module.exports.getPostgresType = function(type){
-  if (type === 'coords' || type === 'geojson')
+  if (type === 'coords')
     return 'geometry(Point,4326)';
   else if (type === 'string')
     return 'text';
@@ -13,16 +13,44 @@ module.exports.getPostgresType = function(type){
     return 'double precision';
   else if (type === 'ISO8601' || type === 'timestamp')
     return 'timestamp without time zone';
+  else if (type.startsWith('list'))
+    return this.getPostgresListType(type) + ' ARRAY';
   else if (type === 'json')
     return 'JSONB';
+  else if (type.startsWith('geojson'))
+    return 'geometry(' + this.getPostgresGeoJSONType(type) + ', 4326)';
 }
+
+module.exports.getPostgresListType = function(type) {
+  if (type === 'list' || type === 'list-string')
+    return 'text';
+  else if (type === 'list-numeric')
+    return 'numeric';
+};
+
+module.exports.getPostgresGeoJSONType = function(type) {
+  if (type === 'geojson-point')
+    return 'Point';
+  else if (type === 'geojson-line')
+    return 'LineString';
+  else if (type === 'geojson-polygon')
+    return 'Polygon';
+  else if (type === 'geojson-multipoint')
+    return 'MultiPoint';
+  else if (type === 'geojson-multiline')
+    return 'MultiLineString';
+  else if (type === 'geojson-multipolygon')
+    return 'MultiPolygon';
+  else if (type === 'geojson')
+    return 'Geometry';
+};
 
 module.exports.getValueForType = function(value, type){
   if (type === 'coords') {
     var s = value.split(',');
     return 'ST_SetSRID(ST_MakePoint(' + s[1].trim() + ',' + s[0].trim() + '), 4326)';
 
-  } else if (type == 'geojson') {
+  } else if (type.startsWith('geojson')) {
     if (typeof value !== 'object') {
       value = JSON.parse(value);
     }
@@ -30,13 +58,37 @@ module.exports.getValueForType = function(value, type){
     if (!value.hasOwnProperty('type') ||
         !value.hasOwnProperty('coordinates') ||
         value.coordinates.constructor !== Array) {
-      log.error(type + 'isn\'t a valid GeoJSON');
-      throw Error(type + 'isn\'t a valid GeoJSON');
+      var errorMsg = type + ' isn\'t a valid GeoJSON';
+      log.error(errorMsg);
+      throw Error(errorMsg);
     }
 
-    value.coordinates = this._parseGeoJSONCoordiantes(value.coordinates);
-    
+    var postgresGeoJSONType = this.getPostgresGeoJSONType(type);
+    if (type !== 'geojson' && value.type !== postgresGeoJSONType) {
+      var errorMsg = type + ' isn\'t a valid ' + postgresGeoJSONType + ' GeoJSON';
+      log.error(errorMsg);
+      throw Error(errorMsg);
+    }
+
     return 'ST_SetSRID(ST_GeomFromGeoJSON(\'' + JSON.stringify(value) + '\'), 4326)';
+
+  } else if (type.startsWith('list')) {
+    if (!Array.isArray(value)) {
+      value = [];
+    }
+
+    var sep = '';
+    var cast = '';  // Casting is necesary for empty arrays
+
+    if (type === 'list' || type === 'list-string') {
+      var sep = value.length ? '\'' : '';
+      var cast = 'text';
+
+    } else if (type === 'list-numeric') {
+      var cast = 'numeric';
+    }
+
+    return 'ARRAY[' + sep + value.join(sep + ', ' + sep) + sep + ']::' + cast + '[]';
 
   } else if (type === 'ISO8601' || type === 'timestamp') {
     if (!value || value === '' || new Date(value) == 'Invalid Date'){
@@ -45,13 +97,13 @@ module.exports.getValueForType = function(value, type){
     else {
       return value;
     }
-  
+
   } else if (type === 'string' || type === 'integer' || type === 'float') {
     return value;
 
   } else if (type === 'json') {
     return JSON.stringify(value);
-  
+
   } else if (type === 'percent') {
     return value * 100;
 
@@ -62,7 +114,7 @@ module.exports.getValueForType = function(value, type){
 };
 
 module.exports.isTypeQuoted = function(type){
-  if (type === 'coords' || type === 'geojson' || type === 'integer' || type === 'float' || type === 'percent') {
+  if (type === 'coords' || type.startsWith('geojson') || type.startsWith('list') || type === 'integer' || type === 'float' || type === 'percent') {
     return false;
 
   } else if (type === 'string' || type === 'ISO8601' || type === 'timestamp' || type === 'json') {
@@ -93,16 +145,3 @@ module.exports.parseLatLon = function(subattr) {
   }
   return subattr;
 }
-
-module.exports._parseGeoJSONCoordiantes = function(coordinates) {
-  var _this = this;
-
-  return coordinates.map(function(coordinate) {
-    if (coordinate.constructor === Array) {
-      return _this._parseGeoJSONCoordiantes(coordinate);
-    }
-
-    // Isn't worth it to check if they are floats...
-    return parseFloat(coordinate);
-  });
-};
