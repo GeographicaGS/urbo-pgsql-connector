@@ -190,9 +190,11 @@ function createSubscriptionCallback(sub){
         cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
         cdbmodel.storeData(sub,req.body.contextResponses);
       }
+
+      res.json(true);
     });
 
-    res.json(true);
+
   });
 }
 
