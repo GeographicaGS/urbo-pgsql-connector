@@ -26,6 +26,16 @@ cartodb:
   # Optional. Default to false. If you've an enterprise account at CartoDB you must set this param to true
   enterprise: false
 
+# urbo-processing parameters
+processing:
+  active: false
+  url: http://localhost:XXXX
+  requestAttempts: 5
+  psqlJob: connectorPsql
+  cartoJob: connectorCarto
+  jobAttempts: 3
+  priority: critical
+
 # Orion Context Broker API URLs
 contextBrokerUrls:
   portAuthtk: XXXXX

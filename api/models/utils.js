@@ -1,5 +1,7 @@
-var logParams = require('../config.js').getLogOpt();
+var config = require('../config.js');
+var logParams = config.getLogOpt();
 var log = require('log4js').getLogger(logParams.output);
+var request = require('request');
 var _ = require('underscore');
 
 module.exports.getPostgresType = function(type){
@@ -145,3 +147,78 @@ module.exports.parseLatLon = function(subattr) {
   }
   return subattr;
 }
+
+module.exports.retryRequest = function(options, retries, cb, lastParams) {
+  if (retries > 0) {
+    request(options, function(error, response, body) {
+      if (error) {
+        log.info(`Request failed, retrying ${retries - 1} more times: ` + options);
+        this.retryRequest(options, retries - 1, cb, {
+          error: error,
+          response: response,
+          body: body
+        });
+
+      } else {
+        cb(error, response, body);
+      }
+    }.bind(this));
+
+  } else {
+    cb(lastParams.error, lastParams.response, lastParams.body);
+  }
+};
+
+module.exports.storeData = function(subscription, contextResponses) {
+  var processingConfig = config.getData().processing;
+  var options = {
+    'url': processingConfig.url,
+    'method': 'POST',
+    'headers': {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    'json': {
+      'type': 'undefined',
+      'data': {
+        'title': 'undefined',
+        'contextResponses': 'undefined',
+        'subscription': subscription
+      },
+      'options' : {
+        'attempts': processingConfig.jobAttempts,
+        'priority': processingConfig.priority
+      }
+    }
+  };
+
+  contextResponses.forEach(function(contextResponse) {
+    var psqlOptions = JSON.parse(JSON.stringify(options));  // Cheap deeo clone
+    psqlOptions.json.type = processingConfig.psqlJob;
+    psqlOptions.json.data.title = subscription.id + ' to PSQL';
+    psqlOptions.json.data.contextResponses = [contextResponse];
+    this.retryRequest(psqlOptions, processingConfig.requestAttempts, function(error, response, body) {
+      if (error) {
+        log.error('Error inserting at PGSQL');
+        log.error(error);
+      }
+    });
+
+    var cdbActiveFields = config.cdbActiveFields(subscription);
+    var cdbActive = config.getData().cartodb.active;
+    if (cdbActive && cdbActiveFields) {
+
+      var cartoOptions = JSON.parse(JSON.stringify(options));  // Cheap deeo clone
+      cartoOptions.json.type = processingConfig.cartoJob;
+      cartoOptions.json.data.title = subscription.id + ' to CARTO';
+      cartoOptions.json.data.contextResponses = [contextResponse];
+      this.retryRequest(cartoOptions, processingConfig.requestAttempts, function(error, response, body) {
+        if (error) {
+          log.error('Error inserting at CARTO');
+          log.error(error);
+        }
+      });
+
+    }
+  }.bind(this));
+};
