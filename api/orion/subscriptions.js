@@ -10,6 +10,7 @@ var util = require('util');
 var tokenManager = require('./tokenmanager.js');
 var servicesTokens;
 var subscriptionData = require('./subscriptiondata.js');
+var utils = require('../models/utils.js');
 
 function createSubscriptionSerial(idx,cb){
   var subscriptions = config.getSubs();
@@ -172,28 +173,36 @@ function updateOrionSubscription(sub, subs_id,cb){
     });
 }
 
-function createSubscriptionCallback(sub){
+function createSubscriptionCallback(sub) {
   log.info('Set router: ' + sub.id);
 
-  router.post('/' + sub.id,function(req,res,next){
-    psqlmodel = new SubscriptionsModel(config.getData().pgsql);
-    psqlmodel.storeData(sub,req.body.contextResponses,function(err){
-      if (err){
-        log.error('Error inserting at PGSQL');
-        log.warn('Ignoring data, not writting to Carto (alasarr idea)');
-        return;
-      }
-      var cdbActiveFields = config.cdbActiveFields(sub);
-      var cdbActive = config.getData().cartodb.active;
-      if (cdbActive && cdbActiveFields){
-        cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
-        cdbmodel.storeData(sub,req.body.contextResponses,function(err){
-          if (err)
-            log.error('Error inserting at CARTO');
-        });
-      }
+  router.post('/' + sub.id,function(req, res, next) {
+    if (config.getData().processing.active) {
+      utils.storeData(sub, req.body.contextResponses);
+
+    } else {
+      psqlmodel = new SubscriptionsModel(config.getData().pgsql);
+      psqlmodel.storeData(sub,req.body.contextResponses,function(err){
+        if (err){
+          log.error('Error inserting at PGSQL');
+          log.warn('Ignoring data, not writting to Carto (alasarr idea)');
+          return;
+        }
+        var cdbActiveFields = config.cdbActiveFields(sub);
+        var cdbActive = config.getData().cartodb.active;
+        if (cdbActive && cdbActiveFields){
+          cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
+          cdbmodel.storeData(sub,req.body.contextResponses,function(err){
+            if (err)
+              log.error('Error inserting at CARTO');
+          });
+        }
+      });
+    }
+
+    res.json({
+      ok: 1
     });
-    res.json({ok:1});
   });
 }
 

@@ -26,6 +26,16 @@ cartodb:
   active: false
   enterprise: true
 
+# urbo-processing parameters
+processing:
+  active: false
+  url: http://localhost:XXXX
+  requestAttempts: 5
+  psqlJob: connectorPsql
+  cartoJob: connectorCarto
+  jobAttempts: 3
+  priority: critical
+
 # Orion Context Broker API URLs
 contextBrokerUrls:
   portAuthtk: xxxxxxxxxxxxx

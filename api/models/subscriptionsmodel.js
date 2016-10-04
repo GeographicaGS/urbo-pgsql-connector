@@ -286,7 +286,8 @@ SubscriptionsModel.prototype.upsertSubscriptedData = function(table, obj, objdq,
                 .returning("*")
                 .toString();
   var slUpsrt = this._squel.select().from("upsert");
-  var slCon = slConstructor.from("").where("NOT EXISTS ?", slUpsrt);
+  // var slCon = slConstructor.from("").where("NOT EXISTS ?", slUpsrt);  // OLD -> .from("")
+  var slCon = slConstructor.where("NOT EXISTS ?", slUpsrt);
 
   var dataKeys = _.keys(_.extend(obj, objdq));
   dataKeys.push("updated_at");
