@@ -157,17 +157,15 @@ function Config(){
     }
   }
 
-  this._recreateSubscriptions = function() {
-    return this._data.recreateSubscriptions || {
-      global: false,
-      single: false
-    };
-  };
-
   this.recreateSubscription = function(subscription) {
-    var rss = this._recreateSubscriptions();
+    var rss = this._data.recreateSubscriptions || 'none';
     var rs = subscription.recreateSubscription || false;
-    if (rss.global || (rss.single && rs)) {
+
+    var _global = rss === 'global' ? true : false;  // global is a reserverd word :(
+    var _single = rss === 'single' ? true : false;  // _keeping the mood
+    rs = rs === true ? true : false;  // Only accepting booleans here
+
+    if (_global || (_single && rs)) {
       return true;
 
     } else {
