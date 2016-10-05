@@ -50,6 +50,9 @@ function registerSubscription(sub,cb){
       log.error('Error getting subscription: [%s]',sub.id);
       return cb(err);
     }
+    else if (d && config.recreateSubscription(sub)){
+      recreateSubscription(sub,d.subs_id,cb);
+    }
     else if (d){
       updateOrionSubscription(sub,d.subs_id,cb);
     }
@@ -135,7 +138,6 @@ function newOrionSubscription(sub, cb){
 }
 
 function updateOrionSubscription(sub, subs_id,cb){
-    var cfgData = config.getData();
     var srv = config.getSubService(sub.subservice_id);
 
     var data = {
@@ -171,6 +173,50 @@ function updateOrionSubscription(sub, subs_id,cb){
         cb(error);
       }
     });
+}
+
+function recreateSubscription(sub, subs_id, cb) {
+  var srv = config.getSubService(sub.subservice_id);
+
+  var headers = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Fiware-Service': srv.service,
+    'Fiware-ServicePath': srv.subservice,
+    'x-auth-token': servicesTokens[sub.subservice_id]
+  };
+
+  var data = {
+    'subscriptionId': subs_id
+  };
+
+  var options = {
+    'url': config.getCtxBrUrls('dltsbscr'),
+    'method': 'POST',
+    'rejectUnauthorized': false,
+    'headers': headers,
+    'json': data
+  };
+
+  // Deleting from Orion
+  request(options, function (error, response, body) {
+    if (error || response.statusCode !== 200  || body.statusCode.code !== 200) {
+      log.error(util.format('Error deleting subscription from Orion: [%s]', subs_id));
+      log.error('Request error: ' + error);
+      return cb(error);
+    }
+
+    // Deleting from PSQL
+    model = new SubscriptionsModel(config.getData().pgsql);
+    model.deleteSubscription(subs_id, function(err, data) {
+      if (err) {
+        log.error(util.format('Error deleting subscription from PSQL: [%s]', subs_id));
+        return cb(err);
+      }
+
+      newOrionSubscription(sub, cb);
+    });
+  });
 }
 
 function createSubscriptionCallback(sub) {

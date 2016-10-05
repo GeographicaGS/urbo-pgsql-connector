@@ -218,6 +218,23 @@ SubscriptionsModel.prototype.getSubscription = function(id,cb){
   });
 }
 
+SubscriptionsModel.prototype.deleteSubscription = function(subs_id, cb){
+  var q = 'DELETE FROM subscriptions WHERE subs_id=$1';
+
+  this.query(q,[subs_id],function(err,d){
+    if (err){
+      log.error('Cannot execute sql query');
+      cb(err);
+    }
+    else if (!d.rows.length){
+      cb(null,null);
+    }
+    else{
+      cb(null,d.rows[0]);
+    }
+  });
+};
+
 SubscriptionsModel.prototype.handleSubscriptionsTable = function(data, cb){
   var table = 'subscriptions';
   var sql = 'SELECT COUNT(*) as n FROM subscriptions WHERE id_name=$1';

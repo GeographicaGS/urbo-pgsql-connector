@@ -42,6 +42,11 @@ contextBrokerUrls:
   portCtxApi: XXXXX
   urlCtxBrBase: https://url
 
+# Configuration for recreate (delete and create) subscriptions (true & false better than an enum).
+recreateSubscriptions:
+  global: true
+  single: false
+
 # Fiware subservices catalog.
 subservices:
     # Internal id of subservice. It must be a string without spaces or special characters. Only [a-z][A-Z]
@@ -76,6 +81,8 @@ subscriptions:
     subsduration: P2M
     # Optional: Subscription Throttling (ISO8601 durations). Default: PT0S (zero seconds)
     substhrottling: PT0S
+    # Optional: If 'recreateSubscriptions.global === false' and 'recreateSubscriptions.single === true', this one will be taken into account.
+    recreateSubscription: false
     # Fiware entities to be subscribed.
     # Mandatory: typeName - entity types
     # Optional: typePattern - custom regular expressions to get entitites. Default pattern (get all entities from type): .*

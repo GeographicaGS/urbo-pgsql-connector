@@ -7,11 +7,12 @@ FIWARE NGSI APIv1
 Context management using NGSI10 standard operations:
 https://github.com/telefonicaid/fiware-orion/blob/develop/doc/manuals/user/walkthrough_apiv1.md#ngsi10-standard-operations
 */
-var URL_AUTHTK = '/v3/auth/tokens'
-var URL_QRY = '/NGSI10/queryContext'
-var URL_UDT = '/NGSI10/updateContext'
-var URL_SBC = '/NGSI10/subscribeContext'
-var URL_SBC_UPDATE = '/NGSI10/updateContextSubscription'
+var URL_AUTHTK = '/v3/auth/tokens';
+var URL_QRY = '/NGSI10/queryContext';
+var URL_UDT = '/NGSI10/updateContext';
+var URL_SBC = '/NGSI10/subscribeContext';
+var URL_SBC_UPDATE = '/NGSI10/updateContextSubscription';
+var URL_SBC_DELETE = '/NGSI10/unsubscribeContext';
 
 /*
 Logs params
@@ -141,19 +142,39 @@ function Config(){
     else{
       var portCtxApi = this._data.contextBrokerUrls.portCtxApi;
       var apiBase = urlCtxBrBase + ':' + portCtxApi;
-      if (optype == 'subscr')
+      if (optype === 'subscr')
         return apiBase + URL_SBC;
-      else if (optype == 'updsbscr')
+      else if (optype === 'updsbscr')
         return apiBase + URL_SBC_UPDATE;
-      else if (optype == 'update')
+      else if (optype === 'dltsbscr')
+        return apiBase + URL_SBC_DELETE;
+      else if (optype === 'update')
         return apiBase + URL_UDT;
-      else if (optype == 'query')
+      else if (optype === 'query')
         return apiBase + URL_QRY;
       else
         return null
     }
   }
 
+  this._recreateSubscriptions = function() {
+    return this._data.recreateSubscriptions || {
+      global: false,
+      single: false
+    };
+  };
+
+  this.recreateSubscription = function(subscription) {
+    var rss = this._recreateSubscriptions();
+    var rs = subscription.recreateSubscription || false;
+    if (rss.global || (rss.single && rs)) {
+      return true;
+
+    } else {
+      return false;
+    }
+  };
+
 }
 
-module.exports = new Config()
+module.exports = new Config();
