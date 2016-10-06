@@ -1,9 +1,10 @@
+var config = require('../config.js');
 var util = require('util');
 var CartoDBModel = require('./cartodbmodel.js');
 var utils = require('./utils');
 var _ = require('underscore');
 
-var logParams = require('../config.js').getLogOpt();
+var logParams = config.getLogOpt();
 var log = require('log4js').getLogger(logParams.output);
 
 function SubscriptionsCartoDBModel(cfg) {
@@ -27,7 +28,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
     if (err){
       log.error('Error getting table information');
       log.error(err);
-      return cb(err,null)
+      return cb(err,null);
     }
 
     if (!data.rows[0].n){
@@ -69,6 +70,17 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
           cartodbfy,
           'ALTER TABLE '+tableName + " ADD COLUMN created_at timestamp without time zone DEFAULT (now() at time zone 'utc');",
           'ALTER TABLE '+tableName + " ADD COLUMN updated_at timestamp without time zone DEFAULT (now() at time zone 'utc');" ];
+
+      var attrConstraint = config.getFieldsForConstraint(sub);
+      if (attrConstraint.length) {
+        attrConstraint = attrConstraint.map(function(attribute) {
+          return utils.wrapStrings(attribute, ['"']);
+        });
+        attrConstraint = attrConstraint.join(', ');
+
+        var constraint = 'ALTER TABLE ' + tableName + ' ADD CONSTRAINT ' + sub.id + '_unique UNIQUE (id_entity, ' + attrConstraint + ');'
+        q.push(constraint);
+      }
 
       that.query({ 'query' : q.join(' ') },function(err,data){
         if (err){

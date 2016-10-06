@@ -112,6 +112,9 @@ subscriptions:
         cartodb: true
         # Optional. Default to false. If true a index will be created at PostgreSQL.
         indexdb: true
+        # Optional. Default to false. If true, it will be added in a UNIQUE constraint.
+        # Note: 'id_entity' always is part of the constraint, but if it's the only attribute for the constraint, the constraint won't be created.
+        constraint: true
       - name: position
         type: coords
         cartodb: true

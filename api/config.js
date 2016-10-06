@@ -173,6 +173,16 @@ function Config(){
     }
   };
 
+  this.getFieldsForConstraint = function(subscription) {
+    var attributes = subscription.attributes.filter(function(attribute) {
+      return attribute.constraint;
+    });
+
+    return attributes.map(function(attribute) {
+      return attribute.namedb || attribute.name;
+    });
+  };
+
 }
 
 module.exports = new Config();
