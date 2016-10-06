@@ -90,7 +90,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
         });
         attrConstraint = attrConstraint.join(', ');
 
-        var constraint = ', CONSTRAINT ' + sub.id + '_unique UNIQUE (id_entity, ' + attrConstraint + ')'
+        var constraint = ', CONSTRAINT ' + schemaName + '_' + sub.id + '_unique UNIQUE (id_entity, ' + attrConstraint + ')'
         q.push(constraint);
       }
 
