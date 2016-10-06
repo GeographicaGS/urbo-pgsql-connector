@@ -42,7 +42,7 @@ contextBrokerUrls:
   portCtxApi: XXXXX
   urlCtxBrBase: https://url
 
-# Configuration for recreate (delete and create) subscriptions.
+# Configuration for recreating (delete and create) subscriptions.
 # Optional. Options: global|single|none. Default: none.
 # Note: When 'single' is set, each subscription can have a 'recreateSubscription' boolean attribute.
 recreateSubscriptions: global

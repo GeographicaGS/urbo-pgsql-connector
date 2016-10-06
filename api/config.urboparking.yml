@@ -598,6 +598,9 @@ subscriptions:
         namedb: status
         type: string
         cartodb: true
+      - name: floor
+        type: integer
+        cartodb: true
     trigger_attributes:
       - dateModified
 
@@ -694,6 +697,9 @@ subscriptions:
         namedb: totalspotnumber
         type: integer
         cartodb: true
+      - name: floor
+        type: integer
+        cartodb: true
     trigger_attributes:
       - location
       - allowedVehicleType
@@ -704,6 +710,7 @@ subscriptions:
       - refParkingSite
       - requiredPermit
       - totalSpotNumber
+      - floor
 
   # ParkingSpot #########################
   - id: parkingspot_lastdata

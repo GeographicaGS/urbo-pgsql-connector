@@ -198,9 +198,10 @@ function recreateSubscription(sub, subs_id, cb) {
     'json': data
   };
 
+  log.info(util.format('Recreating subscription [%s] for \'%s\'', subs_id, sub.id));
   // Deleting from Orion
   request(options, function (error, response, body) {
-    if (error || response.statusCode !== 200  || body.statusCode.code !== 200) {
+    if (error || response.statusCode !== 200  || body.statusCode.code !== '200') {
       log.error(util.format('Error deleting subscription from Orion: [%s]', subs_id));
       log.error('Request error: ' + error);
       return cb(error);
