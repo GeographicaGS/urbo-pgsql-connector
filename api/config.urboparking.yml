@@ -26,6 +26,16 @@ cartodb:
   active: false
   enterprise: true
 
+# urbo-processing parameters
+processing:
+  active: false
+  url: http://localhost:XXXX
+  requestAttempts: 5
+  psqlJob: connectorPsql
+  cartoJob: connectorCarto
+  jobAttempts: 3
+  priority: critical
+
 # Orion Context Broker API URLs
 contextBrokerUrls:
   portAuthtk: xxxxxxxxxx
@@ -43,7 +53,7 @@ subservices:
 
 subscriptions:
   # OffStreetParking ######################
-  - id: offstreetparking_lastdata
+  - id: parking_offstreetparking_lastdata
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -62,6 +72,7 @@ subscriptions:
         type: ISO8601
         indexdb: true
         cartodb: true
+        constraint: true
       - name: occupancyDetectionType
         namedb: occupancydetectiontype
         type: list-string
@@ -138,7 +149,7 @@ subscriptions:
     trigger_attributes:
       - dateModified
 
-  - id: offstreetparking_status
+  - id: parking_offstreetparking_status
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -153,6 +164,7 @@ subscriptions:
         type: ISO8601
         indexdb: true
         cartodb: true
+        constraint: true
       - name: status
         namedb: status
         type: string
@@ -160,7 +172,7 @@ subscriptions:
     trigger_attributes:
       - status
 
-  - id: offstreetparking_availablespotnumber
+  - id: parking_offstreetparking_availspotn
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -175,6 +187,7 @@ subscriptions:
         type: ISO8601
         indexdb: true
         cartodb: true
+        constraint: true
       - name: availableSpotNumber
         namedb: availablespotnumber
         type: integer
@@ -182,7 +195,7 @@ subscriptions:
     trigger_attributes:
       - availableSpotNumber
 
-  - id: offstreetparking
+  - id: parking_offstreetparking
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -201,6 +214,7 @@ subscriptions:
         type: ISO8601
         indexdb: true
         cartodb: true
+        constraint: true
       - name: occupancyDetectionType
         namedb: occupancydetectiontype
         type: list-string
@@ -287,7 +301,7 @@ subscriptions:
       - maximumallowedwidth
 
   # OnStreetParking ######################
-  - id: onstreetparking_lastdata
+  - id: parking_onstreetparking_lastdata
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -306,6 +320,7 @@ subscriptions:
         type: ISO8601
         indexdb: true
         cartodb: true
+        constraint: true
       - name: occupancyDetectionType
         namedb: occupancydetectiontype
         type: list-string
@@ -382,7 +397,7 @@ subscriptions:
     trigger_attributes:
       - dateModified
 
-  - id: onstreetparking_status
+  - id: parking_onstreetparking_status
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -397,6 +412,7 @@ subscriptions:
         type: ISO8601
         indexdb: true
         cartodb: true
+        constraint: true
       - name: status
         namedb: status
         type: string
@@ -404,7 +420,7 @@ subscriptions:
     trigger_attributes:
       - status
 
-  - id: onstreetparking_availablespotnumber
+  - id: parking_onstreetparking_availspotn
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -419,6 +435,7 @@ subscriptions:
         type: ISO8601
         indexdb: true
         cartodb: true
+        constraint: true
       - name: availableSpotNumber
         namedb: availablespotnumber
         type: integer
@@ -426,7 +443,7 @@ subscriptions:
     trigger_attributes:
       - availableSpotNumber
 
-  - id: onstreetparking
+  - id: parking_onstreetparking
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -445,6 +462,7 @@ subscriptions:
         type: ISO8601
         indexdb: true
         cartodb: true
+        constraint: true
       - name: occupancyDetectionType
         namedb: occupancydetectiontype
         type: list-string
@@ -529,9 +547,9 @@ subscriptions:
       - lowestFloor
       - maximumallowedheight
       - maximumallowedwidth
-  
+
   # ParkingGroup ######################
-  - id: parkinggroup_lastdata
+  - id: parking_parkinggroup_lastdata
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -550,6 +568,7 @@ subscriptions:
         type: ISO8601
         indexdb: true
         cartodb: true
+        constraint: true
       - name: occupancyDetectionType
         namedb: occupancydetectiontype
         type: string
@@ -588,10 +607,13 @@ subscriptions:
         namedb: status
         type: string
         cartodb: true
+      - name: floor
+        type: integer
+        cartodb: true
     trigger_attributes:
       - dateModified
 
-  - id: parkinggroup_status
+  - id: parking_parkinggroup_status
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -606,6 +628,7 @@ subscriptions:
         type: ISO8601
         indexdb: true
         cartodb: true
+        constraint: true
       - name: status
         namedb: status
         type: string
@@ -613,7 +636,7 @@ subscriptions:
     trigger_attributes:
       - status
 
-  - id: parkinggroup_availablespotnumber
+  - id: parking_parkinggroup_availspotn
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -628,6 +651,7 @@ subscriptions:
         type: ISO8601
         indexdb: true
         cartodb: true
+        constraint: true
       - name: availableSpotNumber
         namedb: availablespotnumber
         type: integer
@@ -635,7 +659,7 @@ subscriptions:
     trigger_attributes:
       - availableSpotNumber
 
-  - id: parkinggroup
+  - id: parking_parkinggroup
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -654,6 +678,7 @@ subscriptions:
         type: ISO8601
         indexdb: true
         cartodb: true
+        constraint: true
       - name: occupancyDetectionType
         namedb: occupancydetectiontype
         type: string
@@ -684,6 +709,9 @@ subscriptions:
         namedb: totalspotnumber
         type: integer
         cartodb: true
+      - name: floor
+        type: integer
+        cartodb: true
     trigger_attributes:
       - location
       - allowedVehicleType
@@ -694,9 +722,10 @@ subscriptions:
       - refParkingSite
       - requiredPermit
       - totalSpotNumber
+      - floor
 
   # ParkingSpot #########################
-  - id: parkingspot_lastdata
+  - id: parking_parkingspot_lastdata
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -715,6 +744,7 @@ subscriptions:
         type: ISO8601
         indexdb: true
         cartodb: true
+        constraint: true
       - name: category
         type: list-string
         cartodb: true
@@ -741,7 +771,7 @@ subscriptions:
     trigger_attributes:
       - dateModified
 
-  - id: parkingspot_status
+  - id: parking_parkingspot_status
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -756,13 +786,14 @@ subscriptions:
         type: ISO8601
         indexdb: true
         cartodb: true
+        constraint: true
       - name: status
         type: string
         cartodb: true
     trigger_attributes:
       - status
 
-  - id: parkingspot
+  - id: parking_parkingspot
     subservice_id: parking_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
@@ -781,6 +812,7 @@ subscriptions:
         type: ISO8601
         indexdb: true
         cartodb: true
+        constraint: true
       - name: category
         type: list-string
         cartodb: true

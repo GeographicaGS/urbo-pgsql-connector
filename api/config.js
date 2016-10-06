@@ -7,11 +7,12 @@ FIWARE NGSI APIv1
 Context management using NGSI10 standard operations:
 https://github.com/telefonicaid/fiware-orion/blob/develop/doc/manuals/user/walkthrough_apiv1.md#ngsi10-standard-operations
 */
-var URL_AUTHTK = '/v3/auth/tokens'
-var URL_QRY = '/NGSI10/queryContext'
-var URL_UDT = '/NGSI10/updateContext'
-var URL_SBC = '/NGSI10/subscribeContext'
-var URL_SBC_UPDATE = '/NGSI10/updateContextSubscription'
+var URL_AUTHTK = '/v3/auth/tokens';
+var URL_QRY = '/NGSI10/queryContext';
+var URL_UDT = '/NGSI10/updateContext';
+var URL_SBC = '/NGSI10/subscribeContext';
+var URL_SBC_UPDATE = '/NGSI10/updateContextSubscription';
+var URL_SBC_DELETE = '/NGSI10/unsubscribeContext';
 
 /*
 Logs params
@@ -141,19 +142,47 @@ function Config(){
     else{
       var portCtxApi = this._data.contextBrokerUrls.portCtxApi;
       var apiBase = urlCtxBrBase + ':' + portCtxApi;
-      if (optype == 'subscr')
+      if (optype === 'subscr')
         return apiBase + URL_SBC;
-      else if (optype == 'updsbscr')
+      else if (optype === 'updsbscr')
         return apiBase + URL_SBC_UPDATE;
-      else if (optype == 'update')
+      else if (optype === 'dltsbscr')
+        return apiBase + URL_SBC_DELETE;
+      else if (optype === 'update')
         return apiBase + URL_UDT;
-      else if (optype == 'query')
+      else if (optype === 'query')
         return apiBase + URL_QRY;
       else
         return null
     }
   }
 
+  this.recreateSubscription = function(subscription) {
+    var rss = this._data.recreateSubscriptions || 'none';
+    var rs = subscription.recreateSubscription || false;
+
+    var _global = rss === 'global' ? true : false;  // global is a reserverd word :(
+    var _single = rss === 'single' ? true : false;  // _keeping the mood
+    rs = rs === true ? true : false;  // Only accepting booleans here
+
+    if (_global || (_single && rs)) {
+      return true;
+
+    } else {
+      return false;
+    }
+  };
+
+  this.getFieldsForConstraint = function(subscription) {
+    var attributes = subscription.attributes.filter(function(attribute) {
+      return attribute.constraint;
+    });
+
+    return attributes.map(function(attribute) {
+      return attribute.namedb || attribute.name;
+    });
+  };
+
 }
 
-module.exports = new Config()
+module.exports = new Config();

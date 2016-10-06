@@ -10,6 +10,7 @@ var util = require('util');
 var tokenManager = require('./tokenmanager.js');
 var servicesTokens;
 var subscriptionData = require('./subscriptiondata.js');
+var utils = require('../models/utils.js');
 
 function createSubscriptionSerial(idx,cb){
   var subscriptions = config.getSubs();
@@ -48,6 +49,9 @@ function registerSubscription(sub,cb){
     if (err){
       log.error('Error getting subscription: [%s]',sub.id);
       return cb(err);
+    }
+    else if (d && config.recreateSubscription(sub)){
+      recreateSubscription(sub,d.subs_id,cb);
     }
     else if (d){
       updateOrionSubscription(sub,d.subs_id,cb);
@@ -134,7 +138,6 @@ function newOrionSubscription(sub, cb){
 }
 
 function updateOrionSubscription(sub, subs_id,cb){
-    var cfgData = config.getData();
     var srv = config.getSubService(sub.subservice_id);
 
     var data = {
@@ -172,28 +175,81 @@ function updateOrionSubscription(sub, subs_id,cb){
     });
 }
 
-function createSubscriptionCallback(sub){
+function recreateSubscription(sub, subs_id, cb) {
+  var srv = config.getSubService(sub.subservice_id);
+
+  var headers = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Fiware-Service': srv.service,
+    'Fiware-ServicePath': srv.subservice,
+    'x-auth-token': servicesTokens[sub.subservice_id]
+  };
+
+  var data = {
+    'subscriptionId': subs_id
+  };
+
+  var options = {
+    'url': config.getCtxBrUrls('dltsbscr'),
+    'method': 'POST',
+    'rejectUnauthorized': false,
+    'headers': headers,
+    'json': data
+  };
+
+  log.info(util.format('Recreating subscription [%s] for \'%s\'', subs_id, sub.id));
+  // Deleting from Orion
+  request(options, function (error, response, body) {
+    if (error || response.statusCode !== 200  || body.statusCode.code !== '200') {
+      log.error(util.format('Error deleting subscription from Orion: [%s]', subs_id));
+      log.error('Request error: ' + error);
+      return cb(error);
+    }
+
+    // Deleting from PSQL
+    model = new SubscriptionsModel(config.getData().pgsql);
+    model.deleteSubscription(subs_id, function(err, data) {
+      if (err) {
+        log.error(util.format('Error deleting subscription from PSQL: [%s]', subs_id));
+        return cb(err);
+      }
+
+      newOrionSubscription(sub, cb);
+    });
+  });
+}
+
+function createSubscriptionCallback(sub) {
   log.info('Set router: ' + sub.id);
 
-  router.post('/' + sub.id,function(req,res,next){
-    psqlmodel = new SubscriptionsModel(config.getData().pgsql);
-    psqlmodel.storeData(sub,req.body.contextResponses,function(err){
-      if (err){
-        log.error('Error inserting at PGSQL');
-        log.warn('Ignoring data, not writting to Carto (alasarr idea)');
-        return;
-      }
-      var cdbActiveFields = config.cdbActiveFields(sub);
-      var cdbActive = config.getData().cartodb.active;
-      if (cdbActive && cdbActiveFields){
-        cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
-        cdbmodel.storeData(sub,req.body.contextResponses,function(err){
-          if (err)
-            log.error('Error inserting at CARTO');
-        });
-      }
+  router.post('/' + sub.id,function(req, res, next) {
+    if (config.getData().processing.active) {
+      utils.storeData(sub, req.body.contextResponses);
+
+    } else {
+      psqlmodel = new SubscriptionsModel(config.getData().pgsql);
+      psqlmodel.storeData(sub,req.body.contextResponses,function(err){
+        if (err){
+          log.error('Error inserting at PGSQL');
+          log.warn('Ignoring data, not writting to Carto (alasarr idea)');
+          return;
+        }
+        var cdbActiveFields = config.cdbActiveFields(sub);
+        var cdbActive = config.getData().cartodb.active;
+        if (cdbActive && cdbActiveFields){
+          cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
+          cdbmodel.storeData(sub,req.body.contextResponses,function(err){
+            if (err)
+              log.error('Error inserting at CARTO');
+          });
+        }
+      });
+    }
+
+    res.json({
+      ok: 1
     });
-    res.json({ok:1});
   });
 }
 
