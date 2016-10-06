@@ -1,9 +1,10 @@
+var config = require('../config.js');
 var util = require('util');
 var PGSQLModel = require('./pgsqlmodel.js');
 var utils = require('./utils');
 var _ = require('underscore');
 
-var logParams = require('../config.js').getLogOpt();
+var logParams = config.getLogOpt();
 var log = require('log4js').getLogger(logParams.output);
 
 function SubscriptionsModel(cfg) {
@@ -46,7 +47,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
   var schemaName = sub.schemaname;
 
   var sql = ['SELECT * FROM information_schema.tables',
-             "WHERE table_schema = $1 AND table_name = $2"]
+             "WHERE table_schema = $1 AND table_name = $2"];
 
   var that = this;
   this.query(sql.join(' '),[schemaName, sub.id],function(err,data){
@@ -80,8 +81,20 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           fields.join(','),
           ",id_entity varchar(64) not null",
           ",created_at timestamp without time zone DEFAULT (now() at time zone 'utc')",
-          ",updated_at timestamp without time zone DEFAULT (now() at time zone 'utc')",
-          ')'];
+          ",updated_at timestamp without time zone DEFAULT (now() at time zone 'utc')"];
+
+      var attrConstraint = config.getFieldsForConstraint(sub);
+      if (attrConstraint.length) {
+        attrConstraint = attrConstraint.map(function(attribute) {
+          return utils.wrapStrings(attribute, ['"']);
+        });
+        attrConstraint = attrConstraint.join(', ');
+
+        var constraint = ', CONSTRAINT ' + sub.id + '_unique UNIQUE (id_entity, ' + attrConstraint + ')'
+        q.push(constraint);
+      }
+
+      q.push(')');
 
       that.query(q.join(' '),null,function(err,data){
         if (err){
@@ -217,6 +230,23 @@ SubscriptionsModel.prototype.getSubscription = function(id,cb){
     }
   });
 }
+
+SubscriptionsModel.prototype.deleteSubscription = function(subs_id, cb){
+  var q = 'DELETE FROM subscriptions WHERE subs_id=$1';
+
+  this.query(q,[subs_id],function(err,d){
+    if (err){
+      log.error('Cannot execute sql query');
+      cb(err);
+    }
+    else if (!d.rows.length){
+      cb(null,null);
+    }
+    else{
+      cb(null,d.rows[0]);
+    }
+  });
+};
 
 SubscriptionsModel.prototype.handleSubscriptionsTable = function(data, cb){
   var table = 'subscriptions';
