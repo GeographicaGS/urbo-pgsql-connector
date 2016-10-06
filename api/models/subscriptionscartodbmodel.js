@@ -78,7 +78,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
         });
         attrConstraint = attrConstraint.join(', ');
 
-        var constraint = 'ALTER TABLE ' + tableName + ' ADD CONSTRAINT ' + sub.schemaname + '_' + sub.id + '_unique UNIQUE (id_entity, ' + attrConstraint + ');';
+        var constraint = 'ALTER TABLE ' + tableName + ' ADD CONSTRAINT ' + tableName + '_unique UNIQUE (id_entity, ' + attrConstraint + ');';
         q.push(constraint);
       }
 
