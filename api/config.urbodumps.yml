@@ -26,6 +26,16 @@ cartodb:
   active: false
   enterprise: true
 
+# urbo-processing parameters
+processing:
+  active: false
+  url: http://localhost:XXXX
+  requestAttempts: 5
+  psqlJob: connectorPsql
+  cartoJob: connectorCarto
+  jobAttempts: 3
+  priority: critical
+
 # Orion Context Broker API URLs
 contextBrokerUrls:
   portAuthtk: xxxxxxxxxxxxx
@@ -60,6 +70,7 @@ subscriptions:
         type: ISO8601
         cartodb: true
         indexdb: true
+        constraint: true
       - name: dateUpdated
         namedb: dateupdated
         type: ISO8601
@@ -147,6 +158,7 @@ subscriptions:
         type: ISO8601
         cartodb: true
         indexdb: true
+        constraint: true
       - name: dateUpdated
         namedb: dateupdated
         type: ISO8601
