@@ -1,0 +1,207 @@
+  # FIWARE URBO STREETLIGHT CONNECTOR CONFIGURATION FILE
+
+baseURL: http://url:port
+
+# debugAccessToken:
+
+# Logging configuration parameters
+logging:
+  # Level options: INFO|ERROR|DEBUG. Default: INFO
+  level: DEBUG
+  # Output options: console|file. Default: console
+  output: file
+
+# PostgreSQL configuration parameters
+pgsql:
+  host: postgis
+  user: xxxxxxxxxx
+  password: xxxxxxxxxx
+  database: xxxxxxxxxx
+  port: 5432
+
+# CartoDB configuration parameters
+cartodb:
+  apiKey: xxxxxxxxxx
+  user: xxxxxxxxxx
+  active: false
+  enterprise: true
+
+# urbo-processing parameters
+processing:
+  active: false
+  url: http://localhost:XXXX
+  requestAttempts: 5
+  psqlJob: connectorPsql
+  cartoJob: connectorCarto
+  jobAttempts: 3
+  priority: critical
+
+# Orion Context Broker API URLs
+contextBrokerUrls:
+  portAuthtk: xxxxxxxxxx
+  portCtxApi: xxxxxxxxxx
+  urlCtxBrBase: https://xxxxxxxxxx
+
+# Fiware subservices subscriptions configuration
+subservices:
+  - id: streetlight_simulations
+    service: urbo
+    subservice: /geographica
+    auth:
+      user: xxxxxxxxxx
+      password: xxxxxxxxxx
+
+subscriptions:
+  # StreetlightControlCabinet ######################
+  - id: lighting_stcabinet
+    subservice_id: lighting_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: true
+    entityTypes:
+      - typeName: StreetlightControlCabinet
+    mode: update
+    attributes:
+      - name: location
+        namedb: position
+        type: geojson-multipolygon
+        cartodb: true
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: address
+        type: string
+        cartodb: true
+      - name: areaServed
+        namedb: areaserved
+        type: string
+        cartodb: true
+      - name: serialNumber
+        namedb: serialnumber
+        type: string
+        cartodb: true
+      - name: cupboardMadeOf
+        namedb: cupboardmadeof
+        type: string
+        cartodb: true
+      - name: brandName
+        namedb: brandname
+        type: string
+        cartodb: true
+      - name: modelName
+        namedb: modelname
+        type: string
+        cartodb: true
+      - name: workingMode
+        namedb: workingmode
+        type: string
+        cartodb: true
+      - name: meteringStartingDate
+        namedb: meteringstartingdate
+        type: ISO8601
+        cartodb: true
+      - name: maximumPowerAvailable
+        namedb: maximumpoweravailable
+        type: integer
+        cartodb: true
+    trigger_attributes:
+      - dateModified
+
+
+
+
+
+
+  # StreetlightControlCabinet ######################
+  - id: lighting_stcabinet_state
+    subservice_id: lighting_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: true
+    entityTypes:
+      - typeName: StreetlightControlCabinet
+    mode: update
+    attributes:
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: energyConsumed
+        namedb: energyconsumed
+        type: long integer
+        cartodb: true
+      - name: reactiveEnergyConsumed
+        namedb: reactiveenergyconsumed
+        type: long integer
+        cartodb: true
+      - name: totalActivePower
+        namedb: totalactivepower
+        type: integer
+        cartodb: true
+      - name: carbonFootprint
+        namedb: carbonfootprint
+        type: long integer
+        cartodb: true
+      - name: energyCost
+        namedb: energycost
+        type: long integer
+        cartodb: true
+
+    trigger_attributes:
+      - totalActivePower
+
+
+  # StreetlightControlCabinet ######################
+  - id: lighting_stcabinet_powerstate
+    subservice_id: lighting_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: true
+    entityTypes:
+      - typeName: StreetlightControlCabinet
+    mode: update
+    attributes:
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: powerState
+        namedb: powerstate
+        type: string
+    trigger_attributes:
+      - powerState
+
+
+  # StreetlightControlCabinet ######################
+  - id: lighting_stcabinet_lastinvoicedat
+    subservice_id: lighting_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: true
+    entityTypes:
+      - typeName: StreetlightControlCabinet
+    mode: update
+    attributes:
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: dateLastInvoice
+        namedb: lastinvoicedate
+        type: ISO8601
+        cartodb: true
+    trigger_attributes:
+      - dateLastInvoice      
