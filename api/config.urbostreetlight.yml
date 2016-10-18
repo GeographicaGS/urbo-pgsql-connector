@@ -58,30 +58,21 @@ subscriptions:
     schemaname: distrito_telefonica
     subsduration: P8M
     substhrottling: PT0S
-    fetchDataOnCreated: true
+    fetchDataOnCreated: false
     entityTypes:
       - typeName: StreetlightControlCabinet
-    mode: update
+    mode: append
     attributes:
-      - name: location
-        namedb: position
-        type: geojson-multipolygon
+      - name: position
+        type: geojson-point
         cartodb: true
-      - name: dateModified
-        namedb: TimeInstant
+      - name: TimeInstant
         type: ISO8601
         indexdb: true
         cartodb: true
         constraint: true
-      - name: address
-        type: string
-        cartodb: true
       - name: areaServed
         namedb: areaserved
-        type: string
-        cartodb: true
-      - name: serialNumber
-        namedb: serialnumber
         type: string
         cartodb: true
       - name: cupboardMadeOf
@@ -100,21 +91,75 @@ subscriptions:
         namedb: workingmode
         type: string
         cartodb: true
-      - name: meteringStartingDate
-        namedb: meteringstartingdate
-        type: ISO8601
-        cartodb: true
       - name: maximumPowerAvailable
         namedb: maximumpoweravailable
         type: integer
         cartodb: true
     trigger_attributes:
-      - dateModified
+      - position
+      - areaServed
+      - cupboardMadeOf
+      - brandName
+      - modelName
+      - workingMode
+      - maximumPowerAvailable
 
-
-
-
-
+  - id: lighting_stcabinet_lastdata
+    subservice_id: lighting_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: StreetlightControlCabinet
+    mode: update
+    attributes:
+      - name: position
+        type: geojson-point
+        cartodb: true
+      - name: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: areaServed
+        namedb: areaserved
+        type: string
+        cartodb: true
+      - name: cupboardMadeOf
+        namedb: cupboardmadeof
+        type: string
+        cartodb: true
+      - name: brandName
+        namedb: brandname
+        type: string
+        cartodb: true
+      - name: modelName
+        namedb: modelname
+        type: string
+        cartodb: true
+      - name: workingMode
+        namedb: workingmode
+        type: string
+        cartodb: true
+      - name: maximumPowerAvailable
+        namedb: maximumpoweravailable
+        type: integer
+        cartodb: true
+      - name: ___Consumo_ModBus__energía_acumulada_activa_
+        namedb: energyconsumed
+        type: long integer
+        cartodb: true
+      - name: ___Consumo_ModBus__energía_acumulada_reactiva_
+        namedb: reactiveenergyconsumed
+        type: long integer
+        cartodb: true
+      - name: ___Consumo_activo_instantáneo__R+S+T_
+        namedb: totalactivepower
+        type: integer
+        cartodb: true
+    trigger_attributes:
+      - TimeInstant
 
   # StreetlightControlCabinet ######################
   - id: lighting_stcabinet_state
@@ -122,40 +167,31 @@ subscriptions:
     schemaname: distrito_telefonica
     subsduration: P8M
     substhrottling: PT0S
-    fetchDataOnCreated: true
+    fetchDataOnCreated: false
     entityTypes:
       - typeName: StreetlightControlCabinet
-    mode: update
+    mode: append
     attributes:
-      - name: dateModified
-        namedb: TimeInstant
+      - name: TimeInstant
         type: ISO8601
         indexdb: true
         cartodb: true
         constraint: true
-      - name: energyConsumed
+      - name: ___Consumo_ModBus__energía_acumulada_activa_
         namedb: energyconsumed
         type: long integer
         cartodb: true
-      - name: reactiveEnergyConsumed
+      - name: ___Consumo_ModBus__energía_acumulada_reactiva_
         namedb: reactiveenergyconsumed
         type: long integer
         cartodb: true
-      - name: totalActivePower
+      - name: ___Consumo_activo_instantáneo__R+S+T_
         namedb: totalactivepower
         type: integer
         cartodb: true
-      - name: carbonFootprint
-        namedb: carbonfootprint
-        type: long integer
-        cartodb: true
-      - name: energyCost
-        namedb: energycost
-        type: long integer
-        cartodb: true
 
     trigger_attributes:
-      - totalActivePower
+      - ___Consumo_activo_instantáneo__R+S+T_
 
 
   # StreetlightControlCabinet ######################
@@ -164,13 +200,12 @@ subscriptions:
     schemaname: distrito_telefonica
     subsduration: P8M
     substhrottling: PT0S
-    fetchDataOnCreated: true
+    fetchDataOnCreated: false
     entityTypes:
       - typeName: StreetlightControlCabinet
-    mode: update
+    mode: append
     attributes:
-      - name: dateModified
-        namedb: TimeInstant
+      - name: TimeInstant
         type: ISO8601
         indexdb: true
         cartodb: true
@@ -180,28 +215,3 @@ subscriptions:
         type: string
     trigger_attributes:
       - powerState
-
-
-  # StreetlightControlCabinet ######################
-  - id: lighting_stcabinet_lastinvoicedat
-    subservice_id: lighting_simulations
-    schemaname: distrito_telefonica
-    subsduration: P8M
-    substhrottling: PT0S
-    fetchDataOnCreated: true
-    entityTypes:
-      - typeName: StreetlightControlCabinet
-    mode: update
-    attributes:
-      - name: dateModified
-        namedb: TimeInstant
-        type: ISO8601
-        indexdb: true
-        cartodb: true
-        constraint: true
-      - name: dateLastInvoice
-        namedb: lastinvoicedate
-        type: ISO8601
-        cartodb: true
-    trigger_attributes:
-      - dateLastInvoice      
