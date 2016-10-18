@@ -95,6 +95,31 @@ subscriptions:
         namedb: maximumpoweravailable
         type: integer
         cartodb: true
+      - name: customerId
+        namedb: customerid
+        type: string
+        cartodb: true
+      - name: premisesId
+        namedb: premisesid
+        type: string
+        cartodb: true
+      - name: groupId
+        namedb: groupid
+        type: string
+        cartodb: true
+      - name: deviceType
+        namedb: devicetype
+        type: string
+        cartodb: true
+      - name: energyType
+        namedb: energytype
+        type: string
+        cartodb: true
+      - name: energyUse
+        namedb: energyuse
+        type: string
+        cartodb: true
+
     trigger_attributes:
       - position
       - areaServed
@@ -103,6 +128,12 @@ subscriptions:
       - modelName
       - workingMode
       - maximumPowerAvailable
+      - customerId
+      - premisesId
+      - groupId
+      - deviceType
+      - energyType
+      - energyUse
 
   - id: lighting_stcabinet_lastdata
     subservice_id: lighting_simulations
@@ -158,6 +189,31 @@ subscriptions:
         namedb: totalactivepower
         type: integer
         cartodb: true
+      - name: customerId
+        namedb: customerid
+        type: string
+        cartodb: true
+      - name: premisesId
+        namedb: premisesid
+        type: string
+        cartodb: true
+      - name: groupId
+        namedb: groupid
+        type: string
+        cartodb: true
+      - name: deviceType
+        namedb: devicetype
+        type: string
+        cartodb: true
+      - name: energyType
+        namedb: energytype
+        type: string
+        cartodb: true
+      - name: energyUse
+        namedb: energyuse
+        type: string
+        cartodb: true
+
     trigger_attributes:
       - TimeInstant
 
