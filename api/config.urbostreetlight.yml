@@ -127,15 +127,15 @@ subscriptions:
         constraint: true
       - name: energyConsumed
         namedb: energyconsumed
-        type: bigint
+        type: float
         cartodb: true
       - name: reactiveEnergyConsumed
         namedb: reactiveenergyconsumed
-        type: bigint
+        type: float
         cartodb: true
       - name: totalActivePower
         namedb: totalactivepower
-        type: integer
+        type: float
         cartodb: true
       - name: customerId
         namedb: customerid
@@ -184,15 +184,15 @@ subscriptions:
         constraint: true
       - name: energyConsumed
         namedb: energyconsumed
-        type: long integer
+        type: float
         cartodb: true
       - name: reactiveEnergyConsumed
         namedb: reactiveenergyconsumed
-        type: long integer
+        type: float
         cartodb: true
       - name: totalActivePower
         namedb: totalactivepower
-        type: integer
+        type: float
         cartodb: true
 
     trigger_attributes:
