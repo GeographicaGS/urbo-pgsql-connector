@@ -127,11 +127,11 @@ subscriptions:
         constraint: true
       - name: energyConsumed
         namedb: energyconsumed
-        type: long integer
+        type: bigint
         cartodb: true
       - name: reactiveEnergyConsumed
         namedb: reactiveenergyconsumed
-        type: long integer
+        type: bigint
         cartodb: true
       - name: totalActivePower
         namedb: totalactivepower
