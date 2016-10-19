@@ -66,35 +66,12 @@ subscriptions:
       - name: position
         type: geojson-point
         cartodb: true
-      - name: TimeInstant
+      - name: timeInstant
+        namedb: TimeInstant
         type: ISO8601
         indexdb: true
         cartodb: true
         constraint: true
-      - name: areaServed
-        namedb: areaserved
-        type: string
-        cartodb: true
-      - name: cupboardMadeOf
-        namedb: cupboardmadeof
-        type: string
-        cartodb: true
-      - name: brandName
-        namedb: brandname
-        type: string
-        cartodb: true
-      - name: modelName
-        namedb: modelname
-        type: string
-        cartodb: true
-      - name: workingMode
-        namedb: workingmode
-        type: string
-        cartodb: true
-      - name: maximumPowerAvailable
-        namedb: maximumpoweravailable
-        type: integer
-        cartodb: true
       - name: customerId
         namedb: customerid
         type: string
@@ -148,44 +125,21 @@ subscriptions:
       - name: position
         type: geojson-point
         cartodb: true
-      - name: TimeInstant
+      - name: timeInstant
+        namedb: TimeInstant
         type: ISO8601
         indexdb: true
         cartodb: true
         constraint: true
-      - name: areaServed
-        namedb: areaserved
-        type: string
-        cartodb: true
-      - name: cupboardMadeOf
-        namedb: cupboardmadeof
-        type: string
-        cartodb: true
-      - name: brandName
-        namedb: brandname
-        type: string
-        cartodb: true
-      - name: modelName
-        namedb: modelname
-        type: string
-        cartodb: true
-      - name: workingMode
-        namedb: workingmode
-        type: string
-        cartodb: true
-      - name: maximumPowerAvailable
-        namedb: maximumpoweravailable
-        type: integer
-        cartodb: true
-      - name: ___Consumo_ModBus__energía_acumulada_activa_
+      - name: energyConsumed
         namedb: energyconsumed
         type: long integer
         cartodb: true
-      - name: ___Consumo_ModBus__energía_acumulada_reactiva_
+      - name: reactiveEnergyConsumed
         namedb: reactiveenergyconsumed
         type: long integer
         cartodb: true
-      - name: ___Consumo_activo_instantáneo__R+S+T_
+      - name: totalActivePower
         namedb: totalactivepower
         type: integer
         cartodb: true
@@ -215,7 +169,7 @@ subscriptions:
         cartodb: true
 
     trigger_attributes:
-      - TimeInstant
+      - timeInstant
 
   # StreetlightControlCabinet ######################
   - id: lighting_stcabinet_state
@@ -228,26 +182,27 @@ subscriptions:
       - typeName: StreetlightControlCabinet
     mode: append
     attributes:
-      - name: TimeInstant
+      - name: timeInstant
+        namedb: "TimeInstant"
         type: ISO8601
         indexdb: true
         cartodb: true
         constraint: true
-      - name: ___Consumo_ModBus__energía_acumulada_activa_
+      - name: energyConsumed
         namedb: energyconsumed
         type: long integer
         cartodb: true
-      - name: ___Consumo_ModBus__energía_acumulada_reactiva_
+      - name: reactiveEnergyConsumed
         namedb: reactiveenergyconsumed
         type: long integer
         cartodb: true
-      - name: ___Consumo_activo_instantáneo__R+S+T_
+      - name: totalActivePower
         namedb: totalactivepower
         type: integer
         cartodb: true
 
     trigger_attributes:
-      - ___Consumo_activo_instantáneo__R+S+T_
+      - totalActivePower
 
 
   # StreetlightControlCabinet ######################
@@ -261,7 +216,8 @@ subscriptions:
       - typeName: StreetlightControlCabinet
     mode: append
     attributes:
-      - name: TimeInstant
+      - name: timeInstant
+        namedb: TimeInstant
         type: ISO8601
         indexdb: true
         cartodb: true
