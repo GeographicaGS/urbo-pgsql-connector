@@ -99,12 +99,6 @@ subscriptions:
 
     trigger_attributes:
       - position
-      - areaServed
-      - cupboardMadeOf
-      - brandName
-      - modelName
-      - workingMode
-      - maximumPowerAvailable
       - customerId
       - premisesId
       - groupId
