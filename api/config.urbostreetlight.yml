@@ -60,7 +60,7 @@ subscriptions:
     substhrottling: PT0S
     fetchDataOnCreated: false
     entityTypes:
-      - typeName: StreetlightControlCabinet
+      - typeName: ht_6
     mode: append
     attributes:
       - name: position
@@ -113,7 +113,7 @@ subscriptions:
     substhrottling: PT0S
     fetchDataOnCreated: false
     entityTypes:
-      - typeName: StreetlightControlCabinet
+      - typeName: ht_6
     mode: update
     attributes:
       - name: position
@@ -173,7 +173,7 @@ subscriptions:
     substhrottling: PT0S
     fetchDataOnCreated: false
     entityTypes:
-      - typeName: StreetlightControlCabinet
+      - typeName: ht_6
     mode: append
     attributes:
       - name: timeInstant
@@ -207,7 +207,7 @@ subscriptions:
     substhrottling: PT0S
     fetchDataOnCreated: false
     entityTypes:
-      - typeName: StreetlightControlCabinet
+      - typeName: ht_6
     mode: append
     attributes:
       - name: timeInstant
