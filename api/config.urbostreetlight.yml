@@ -141,6 +141,10 @@ subscriptions:
         namedb: customerid
         type: string
         cartodb: true
+      - name: powerState
+        namedb: powerstate
+        type: string
+        cartodb: true
       - name: premisesId
         namedb: premisesid
         type: string
