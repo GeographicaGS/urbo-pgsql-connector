@@ -298,7 +298,7 @@ SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(table, obj,
 
   this.query({ 'query' : sql}, function(err, r){
     if (err)
-      log.error('Cannot execute upsert query for table [%s] - CartoDB',table);
+      log.error('CARTO: Cannot execute upsert query: %s',sql);
     if (cb) cb(err);
   });
 }

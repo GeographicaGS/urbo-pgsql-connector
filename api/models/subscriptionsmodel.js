@@ -301,11 +301,8 @@ SubscriptionsModel.prototype.upsertSubscriptedData = function(table, obj, objdq,
               ON CONFLICT (id_entity) DO UPDATE SET ${update}`;
 
   this.query(sql,null, function(err, r){
-    if (err){
-      log.error('Cannot execute upsert query:' + sql);
-      log.error(bindings);
-      log.error(err);
-    }
+    if (err)
+      log.error('Cannot execute upsert query: %s'  + sql);
 
     if (cb) cb(err);
 
