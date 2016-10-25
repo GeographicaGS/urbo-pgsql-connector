@@ -159,7 +159,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
 SubscriptionsCartoDBModel.prototype.createJSONIndexes = function(sub, attribs){
   var q;
   for (var i=0;i<attribs.length;i++){
-    q = ['CREATE INDEX',sub.id+'_'+attribs[i]+'_idx',
+    q = ['CREATE INDEX ' + sub.schemaname + '_' + sub.id + '_' + attribs[i]+'_idx',
          'ON',sub.schemaname+'_'+sub.id,'USING gin('+utils.wrapStrings(attribs[i],['"'])+')'];
 
     this.query({ 'query' : q.join(' ')}, null, function(err, r){
@@ -175,7 +175,7 @@ SubscriptionsCartoDBModel.prototype.createAttrIndexes = function(sub, attribs){
   var q = [];
   var sq;
   for (var i=0;i<attribs.length;i++){
-    sq = ['CREATE INDEX',sub.id+'_'+attribs[i]+'_idx',
+    sq = ['CREATE INDEX ' + sub.schemaname + '_' + sub.id + '_' + attribs[i]+'_idx',
          'ON',sub.schemaname+'_'+sub.id,'USING btree('+utils.wrapStrings(attribs[i],['"'])+');'];
     q.push(sq.join(' '));
   }

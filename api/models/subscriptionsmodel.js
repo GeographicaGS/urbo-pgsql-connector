@@ -172,7 +172,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
 }
 
 SubscriptionsModel.prototype.createGeomIndexes = function(sub){
-  var q = ['CREATE INDEX',sub.id+'_geometry_idx',
+  var q = ['CREATE INDEX ' + sub.schemaname + '_' + sub.id+'_gidx',
            'ON',sub.schemaname+'.'+sub.id,'USING gist(position)'];
 
   this.query(q.join(' '),null,function(err,d){
@@ -186,7 +186,7 @@ SubscriptionsModel.prototype.createGeomIndexes = function(sub){
 SubscriptionsModel.prototype.createJSONIndexes = function(sub, attribs){
   var q;
   for (var i=0;i<attribs.length;i++){
-    q = ['CREATE INDEX',sub.id+'_'+attribs[i]+'_idx',
+    q = ['CREATE INDEX'  + sub.schemaname + '_' + sub.id + '_' + attribs[i]+'_idx',
          'ON',sub.schemaname+'.'+sub.id,'USING gin('+utils.wrapStrings(attribs[i],['"'])+')'];
 
     this.query(q.join(' '),null,function(err,d){
@@ -201,7 +201,7 @@ SubscriptionsModel.prototype.createJSONIndexes = function(sub, attribs){
 SubscriptionsModel.prototype.createAttrIndexes = function(sub, attribs){
   var q;
   for (var i=0;i<attribs.length;i++){
-    q = ['CREATE INDEX',sub.id+'_'+attribs[i]+'_idx',
+    q = ['CREATE INDEX' + sub.schemaname + '_' + sub.id+ '_'+attribs[i]+'_idx',
          'ON',sub.schemaname+'.'+sub.id,'USING btree('+utils.wrapStrings(attribs[i],['"'])+')'];
 
     this.query(q.join(' '),null,function(err,d){
