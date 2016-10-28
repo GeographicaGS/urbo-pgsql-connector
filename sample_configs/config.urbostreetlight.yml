@@ -141,9 +141,13 @@ subscriptions:
         namedb: customerid
         type: string
         cartodb: true
-      - name: powerState
-        namedb: powerstate
-        type: string
+      - name: powerState_general
+        namedb: powerstate_general
+        type: float
+        cartodb: true
+      - name: powerState_reduced
+        namedb: powerstate_reduced
+        type: float
         cartodb: true
       - name: premisesId
         namedb: premisesid
@@ -220,8 +224,14 @@ subscriptions:
         indexdb: true
         cartodb: true
         constraint: true
-      - name: powerState
-        namedb: powerstate
-        type: string
+      - name: powerState_general
+        namedb: powerstate_general
+        type: float
+        cartodb: true
+      - name: powerState_reduced
+        namedb: powerstate_reduced
+        type: float
+        cartodb: true
     trigger_attributes:
-      - powerState
+      - powerState_general
+      - powerState_reduced
