@@ -43,9 +43,10 @@ function createSubscription(sub,cb){
 
 function registerSubscription(sub,cb){
 
-  model = new SubscriptionsModel(config.getData().pgsql);
+  var cfg = config.getData(),
+    model = new SubscriptionsModel(cfg.pgsql);
 
-  model.getSubscription(sub.id,function(err,d){
+  model.getSubscription(sub.id,sub.schemaname,function(err,d){
     if (err){
       log.error('Error getting subscription: [%s]',sub.id);
       return cb(err);
@@ -114,9 +115,11 @@ function newOrionSubscription(sub, cb){
   request(options, function (error, response, body) {
     if (!error && response.statusCode == 200) {
 
-      var subscriptionID = response.body.subscribeResponse.subscriptionId;
-      model = new SubscriptionsModel(config.getData().pgsql);
-      model.handleSubscriptionsTable({'subs_id': subscriptionID, 'id_name': sub.id},function(err){
+      var cfg = config.getData(),
+        subscriptionID = response.body.subscribeResponse.subscriptionId;
+        model = new SubscriptionsModel(cfg.pgsql);
+
+      model.handleSubscriptionsTable({'subs_id': subscriptionID, 'id_name': sub.id, 'schema': sub.schemaname},function(err){
         if (err){
           log.error('Error handling subscription');
           return cb(err);

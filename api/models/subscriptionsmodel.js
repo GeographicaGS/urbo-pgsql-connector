@@ -83,6 +83,9 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           ",created_at timestamp without time zone DEFAULT (now() at time zone 'utc')",
           ",updated_at timestamp without time zone DEFAULT (now() at time zone 'utc')"];
 
+      if (sub.mode=='update')
+        q.push(', CONSTRAINT ' + schemaName + '_' + sub.id + '_id_entity UNIQUE (id_entity)');
+
       var attrConstraint = config.getFieldsForConstraint(sub);
       if (attrConstraint.length) {
         attrConstraint = attrConstraint.map(function(attribute) {
@@ -169,7 +172,7 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
 }
 
 SubscriptionsModel.prototype.createGeomIndexes = function(sub){
-  var q = ['CREATE INDEX',sub.id+'_geometry_idx',
+  var q = ['CREATE INDEX ' + sub.schemaname + '_' + sub.id+'_gidx',
            'ON',sub.schemaname+'.'+sub.id,'USING gist(position)'];
 
   this.query(q.join(' '),null,function(err,d){
@@ -183,7 +186,7 @@ SubscriptionsModel.prototype.createGeomIndexes = function(sub){
 SubscriptionsModel.prototype.createJSONIndexes = function(sub, attribs){
   var q;
   for (var i=0;i<attribs.length;i++){
-    q = ['CREATE INDEX',sub.id+'_'+attribs[i]+'_idx',
+    q = ['CREATE INDEX '  + sub.schemaname + '_' + sub.id + '_' + attribs[i]+'_idx',
          'ON',sub.schemaname+'.'+sub.id,'USING gin('+utils.wrapStrings(attribs[i],['"'])+')'];
 
     this.query(q.join(' '),null,function(err,d){
@@ -198,7 +201,7 @@ SubscriptionsModel.prototype.createJSONIndexes = function(sub, attribs){
 SubscriptionsModel.prototype.createAttrIndexes = function(sub, attribs){
   var q;
   for (var i=0;i<attribs.length;i++){
-    q = ['CREATE INDEX',sub.id+'_'+attribs[i]+'_idx',
+    q = ['CREATE INDEX ' + sub.schemaname + '_' + sub.id+ '_'+attribs[i]+'_idx',
          'ON',sub.schemaname+'.'+sub.id,'USING btree('+utils.wrapStrings(attribs[i],['"'])+')'];
 
     this.query(q.join(' '),null,function(err,d){
@@ -214,10 +217,10 @@ SubscriptionsModel.prototype.queryData = function(sql,bindings,cb){
   this.query(sql,bindings,cb);
 }
 
-SubscriptionsModel.prototype.getSubscription = function(id,cb){
-  var q = 'SELECT subs_id FROM subscriptions WHERE id_name=$1';
+SubscriptionsModel.prototype.getSubscription = function(id_name,schema,cb){
+  var q = 'SELECT subs_id FROM subscriptions WHERE id_name=$1 and schema=$2';
 
-  this.query(q,[id],function(err,d){
+  this.query(q,[id_name,schema],function(err,d){
     if (err){
       log.error('Cannot execute sql query');
       cb(err);
@@ -250,10 +253,10 @@ SubscriptionsModel.prototype.deleteSubscription = function(subs_id, cb){
 
 SubscriptionsModel.prototype.handleSubscriptionsTable = function(data, cb){
   var table = 'subscriptions';
-  var sql = 'SELECT COUNT(*) as n FROM subscriptions WHERE id_name=$1';
+  var sql = 'SELECT COUNT(*) as n FROM subscriptions WHERE id_name=$1 AND schema=$2';
 
   var self = this;
-  this.query(sql, [data.id_name], function(err, r){
+  this.query(sql, [data.id_name,data.schema], function(err, r){
     if (err)
       return log.error('Cannot execute sql query');
 
@@ -267,78 +270,119 @@ SubscriptionsModel.prototype.handleSubscriptionsTable = function(data, cb){
 }
 
 SubscriptionsModel.prototype.upsertSubscriptedData = function(table, obj, objdq,cb){
-  /*
-  Upsert SQL example:
 
-  WITH upsert AS
-      (
-          UPDATE dev_agua
-          SET id_entity='dispositivo_k01',
-              value='18',
-              timeinstant='2016-03-04T16:09:54.01',
-              position=ST_SetSRID(ST_MakePoint(-4.45,37.09),4326)
-          WHERE id=(SELECT MAX(id) FROM dev_agua WHERE id_entity='dispositivo_k01')
-          RETURNING *
-      )
-  INSERT INTO dev_agua (id_entity, value, timeinstant, position)
-      SELECT 'dispositivo_k01' AS id_entity,
-             '0.234' AS value,
-             '2015-03-04T16:09:54.01' AS timeinstant,
-             ST_SetSRID(ST_MakePoint(-4.45,37.09),4326) AS position
-      WHERE NOT EXISTS (SELECT * FROM upsert);
-  */
+  var fields = [], insert = [], update = [];
 
-  var sqpg = this._squel.useFlavour('postgres');
+  function buildQueryArrays(obj,quote){
+    for (var o in obj){
 
-  var updtConstructor = sqpg.update().table(table);
-  var slConstructor = this._squel.select();
-
-  for (var i in obj){
-      updtConstructor.set(utils.wrapStrings(i,['"']),obj[i]);
-      if (i == "TimeInstant" && (!obj[i] || obj[i] == ''))
-        obj[i] = '1970-01-01T00:00Z';
-      slConstructor.field(utils.wrapStrings(obj[i],["'"]),i);
-  }
-  for (var i in objdq){
-      updtConstructor.set(utils.wrapStrings(i,['"']),objdq[i],{dontQuote: true});
-      slConstructor.field(String(objdq[i]),i,{dontQuote: true});
+      fields.push('"' + o + '"');
+      var v = obj[o];
+      if (quote)
+        v = "'" + v + "'";
+      insert.push(v);
+      if (o != 'id_entity')
+        update.push('"'+ o+ '"=' + v);
+    }
   }
 
-  updtConstructor.set("updated_at","now()");
-  slConstructor.field("now()","updated_at");
+  buildQueryArrays(obj,true);
+  buildQueryArrays(objdq,false);
 
-  var slMaxid = sqpg.select()
-                  .field('MAX(id)')
-                  .from(table)
-                  .where("id_entity = ?",obj.id_entity)
+  update.push('updated_at=now()');
+  fields.push('created_at');
+  insert.push('now()');
 
-  var udtQry = updtConstructor.where('id = ?', slMaxid)
-                .returning("*")
-                .toString();
-  var slUpsrt = this._squel.select().from("upsert");
-  // var slCon = slConstructor.from("").where("NOT EXISTS ?", slUpsrt);  // OLD -> .from("")
-  var slCon = slConstructor.where("NOT EXISTS ?", slUpsrt);
+  fields = fields.join(',');
+  insert = insert.join(',');
+  update = update.join(',');
 
-  var dataKeys = _.keys(_.extend(obj, objdq));
-  dataKeys.push("updated_at");
-  dataKeys = _.map(dataKeys, function(dkey){return utils.wrapStrings(dkey,['"']);});
+  var sql = `INSERT INTO ${table} (${fields}) VALUES (${insert})
+              ON CONFLICT (id_entity) DO UPDATE SET ${update}`;
 
-  var insQry = this._squel.insert()
-                 .into(table)
-                 .fromQuery(dataKeys, slCon)
-                 .toString();
-
-  var sql = ["WITH upsert AS ",utils.wrapStrings(udtQry,["(",")"]),insQry]
-  var q = sql.join(' ')
-
-  this.query(q, null, function(err, r){
+  this.query(sql,null, function(err, r){
     if (err)
-      log.error('Cannot execute upsert query:' + q);
+      log.error('Cannot execute upsert query: %s'  + sql);
 
     if (cb) cb(err);
 
   });
 }
+
+// SubscriptionsModel.prototype.upsertSubscriptedDataDEPRECATED = function(table, obj, objdq,cb){
+//   /*
+//   Upsert SQL example:
+//
+//   WITH upsert AS
+//       (
+//           UPDATE dev_agua
+//           SET id_entity='dispositivo_k01',
+//               value='18',
+//               timeinstant='2016-03-04T16:09:54.01',
+//               position=ST_SetSRID(ST_MakePoint(-4.45,37.09),4326)
+//           WHERE id=(SELECT MAX(id) FROM dev_agua WHERE id_entity='dispositivo_k01')
+//           RETURNING *
+//       )
+//   INSERT INTO dev_agua (id_entity, value, timeinstant, position)
+//       SELECT 'dispositivo_k01' AS id_entity,
+//              '0.234' AS value,
+//              '2015-03-04T16:09:54.01' AS timeinstant,
+//              ST_SetSRID(ST_MakePoint(-4.45,37.09),4326) AS position
+//       WHERE NOT EXISTS (SELECT * FROM upsert);
+//   */
+//
+//   var sqpg = this._squel.useFlavour('postgres');
+//
+//   var updtConstructor = sqpg.update().table(table);
+//   var slConstructor = this._squel.select();
+//
+//   for (var i in obj){
+//       updtConstructor.set(utils.wrapStrings(i,['"']),obj[i]);
+//       if (i == "TimeInstant" && (!obj[i] || obj[i] == ''))
+//         obj[i] = '1970-01-01T00:00Z';
+//       slConstructor.field(utils.wrapStrings(obj[i],["'"]),i);
+//   }
+//   for (var i in objdq){
+//       updtConstructor.set(utils.wrapStrings(i,['"']),objdq[i],{dontQuote: true});
+//       slConstructor.field(String(objdq[i]),i,{dontQuote: true});
+//   }
+//
+//   updtConstructor.set("updated_at","now()");
+//   slConstructor.field("now()","updated_at");
+//
+//   var slMaxid = sqpg.select()
+//                   .field('MAX(id)')
+//                   .from(table)
+//                   .where("id_entity = ?",obj.id_entity)
+//
+//   var udtQry = updtConstructor.where('id = ?', slMaxid)
+//                 .returning("*")
+//                 .toString();
+//   var slUpsrt = this._squel.select().from("upsert");
+//   // var slCon = slConstructor.from("").where("NOT EXISTS ?", slUpsrt);  // OLD -> .from("")
+//   var slCon = slConstructor.where("NOT EXISTS ?", slUpsrt);
+//
+//   var dataKeys = _.keys(_.extend(obj, objdq));
+//   dataKeys.push("updated_at");
+//   dataKeys = _.map(dataKeys, function(dkey){return utils.wrapStrings(dkey,['"']);});
+//
+//   var insQry = this._squel.insert()
+//                  .into(table)
+//                  .fromQuery(dataKeys, slCon)
+//                  .toString();
+//
+//   var sql = ["WITH upsert AS ",utils.wrapStrings(udtQry,["(",")"]),insQry]
+//   var q = sql.join(' ')
+//
+//   this.query(q, null, function(err, r){
+//     if (err)
+//       log.error('Cannot execute upsert query:' + q);
+//
+//     if (cb) cb(err);
+//
+//   });
+// }
+
 
 SubscriptionsModel.prototype.storeData = function(sub,contextResponses,cb){
   for (var i in contextResponses){
