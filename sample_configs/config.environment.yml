@@ -1,0 +1,289 @@
+  # FIWARE URBO STREETLIGHT CONNECTOR CONFIGURATION FILE
+
+baseURL: http://url:port
+
+# debugAccessToken:
+
+# Logging configuration parameters
+logging:
+  # Level options: INFO|ERROR|DEBUG. Default: INFO
+  level: DEBUG
+  # Output options: console|file. Default: console
+  output: file
+
+# PostgreSQL configuration parameters
+pgsql:
+  host: postgis
+  user: xxxxxxxxxx
+  password: xxxxxxxxxx
+  database: xxxxxxxxxx
+  port: 5432
+
+# CartoDB configuration parameters
+cartodb:
+  apiKey: xxxxxxxxxx
+  user: xxxxxxxxxx
+  active: false
+  enterprise: true
+
+# urbo-processing parameters
+processing:
+  active: false
+  url: http://localhost:XXXX
+  requestAttempts: 5
+  psqlJob: connectorPsql
+  cartoJob: connectorCarto
+  jobAttempts: 3
+  priority: critical
+
+# Orion Context Broker API URLs
+contextBrokerUrls:
+  portAuthtk: xxxxxxxxxx
+  portCtxApi: xxxxxxxxxx
+  urlCtxBrBase: https://xxxxxxxxxx
+
+# Fiware subservices subscriptions configuration
+subservices:
+  - id: streetlight_simulations
+    service: urbo
+    subservice: /geographica
+    auth:
+      user: xxxxxxxxxx
+      password: xxxxxxxxxx
+
+subscriptions:
+  - id: environment_airqualityobserved
+    subservice_id: environment_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: AirQualityObserved
+    mode: append
+    attributes:
+      - name: location
+        type: geojson-point
+        cartodb: true
+      - name: dateObserved
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: source
+        type: string
+        cartodb: true
+      - name: refPointOfInterest
+        namedb: refpointofinterest
+        type: string
+        cartodb: true
+
+    trigger_attributes:
+      - location
+      - source
+      - refPointOfInterest
+
+  - id: environment_airqualityobserved_lastdata
+    subservice_id: environment_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: AirQualityObserved
+    mode: update
+    attributes:
+      - name: location
+        type: geojson-point
+        cartodb: true
+      - name: dateObserved
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: source
+        type: string
+        cartodb: true
+      - name: refPointOfInterest
+        namedb: refpointofinterest
+        type: string
+        cartodb: true
+      - name: SO2
+        namedb: so2
+        type: float
+        cartodb: true
+      - name: NO2
+        namedb: no2
+        type: float
+        cartodb: true
+      - name: PM10
+        namedb: pm10
+        type: float
+        cartodb: true
+      - name: PM2.5
+        namedb: pm2_5
+        type: float
+        cartodb: true
+      - name: CO
+        namedb: co
+        type: float
+        cartodb: true
+      - name: O3
+        namedb: o3
+        type: float
+        cartodb: true
+
+    trigger_attributes:
+      - dateObserved
+
+  # StreetlightControlCabinet ######################
+  - id: environment_airqualityobserved_measurand
+    subservice_id: environment_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: AirQualityObserved
+    mode: append
+    attributes:
+      - name: dateObserved
+        namedb: "TimeInstant"
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: SO2
+        namedb: so2
+        type: float
+        cartodb: true
+      - name: NO2
+        namedb: no2
+        type: float
+        cartodb: true
+      - name: PM10
+        namedb: pm10
+        type: float
+        cartodb: true
+      - name: PM2.5
+        namedb: pm2_5
+        type: float
+        cartodb: true
+      - name: CO
+        namedb: co
+        type: float
+        cartodb: true
+      - name: O3
+        namedb: o3
+        type: float
+        cartodb: true
+
+    trigger_attributes:
+      - SO2
+      - NO2
+      - PM10
+      - PM2.5
+      - CO
+      - O3
+
+  - id: environment_noiseobserved
+    subservice_id: environment_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: NoiseObserved
+    mode: append
+    attributes:
+      - name: location
+        type: geojson-point
+        cartodb: true
+      - name: dateObserved
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: source
+        type: string
+        cartodb: true
+      - name: dataProvider
+        namedb: dataprovider
+        type: string
+        cartodb: true
+      - name: refPointOfInterest
+        namedb: refpointofinterest
+        type: string
+        cartodb: true
+
+    trigger_attributes:
+      - location
+      - source
+      - dataProvider
+      - refPointOfInterest
+
+  - id: environment_noiseobserved_lastdata
+    subservice_id: environment_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: NoiseObserved
+    mode: update
+    attributes:
+      - name: location
+        type: geojson-point
+        cartodb: true
+      - name: dateObserved
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: source
+        type: string
+        cartodb: true
+      - name: dataProvider
+        namedb: dataprovider
+        type: string
+        cartodb: true
+      - name: refPointOfInterest
+        namedb: refpointofinterest
+        type: string
+        cartodb: true
+      - name: instantSoundLevel
+        namedb: instantsoundlevel
+        type: float
+        cartodb: true
+
+    trigger_attributes:
+      - dateObserved
+
+  # StreetlightControlCabinet ######################
+  - id: environment_noiseobserved_instantlevel
+    subservice_id: environment_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: NoiseObserved
+    mode: append
+    attributes:
+      - name: dateObserved
+        namedb: "TimeInstant"
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: instantSoundLevel
+        namedb: instantsoundlevel
+        type: float
+        cartodb: true
+
+    trigger_attributes:
+      - instantSoundLevel
