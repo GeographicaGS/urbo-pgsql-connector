@@ -83,8 +83,6 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           ",created_at timestamp without time zone DEFAULT (now() at time zone 'utc')",
           ",updated_at timestamp without time zone DEFAULT (now() at time zone 'utc')"];
 
-      if (sub.mode=='update')
-        q.push(', CONSTRAINT ' + schemaName + '_' + sub.id + '_id_entity UNIQUE (id_entity)');
 
       var attrConstraint = config.getFieldsForConstraint(sub);
       if (attrConstraint.length) {
@@ -95,6 +93,10 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
 
         var constraint = ', CONSTRAINT ' + schemaName + '_' + sub.id + '_unique UNIQUE (id_entity, ' + attrConstraint + ')'
         q.push(constraint);
+
+      } else {
+        if (sub.mode=='update')
+          q.push(', CONSTRAINT ' + schemaName + '_' + sub.id + '_id_entity UNIQUE (id_entity)');
       }
 
       q.push(')');

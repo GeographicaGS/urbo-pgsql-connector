@@ -71,9 +71,6 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
           'ALTER TABLE '+tableName + " ADD COLUMN created_at timestamp without time zone DEFAULT (now() at time zone 'utc');",
           'ALTER TABLE '+tableName + " ADD COLUMN updated_at timestamp without time zone DEFAULT (now() at time zone 'utc');" ];
 
-      if (sub.mode=='update')
-        q.push('ALTER TABLE ' + tableName + ' ADD CONSTRAINT ' + schemaTable + '_id_entity UNIQUE (id_entity);');
-
       var attrConstraint = config.getFieldsForConstraint(sub);
       if (attrConstraint.length) {
         attrConstraint = attrConstraint.map(function(attribute) {
@@ -83,6 +80,9 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
 
         var constraint = 'ALTER TABLE ' + tableName + ' ADD CONSTRAINT ' + schemaTable + '_unique UNIQUE (id_entity, ' + attrConstraint + ');';
         q.push(constraint);
+      } else {
+        if (sub.mode=='update')
+          q.push('ALTER TABLE ' + tableName + ' ADD CONSTRAINT ' + schemaTable + '_id_entity UNIQUE (id_entity);');
       }
 
       that.query({ 'query' : q.join(' ') },function(err,data){
