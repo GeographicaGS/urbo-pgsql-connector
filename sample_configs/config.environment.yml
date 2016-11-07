@@ -52,6 +52,7 @@ subservices:
       password: xxxxxxxxxx
 
 subscriptions:
+  # AirQualityObserved ######################
   - id: environment_airqualityobserved
     subservice_id: environment_simulations
     schemaname: distrito_telefonica
@@ -79,11 +80,16 @@ subscriptions:
         namedb: refpointofinterest
         type: string
         cartodb: true
+      - name: address
+        namedb: address
+        type: json
+        cartodb: true
 
     trigger_attributes:
       - location
       - source
       - refPointOfInterest
+      - address
 
   - id: environment_airqualityobserved_lastdata
     subservice_id: environment_simulations
@@ -136,11 +142,9 @@ subscriptions:
         namedb: o3
         type: float
         cartodb: true
-
     trigger_attributes:
       - dateObserved
 
-  # StreetlightControlCabinet ######################
   - id: environment_airqualityobserved_measurand
     subservice_id: environment_simulations
     schemaname: distrito_telefonica
@@ -152,7 +156,7 @@ subscriptions:
     mode: append
     attributes:
       - name: dateObserved
-        namedb: "TimeInstant"
+        namedb: TimeInstant
         type: ISO8601
         indexdb: true
         cartodb: true
@@ -181,7 +185,6 @@ subscriptions:
         namedb: o3
         type: float
         cartodb: true
-
     trigger_attributes:
       - SO2
       - NO2
@@ -190,6 +193,7 @@ subscriptions:
       - CO
       - O3
 
+  # NoiseObserved ######################
   - id: environment_noiseobserved
     subservice_id: environment_simulations
     schemaname: distrito_telefonica
@@ -221,12 +225,16 @@ subscriptions:
         namedb: refpointofinterest
         type: string
         cartodb: true
-
+      - name: address
+        namedb: address
+        type: json
+        cartodb: true
     trigger_attributes:
       - location
       - source
       - dataProvider
       - refPointOfInterest
+      - address
 
   - id: environment_noiseobserved_lastdata
     subservice_id: environment_simulations
@@ -263,11 +271,9 @@ subscriptions:
         namedb: instantsoundlevel
         type: float
         cartodb: true
-
     trigger_attributes:
       - dateObserved
 
-  # StreetlightControlCabinet ######################
   - id: environment_noiseobserved_instantlevel
     subservice_id: environment_simulations
     schemaname: distrito_telefonica
@@ -275,11 +281,11 @@ subscriptions:
     substhrottling: PT0S
     fetchDataOnCreated: false
     entityTypes:
-      - typeName: NoiseObserved
+      - typeName: WeatherObserved
     mode: append
     attributes:
       - name: dateObserved
-        namedb: "TimeInstant"
+        namedb: TimeInstant
         type: ISO8601
         indexdb: true
         cartodb: true
@@ -288,6 +294,162 @@ subscriptions:
         namedb: instantsoundlevel
         type: float
         cartodb: true
-
     trigger_attributes:
       - instantSoundLevel
+
+  # WeatherObserved ######################
+  - id: environment_weatherobserved
+    subservice_id: environment_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: WeatherObserved
+    mode: append
+    attributes:
+      - name: location
+        namedb: position
+        type: geojson-point
+        cartodb: true
+      - name: dateObserved
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: source
+        type: string
+        cartodb: true
+      - name: dataProvider
+        namedb: dataprovider
+        type: string
+        cartodb: true
+      - name: refPointOfInterest
+        namedb: refpointofinterest
+        type: string
+        cartodb: true
+      - name: address
+        namedb: address
+        type: json
+        cartodb: true
+    trigger_attributes:
+      - location
+      - source
+      - dataProvider
+      - refPointOfInterest
+      - address
+
+  - id: environment_weatherobserved_lastdata
+    subservice_id: environment_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: WeatherObserved
+    mode: update
+    attributes:
+      - name: location
+        namedb: position
+        type: geojson-point
+        cartodb: true
+      - name: dateObserved
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: temperature
+        type: float
+        cartodb: true
+      - name: precipitation
+        type: float
+        cartodb: true
+      - name: weatherType
+        namedb: weathertype
+        type: string
+        cartodb: true
+      - name: visibility
+        type: string
+        cartodb: true
+      - name: source
+        type: string
+        cartodb: true
+      - name: dataProvider
+        namedb: dataprovider
+        type: string
+        cartodb: true
+      - name: refPointOfInterest
+        namedb: refpointofinterest
+        type: string
+        cartodb: true
+      - name: address
+        namedb: address
+        type: json
+        cartodb: true
+    trigger_attributes:
+      - dateObserved
+
+  - id: environment_weatherobserved_measurand
+    subservice_id: environment_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: WeatherObserved
+    mode: append
+    attributes:
+      - name: dateObserved
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: temperature
+        type: float
+        cartodb: true
+      - name: precipitation
+        type: float
+        cartodb: true
+      - name: weatherType
+        namedb: weathertype
+        type: string
+        cartodb: true
+      - name: visibility
+        type: string
+        cartodb: true
+    trigger_attributes:
+      - temperature
+      - precipitation
+      - weatherType
+      - visibility
+
+  # WeatherArea ######################
+  - id: environment_weatherarea
+    subservice_id: environment_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: WeatherArea
+    mode: update
+    attributes:
+      - name: location
+        namedb: position
+        type: geojson-multipolygon
+        cartodb: true
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: refWeatherStation
+        namedb: refweatherstation
+        type: string
+        cartodb: true
+    trigger_attributes:
+      - dateModified
