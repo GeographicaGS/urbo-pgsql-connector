@@ -1,4 +1,4 @@
-  # FIWARE URBO STREETLIGHT CONNECTOR CONFIGURATION FILE
+  # FIWARE URBO ENVIRONMENT CONNECTOR CONFIGURATION FILE
 
 baseURL: http://url:port
 
@@ -281,7 +281,7 @@ subscriptions:
     substhrottling: PT0S
     fetchDataOnCreated: false
     entityTypes:
-      - typeName: WeatherObserved
+      - typeName: NoiseObserved
     mode: append
     attributes:
       - name: dateObserved
