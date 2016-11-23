@@ -62,30 +62,30 @@ subscriptions:
       - typeName: WasteContainer
     mode: append
     attributes:
-      - name: location
-        namedb: position
-        type: geojson
-        cartodb: true
+      # - name: location
+      #   namedb: position
+      #   type: geojson
+      #   cartodb: true
       - name: TimeInstant
         type: ISO8601
         cartodb: true
         indexdb: true
         constraint: true
-      - name: dateUpdated
-        namedb: dateupdated
-        type: ISO8601
-        cartodb: true
-        indexdb: true
+      # - name: dateUpdated
+      #   namedb: dateupdated
+      #   type: ISO8601
+      #   cartodb: true
+      #   indexdb: true
       - name: dateLastEmptying
         namedb: datelastemptying
         type: ISO8601
         cartodb: true
         indexdb: true
-      - name: dateNextActuation
-        namedb: datenextactuation
-        type: ISO8601
-        cartodb: true
-        indexdb: true
+      # - name: dateNextActuation
+      #   namedb: datenextactuation
+      #   type: ISO8601
+      #   cartodb: true
+      #   indexdb: true
       - name: fillingLevel
         namedb: fillinglevel
         type: percent
@@ -93,30 +93,30 @@ subscriptions:
       - name: weight
         type: float
         cartodb: true
-      - name: temperature
-        namedb: temperature
-        type: float
-        cartodb: true
-      - name: methaneConcentration
-        namedb: methaneconcentration
-        type: float
-        cartodb: true
+      # - name: temperature
+      #   namedb: temperature
+      #   type: float
+      #   cartodb: true
+      # - name: methaneConcentration
+      #   namedb: methaneconcentration
+      #   type: float
+      #   cartodb: true
       - name: refWasteContainerModel
         namedb: refwastecontainermodel
         type: string
         cartodb: true
-      - name: containerIsle
-        namedb: containerisle
-        type: string
-        cartodb: true
-      - name: isleId
-        namedb: isleid
-        type: string
-        cartodb: true
-      - name: serialNumber
-        namedb: serialnumber
-        type: string
-        cartodb: true
+      # - name: containerIsle
+      #   namedb: containerisle
+      #   type: string
+      #   cartodb: true
+      # - name: isleId
+      #   namedb: isleid
+      #   type: string
+      #   cartodb: true
+      # - name: serialNumber
+      #   namedb: serialnumber
+      #   type: string
+      #   cartodb: true
       - name: category
         namedb: category
         type: string
@@ -129,10 +129,10 @@ subscriptions:
         namedb: storedwastekind
         type: string
         cartodb: true
-      - name: status
-        namedb: status
-        type: string
-        cartodb: true
+      # - name: status
+      #   namedb: status
+      #   type: string
+      #   cartodb: true
       - name: areaServed
         namedb: areaserved
         type: string
