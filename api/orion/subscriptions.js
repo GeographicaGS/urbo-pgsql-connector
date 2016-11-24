@@ -1,6 +1,7 @@
 var config = require('../config.js');
 var express = require('express');
 var router = express.Router();
+var cluster = require('cluster');
 var request = require('request');
 var _ = require('underscore');
 var SubscriptionsModel = require('../models/subscriptionsmodel');
@@ -224,7 +225,7 @@ function recreateSubscription(sub, subs_id, cb) {
 }
 
 function createSubscriptionCallback(sub) {
-  log.info('Set router: ' + sub.id);
+  log.info('Set router:', sub.id, "@ Worker", cluster.worker.id);
 
   router.post('/' + sub.id,function(req, res, next) {
     if (config.getData().processing.active) {

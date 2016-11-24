@@ -5,7 +5,8 @@
  */
 var config = require('../config.js');
 var debug = require('debug')('api:server');
-
+var os = require('os');
+var cluster = require('cluster');
 /**
  * PGSQL connection retries config:
  */
@@ -15,32 +16,55 @@ var connect_retry_timeout = 5000;
 var connect_count = 1;
 
 var startServer = function(){
-  var app = require('../app');
-  var http = require('http');
 
-  /**
-   * Get port from environment and store in Express.
-   */
-  var port = normalizePort(process.env.PORT || '3000');
-  app.set('port', port);
-
-  /**
-   * Initialize HTTP server.
-   */
-  var server = http.createServer(app);
 
   /**
    * Listen on provided port, on all network interfaces.
    */
-  server.listen(port);
-  server.on('error', onError);
-  server.on('listening', function() {
-    var addr = server.address();
-    var bind = typeof addr === 'string'
-      ? 'pipe ' + addr
-      : 'port ' + addr.port;
-    debug('Listening on ' + bind);
-  });
+  if(cluster.isMaster){
+    for(var i=0;i<os.cpus().length; i++){
+      cluster.fork();
+    }
+
+    cluster.on('online', function (worker) {
+      console.log("Worker %d online", worker.id);
+    });
+
+    cluster.on('exit', function (worker, code, signal) {
+        console.log('Worker %d died (%s). Restarting...', worker.id, signal || code);
+        cluster.fork()
+    });
+
+  }
+  else if(cluster.isWorker){
+
+    var app = require('../app');
+    var http = require('http');
+
+    /**
+     * Get port from environment and store in Express.
+     */
+    var port = normalizePort(process.env.PORT || '3000');
+    app.set('port', port);
+
+    /**
+     * Initialize HTTP server.
+     */
+    var server = http.createServer(app);
+
+    server.listen(port);
+    server.on('error', onError);
+    server.on('listening', function() {
+      var addr = server.address();
+      var bind = typeof addr === 'string'
+        ? 'pipe ' + addr
+        : 'port ' + addr.port;
+      debug('Listening on ', bind, "for worker", cluster.worker.id);
+    });
+  }
+
+
+
 }
 
 /**
