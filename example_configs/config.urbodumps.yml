@@ -62,10 +62,10 @@ subscriptions:
       - typeName: WasteContainer
     mode: append
     attributes:
-      # - name: location
-      #   namedb: position
-      #   type: geojson
-      #   cartodb: true
+      - name: location
+        namedb: position
+        type: geojson
+        cartodb: false
       - name: TimeInstant
         type: ISO8601
         cartodb: true
@@ -93,14 +93,14 @@ subscriptions:
       - name: weight
         type: float
         cartodb: true
-      # - name: temperature
-      #   namedb: temperature
-      #   type: float
-      #   cartodb: true
-      # - name: methaneConcentration
-      #   namedb: methaneconcentration
-      #   type: float
-      #   cartodb: true
+      - name: temperature
+        namedb: temperature
+        type: float
+        cartodb: true
+      - name: methaneConcentration
+        namedb: methaneconcentration
+        type: float
+        cartodb: true
       - name: refWasteContainerModel
         namedb: refwastecontainermodel
         type: string
@@ -129,10 +129,10 @@ subscriptions:
         namedb: storedwastekind
         type: string
         cartodb: true
-      # - name: status
-      #   namedb: status
-      #   type: string
-      #   cartodb: true
+      - name: status
+        namedb: status
+        type: string
+        cartodb: true
       - name: areaServed
         namedb: areaserved
         type: string
