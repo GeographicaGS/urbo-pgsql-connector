@@ -1,6 +1,7 @@
 # GUADALAJARA DEMO DASHBOARD CONFIGURATION FILE
 
-baseURL: http://url:port
+baseURL: http://urbo-backend-dev.geographica.gs/connector/guadalajara
+
 
 # debugAccessToken:
 
@@ -13,23 +14,23 @@ logging:
 
 # PostgreSQL configuration parameters
 pgsql:
-  host: postgis
-  user: xxxxx
-  password: xxxxx
-  database: xxxxx
-  port: 5432
+  host: xxxxxx
+  user: xxxx
+  password: xxxx
+  database: xxxx
+  port: xxxx
 
 # CartoDB configuration parameters
 cartodb:
-  apiKey: xxxxxxxxxxxxxxxxxxxxxx
-  user: xxxxxxxxxxxxx
-  active: false
+  apiKey: xxxxxxxx
+  user: xxxxxxxx
+  active: true
   enterprise: true
 
 # urbo-processing parameters
 processing:
-  active: false
-  url: http://localhost:XXXX
+  active: true
+  url: xxxxxxxxxx
   requestAttempts: 5
   psqlJob: connectorPsql
   cartoJob: connectorCarto
@@ -38,34 +39,63 @@ processing:
 
 # Orion Context Broker API URLs
 contextBrokerUrls:
-  portAuthtk: xxxxxxxxxxxxx
-  portCtxApi: xxxxxxxxx
-  urlCtxBrBase: https://xxxxxxxxxxxxxxxxxxxxxxxx
+  portAuthtk: xxx
+  portCtxApi: xxxx
+  urlCtxBrBase: xxxxxxxxxxxxxxxxxx
 
 # Fiware subservices subscriptions configuration
 subservices:
   - id: guadalajara_moba
-    service: sc_guadalajara
-    subservice: /moba
+    service: xxxxxxxxxxxxxxx
+    subservice: /xxxxxxxx
     auth:
-      user: XXX
-      password: XXX
+      user: xxxxxxxxxx
+      password: xxxxxxxxx
 
   - id: guadalajara_mtc
-    service: XXX
-    subservice: /mtc
+    service: xxxxxxxxxx
+    subservice: /xxxxxxxxxx
     auth:
-      user: XXX
-      password: XXX
+      user: xxxxxxxxxxxxxx
+      password: xxxxxxxxxxxxx
 
 subscriptions:
-  - id: guadal_contenedores
+  - id: contenedores
     subservice_id: guadalajara_moba
     schemaname: guadalajara
     entityTypes:
       - typeName: MOBA
-        typePattern: MOBA_[23][0-9][0-9]
-    mode: insert
+    mode: append
+    attributes:
+      #- name: position
+      #  type: coords
+      #  cartodb: true
+      - name: datetime
+        namedb: TimeInstant
+        type: ISO8601
+        cartodb: true
+      - name: level
+        type: float
+        cartodb: true
+      #- name: s_class
+      #  type: string
+      #  cartodb: true
+      #- name: sensorCode
+      #  type: float
+      #  cartodb: true
+      #  namedb: sensor_code
+    trigger_attributes:
+      - datetime
+      - level
+      #- s_class
+      #- sensorCode
+
+  - id: contenedores_lastdata
+    subservice_id: guadalajara_moba
+    schemaname: guadalajara
+    entityTypes:
+      - typeName: MOBA
+    mode: update
     attributes:
       - name: position
         type: coords
@@ -83,6 +113,8 @@ subscriptions:
       - name: sensorCode
         type: float
         cartodb: true
+        namedb: sensor_code
+
     trigger_attributes:
       - datetime
       - level
@@ -94,13 +126,15 @@ subscriptions:
     schemaname: guadalajara
     entityTypes:
       - typeName: SNIncidence
-    mode: insert
+    mode: append
     attributes:
       - name: longitude
-        type: float
+        namedb: lon
+        type: coords
         cartodb: true
       - name: latitude
-        type: float
+        namedb: lat
+        type: coords
         cartodb: true
       - name: incidenceCode
         namedb: incidence_code
