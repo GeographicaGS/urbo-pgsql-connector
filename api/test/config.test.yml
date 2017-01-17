@@ -38,7 +38,7 @@ processing:
 
 # Orion Context Broker API URLs
 contextBrokerUrls:
-  portAuthtk: 15001
+  portAuthtk: 1026
   portCtxApi: 1026
   urlCtxBrBase: http://orion
 
