@@ -27,7 +27,7 @@ node("docker") {
             sh "docker run -d --name urbo_pgsql--${build_name} -v ${workspace}/db:/connector_db -e \"LOCALE=es_ES\" -e \"CREATE_USER=urbo_admin;urbo\" geographica/postgis:awkward_aardvark"
 
             echo "Running orion"
-            sh "docker run -d --name urbo_orion--${build_name} -v fiware/orion"
+            sh "docker run -d --name urbo_orion--${build_name} fiware/orion"
 
             sleep 20
 
