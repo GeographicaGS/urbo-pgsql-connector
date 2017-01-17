@@ -311,7 +311,7 @@ function initialize(cb){
   tokenManager.createTokens(function(error,tokens){
     if (error) {
       return log.error('Error, cannot create tokens for the provided credentials: '+error);
-      if(cb) cb(error);
+      if(cb) return cb(error);
     }
 
     servicesTokens = tokens;
@@ -320,17 +320,17 @@ function initialize(cb){
     createSchemas(schemas,function(error){
       if (error) {
         return log.error('Error, cannot create schemas stopping:'+error);
-        if(cb) cb(error);
+        if(cb) return cb(error);
       }
 
       createSubscriptionSerial(0,function(err){
         if (err) {
           log.error('Cannot created all subscriptions. Something went wrong.');
-          if(cb) cb(err);
+          if(cb) return cb(err);
         }
         else {
           log.info('All subscriptions created succesfully');
-          if(cb) cb(null, subscriptions);
+          if(cb) return cb(null, subscriptions);
         }
       });
     });

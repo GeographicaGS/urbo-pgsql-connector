@@ -27,7 +27,6 @@ describe('ORION', function(){
   it('Initialize subscriptions', function(done){
     this.timeout(0);
     subscriptions.initialize(function(error, subs){
-      console.log(error, subs);
       error.should.be.equal(undefined);
       done();
     });
