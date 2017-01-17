@@ -4,7 +4,6 @@ var request = require('supertest');
 var cluster = require('cluster');
 var should = require('chai').should();  // actually call the function
 var process = require('process');
-var app = require('../app');
 var config = require('../config');
 var getLargeSubscriptions = require('../orion/subscriptiondata')
 var subscriptions = require('../orion/subscriptions');
