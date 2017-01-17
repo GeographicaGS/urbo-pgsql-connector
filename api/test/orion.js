@@ -27,7 +27,13 @@ describe('ORION', function(){
   it('Initialize subscriptions', function(done){
     this.timeout(0);
     subscriptions.initialize(function(error, subs){
-      error.should.be.equal(null);
+      if(error instanceof Array) {
+        error[0].should.be.equal(null);
+      }
+      else {
+       error[0].should.be.equal(null);
+      }
+
       done();
     });
   })
