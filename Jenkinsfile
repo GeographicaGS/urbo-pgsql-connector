@@ -21,7 +21,7 @@ node("docker") {
             echo "Building urbo-connector/${build_name}"
 
             sh "cp api/test/config.test.yml api/config.yml"
-            sh "docker build --pull=true -t geographica/urbo_processing -f Dockerfile.test api"
+            sh "docker build --pull=true -t geographica/urbo_processing -f api/Dockerfile.test api"
             sh "docker run --name urbo_redis--${build_name} -d redis"
 
             echo "Creating database"
