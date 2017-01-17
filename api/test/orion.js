@@ -8,18 +8,19 @@ var app = require('../app');
 var config = require('../config');
 var getLargeSubscriptions = require('../orion/subscriptiondata')
 
-
-
-console.log(config.getCtxBrUrls('query'));
+var srv = config.getSubService('parking_simulations');
+var headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+  'Fiware-Service': srv.service,
+  'Fiware-ServicePath': srv.subservice
+};
 
 describe('ORION', function(){
-  it('a', function(done){
-    request(app)
-    .get('/')
-    .expect(200)
-    .expect(function(res){
-      res.text.should.be.equal('"URBO - PGSQL Connector"')
-    })
-    .end(done);
+  it('Dummy headers check', function(done){
+    this.timeout(0);
+    headers['Content-Type'].should.be.equal('application/json');
+    headers['Fiware-Service'].should.be.equal('urbo');
+    headers['Fiware-ServicePath'].should.be.equal('/geographica_dev');
   });
 });
