@@ -7,7 +7,7 @@ var process = require('process');
 var app = require('../app');
 var config = require('../config');
 var getLargeSubscriptions = require('../orion/subscriptiondata')
-var initialize = require('../orion/subscriptions').initialize;
+var subscriptions = require('../orion/subscriptions');
 
 var srv = config.getSubService('parking_simulations');
 var headers = {
@@ -27,7 +27,7 @@ describe('ORION', function(){
 
   it('Initialize subscriptions', function(done){
     this.timeout(0);
-    initialize(function(subs){
+    subscriptions.initialize(function(subs){
       console.log(subs);
       done();
     });
