@@ -11,6 +11,9 @@ describe('MAIN', function(){
     request(app)
     .get('/')
     .expect(200)
+    .expect(function(res){
+      res.text.should.be.equal('"URBO - PGSQL Connector"')
+    })
     .end(done);
   });
 });
