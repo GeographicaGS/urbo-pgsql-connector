@@ -26,12 +26,15 @@ node("docker") {
             echo "Creating database"
             sh "docker run -d --name urbo_pgsql--${build_name} -v ${workspace}/db:/connector_db -e \"LOCALE=es_ES\" -e \"CREATE_USER=urbo_admin;urbo\" geographica/postgis:awkward_aardvark"
 
+            echo "Running orion"
+            sh "docker run -d --name urbo_orion--${build_name} -v fiware/orion"
+
             sleep 20
 
         stage "Testing"
 
             echo "Testing urbo-connector/${build_name}"
-            sh "docker run -i --rm --name urbo_connector--${build_name} --link urbo_pgsql--${build_name}:postgis geographica/urbo_connector npm test"
+            sh "docker run -i --rm --name urbo_connector--${build_name} --link urbo_pgsql--${build_name}:postgis --link urbo_orion--${build_name}:orion geographica/urbo_connector npm test"
 
     } catch (error) {
 
@@ -49,6 +52,8 @@ node("docker") {
 
             echo "Cleaning urbo-connector/${build_name}"
             sh "docker rm -f -v urbo_pgsql--${build_name}"
+            sh "docker rm -f -v urbo_orion--${build_name}"
+
 
     }
 }

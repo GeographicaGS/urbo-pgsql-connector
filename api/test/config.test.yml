@@ -39,8 +39,8 @@ processing:
 # Orion Context Broker API URLs
 contextBrokerUrls:
   portAuthtk: 15001
-  portCtxApi: 10027
-  urlCtxBrBase: https://195.235.93.224
+  portCtxApi: 1026
+  urlCtxBrBase: http://orion
 
 
 # Fiware subservices subscriptions configuration
