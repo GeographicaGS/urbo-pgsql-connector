@@ -21,8 +21,7 @@ node("docker") {
             echo "Building urbo-connector/${build_name}"
 
             sh "cp api/test/config.test.yml api/config.yml"
-            sh "docker build --pull=true -t geographica/urbo_processing -f api/Dockerfile.test api"
-            sh "docker run --name urbo_redis--${build_name} -d redis"
+            sh "docker build --pull=true -t geographica/urbo_connector -f api/Dockerfile.test api"
 
             echo "Creating database"
             sh "docker run -d --name urbo_pgsql--${build_name} -v ${workspace}/db:/connector_db -e \"LOCALE=es_ES\" -e \"CREATE_USER=urbo_admin;urbo\" geographica/postgis:awkward_aardvark"
@@ -32,7 +31,7 @@ node("docker") {
         stage "Testing"
 
             echo "Testing urbo-connector/${build_name}"
-            sh "docker run -i --rm --name urbo_connector--${build_name} --link urbo_pgsql--${build_name}:postgis --link urbo_redis--${build_name}:redis geographica/urbo_connector npm test"
+            sh "docker run -i --rm --name urbo_connector--${build_name} --link urbo_pgsql--${build_name}:postgis geographica/urbo_connector npm test"
 
     } catch (error) {
 
@@ -49,7 +48,6 @@ node("docker") {
         stage "Cleaning"
 
             echo "Cleaning urbo-connector/${build_name}"
-            sh "docker rm -f -v urbo_redis--${build_name}"
             sh "docker rm -f -v urbo_pgsql--${build_name}"
 
     }
