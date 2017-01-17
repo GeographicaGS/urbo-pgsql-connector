@@ -36,6 +36,6 @@ describe('ORION', function(){
 
       done();
     });
-  })
+  });
 
 });
