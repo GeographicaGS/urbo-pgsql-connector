@@ -307,7 +307,7 @@ function createTable(sub,cb){
   });
 }
 
-function initialize(){
+function initialize(cb){
   tokenManager.createTokens(function(error,tokens){
     if (error)
       return log.error('Error, cannot create tokens for the provided credentials: '+error);
@@ -324,6 +324,7 @@ function initialize(){
           log.error('Cannot created all subscriptions. Something went wrong.');
         else
           log.info('All subscriptions created succesfully');
+          if(cb) cb(subscriptions);
       });
     });
   });

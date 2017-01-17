@@ -7,6 +7,7 @@ var process = require('process');
 var app = require('../app');
 var config = require('../config');
 var getLargeSubscriptions = require('../orion/subscriptiondata')
+var initialize = require('../orion/subscriptions').initialize;
 
 var srv = config.getSubService('parking_simulations');
 var headers = {
@@ -23,4 +24,12 @@ describe('ORION', function(){
     headers['Fiware-ServicePath'].should.be.equal('/geographica_dev');
     done();
   });
+
+  it('Initialize subscriptions', function(done){
+    initialize(function(subs){
+      console.log(subs);
+      done();
+    });
+  })
+
 });
