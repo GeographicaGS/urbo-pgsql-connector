@@ -30,10 +30,10 @@ describe('ORION', function(){
     this.timeout(0);
     subscriptions.initialize(function(error, subs){
       if(error instanceof Array) {
-        error[0].should.be.equal(null);
+        should.equal(error[0], null);
       }
       else {
-       error.should.be.equal(null);
+        should.equal(error, null);
       }
 
       done();

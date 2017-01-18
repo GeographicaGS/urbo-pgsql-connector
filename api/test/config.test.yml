@@ -1,6 +1,6 @@
   # FIWARE URBO WASTE DASHBOARD CONFIGURATION FILE
 
-baseURL: http://localhost:12500
+baseURL: http://localhost:3000
 
 # debugAccessToken:
 
@@ -23,7 +23,7 @@ pgsql:
 cartodb:
   apiKey: XXXX
   user: urbo-admin
-  active: true
+  active: false
   enterprise: false
 
 # urbo-processing parameters
