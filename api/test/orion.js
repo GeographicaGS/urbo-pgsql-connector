@@ -129,8 +129,10 @@ describe('ORION', function(){
           console.log(data);
           done();
         });
-      })
-    });
+      });
+
+    })
+    .end();
 
 
     // subscriptions.initialize(function(error, subs){
