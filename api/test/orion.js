@@ -122,9 +122,8 @@ describe('ORION', function(){
       }
 
       request(reku, function(error, response, body){
-        console.log(error);
-        console.log(JSON.stringify(body));
-        console.log(response);
+        should.equal(error, null);
+        body.statusCode.code.should.be.equal(200);
         done();
 
       })
