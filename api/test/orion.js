@@ -123,7 +123,7 @@ describe('ORION', function(){
 
       request(reku, function(error, response, body){
         should.equal(error, null);
-        body.contextResponses[0].statusCode.code.should.be.equal(200);
+        body.contextResponses[0].statusCode.code.should.be.equal('200');
         done();
 
       })
