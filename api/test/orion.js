@@ -5,6 +5,8 @@ var should = require('chai').should();  // actually call the function
 var config = require('../config');
 var subscriptions = require('../orion/subscriptions');
 
+var SQL = require('../models/pgsqlmodel');
+
 var srv = config.getSubService('lighting_simulations');
 var headers = {
   'Content-Type': 'application/json',
@@ -124,10 +126,12 @@ describe('ORION', function(){
       request(reku, function(error, response, body){
         should.equal(error, null);
         body.contextResponses[0].statusCode.code.should.be.equal('200');
-        done();
-
-      })
-
+        var sql = new SQL();
+        sql.query("SELECT COUNT(*) FROM distrito_telefonica.lighting_stcabinet_state", function(error, data){
+          console.log(data);
+          done();
+        });
+      });
     });
   });
 
