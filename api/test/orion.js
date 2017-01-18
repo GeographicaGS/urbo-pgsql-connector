@@ -33,9 +33,6 @@ describe('ORION', function(){
         should.equal(error[0], null);
       }
       else {
-
-        console.log(subs);
-
         should.equal(error, null);
       }
 
