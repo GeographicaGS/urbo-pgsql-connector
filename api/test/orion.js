@@ -123,7 +123,7 @@ describe('ORION', function(){
 
       request(reku, function(error, response, body){
         console.log(error);
-        console.log(body);
+        console.log(JSON.stringify(body));
         console.log(response);
         done();
 
