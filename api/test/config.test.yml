@@ -51,795 +51,186 @@ subservices:
 
 
 subscriptions:
-  # OffStreetParking ######################
-  - id: parking_offstreetparking_lastdata
-    subservice_id: parking_simulations
+  # StreetlightControlCabinet ######################
+  - id: lighting_stcabinet
+    subservice_id: lighting_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
     substhrottling: PT0S
     fetchDataOnCreated: false
     entityTypes:
-      - typeName: OffStreetParking
-    mode: update
-    attributes:
-      - name: location
-        namedb: position
-        type: geojson-multipolygon
-        cartodb: true
-      - name: dateModified
-        namedb: TimeInstant
-        type: ISO8601
-        indexdb: true
-        cartodb: true
-        constraint: true
-      - name: occupancyDetectionType
-        namedb: occupancydetectiontype
-        type: list-string
-        cartodb: true
-      - name: allowedVehicleType
-        namedb: allowedvehicletype
-        type: list-string
-        cartodb: true
-      - name: areaServed
-        type: string
-        cartodb: true
-      - name: category
-        type: list-string
-        cartodb: true
-      - name: chargeType
-        namedb: chargetype
-        type: list-string
-        cartodb: true
-      - name: maximumParkingDuration
-        namedb: maximumparkingduration
-        type: string
-        cartodb: true
-      - name: name
-        type: string
-        cartodb: true
-      - name: refParkingGroup
-        namedb: refparkinggroup
-        type: list-string
-        cartodb: true
-      - name: requiredPermit
-        namedb: requiredpermit
-        type: list-string
-        cartodb: true
-      - name: totalSpotNumber
-        namedb: totalspotnumber
-        type: integer
-        cartodb: true
-      - name: availableSpotNumber
-        namedb: availablespotnumber
-        type: integer
-        cartodb: true
-      - name: status
-        namedb: status
-        type: string
-        cartodb: true
-      - name: averagespotlength
-        namedb: averagespotlength
-        type: integer
-        cartodb: true
-      - name: averagespotwidth
-        namedb: averagespotwidth
-        type: integer
-        cartodb: true
-      - name: firstAvailableFloor
-        namedb: firstavailablefloor
-        type: integer
-        cartodb: true
-      - name: highestFloor
-        namedb: highestfloor
-        type: integer
-        cartodb: true
-      - name: lowestFloor
-        namedb: lowestfloor
-        type: integer
-        cartodb: true
-      - name: maximumallowedheight
-        namedb: maximumallowedheight
-        type: integer
-        cartodb: true
-      - name: maximumallowedwidth
-        namedb: maximumallowedwidth
-        type: integer
-        cartodb: true
-    trigger_attributes:
-      - dateModified
-
-  - id: parking_offstreetparking_status
-    subservice_id: parking_simulations
-    schemaname: distrito_telefonica
-    subsduration: P8M
-    substhrottling: PT0S
-    fetchDataOnCreated: false
-    entityTypes:
-      - typeName: OffStreetParking
+      - typeName: ht_6
     mode: append
     attributes:
-      - name: dateModified
-        namedb: TimeInstant
-        type: ISO8601
-        indexdb: true
-        cartodb: true
-        constraint: true
-      - name: status
-        namedb: status
-        type: string
-        cartodb: true
-    trigger_attributes:
-      - status
-
-  - id: parking_offstreetparking_availablespotnumber
-    subservice_id: parking_simulations
-    schemaname: distrito_telefonica
-    subsduration: P8M
-    substhrottling: PT0S
-    fetchDataOnCreated: false
-    entityTypes:
-      - typeName: OffStreetParking
-    mode: append
-    attributes:
-      - name: dateModified
-        namedb: TimeInstant
-        type: ISO8601
-        indexdb: true
-        cartodb: true
-        constraint: true
-      - name: availableSpotNumber
-        namedb: availablespotnumber
-        type: integer
-        cartodb: true
-    trigger_attributes:
-      - availableSpotNumber
-
-  - id: parking_offstreetparking
-    subservice_id: parking_simulations
-    schemaname: distrito_telefonica
-    subsduration: P8M
-    substhrottling: PT0S
-    fetchDataOnCreated: false
-    entityTypes:
-      - typeName: OffStreetParking
-    mode: append
-    attributes:
-      - name: location
-        namedb: position
-        type: geojson-multipolygon
-        cartodb: true
-      - name: dateModified
-        namedb: TimeInstant
-        type: ISO8601
-        indexdb: true
-        cartodb: true
-        constraint: true
-      - name: occupancyDetectionType
-        namedb: occupancydetectiontype
-        type: list-string
-        cartodb: true
-      - name: allowedVehicleType
-        namedb: allowedvehicletype
-        type: list-string
-        cartodb: true
-      - name: areaServed
-        type: string
-        cartodb: true
-      - name: category
-        type: list-string
-        cartodb: true
-      - name: chargeType
-        namedb: chargetype
-        type: list-string
-        cartodb: true
-      - name: maximumParkingDuration
-        namedb: maximumparkingduration
-        type: string
-        cartodb: true
-      - name: name
-        type: string
-        cartodb: true
-      - name: refParkingGroup
-        namedb: refparkinggroup
-        type: list-string
-        cartodb: true
-      - name: requiredPermit
-        namedb: requiredpermit
-        type: list-string
-        cartodb: true
-      - name: totalSpotNumber
-        namedb: totalspotnumber
-        type: integer
-        cartodb: true
-      - name: averagespotlength
-        namedb: averagespotlength
-        type: integer
-        cartodb: true
-      - name: averagespotwidth
-        namedb: averagespotwidth
-        type: integer
-        cartodb: true
-      - name: firstAvailableFloor
-        namedb: firstavailablefloor
-        type: integer
-        cartodb: true
-      - name: highestFloor
-        namedb: highestfloor
-        type: integer
-        cartodb: true
-      - name: lowestFloor
-        namedb: lowestfloor
-        type: integer
-        cartodb: true
-      - name: maximumallowedheight
-        namedb: maximumallowedheight
-        type: integer
-        cartodb: true
-      - name: maximumallowedwidth
-        namedb: maximumallowedwidth
-        type: integer
-        cartodb: true
-    trigger_attributes:
-      - location
-      - allowedVehicleType
-      - areaServed
-      - occupancyDetectionType
-      - category
-      - chargeType
-      - maximumParkingDuration
-      - name
-      - refParkingGroup
-      - requiredPermit
-      - totalSpotNumber
-      - averagespotlength
-      - averagespotwidth
-      - firstAvailableFloor
-      - highestFloor
-      - lowestFloor
-      - maximumallowedheight
-      - maximumallowedwidth
-
-  # OnStreetParking ######################
-  - id: parking_onstreetparking_lastdata
-    subservice_id: parking_simulations
-    schemaname: distrito_telefonica
-    subsduration: P8M
-    substhrottling: PT0S
-    fetchDataOnCreated: false
-    entityTypes:
-      - typeName: OnStreetParking
-    mode: update
-    attributes:
-      - name: location
-        namedb: position
-        type: geojson-multipolygon
-        cartodb: true
-      - name: dateModified
-        namedb: TimeInstant
-        type: ISO8601
-        indexdb: true
-        cartodb: true
-        constraint: true
-      - name: occupancyDetectionType
-        namedb: occupancydetectiontype
-        type: list-string
-        cartodb: true
-      - name: allowedVehicleType
-        namedb: allowedvehicletype
-        type: list-string
-        cartodb: true
-      - name: areaServed
-        type: string
-        cartodb: true
-      - name: category
-        type: list-string
-        cartodb: true
-      - name: chargeType
-        namedb: chargetype
-        type: list-string
-        cartodb: true
-      - name: maximumParkingDuration
-        namedb: maximumparkingduration
-        type: string
-        cartodb: true
-      - name: name
-        type: string
-        cartodb: true
-      - name: refParkingGroup
-        namedb: refparkinggroup
-        type: list-string
-        cartodb: true
-      - name: requiredPermit
-        namedb: requiredpermit
-        type: list-string
-        cartodb: true
-      - name: totalSpotNumber
-        namedb: totalspotnumber
-        type: integer
-        cartodb: true
-      - name: availableSpotNumber
-        namedb: availablespotnumber
-        type: integer
-        cartodb: true
-      - name: status
-        namedb: status
-        type: string
-        cartodb: true
-      - name: averagespotlength
-        namedb: averagespotlength
-        type: integer
-        cartodb: true
-      - name: averagespotwidth
-        namedb: averagespotwidth
-        type: integer
-        cartodb: true
-      - name: firstAvailableFloor
-        namedb: firstavailablefloor
-        type: integer
-        cartodb: true
-      - name: highestFloor
-        namedb: highestfloor
-        type: integer
-        cartodb: true
-      - name: lowestFloor
-        namedb: lowestfloor
-        type: integer
-        cartodb: true
-      - name: maximumallowedheight
-        namedb: maximumallowedheight
-        type: integer
-        cartodb: true
-      - name: maximumallowedwidth
-        namedb: maximumallowedwidth
-        type: integer
-        cartodb: true
-    trigger_attributes:
-      - dateModified
-
-  - id: parking_onstreetparking_status
-    subservice_id: parking_simulations
-    schemaname: distrito_telefonica
-    subsduration: P8M
-    substhrottling: PT0S
-    fetchDataOnCreated: false
-    entityTypes:
-      - typeName: OnStreetParking
-    mode: append
-    attributes:
-      - name: dateModified
-        namedb: TimeInstant
-        type: ISO8601
-        indexdb: true
-        cartodb: true
-        constraint: true
-      - name: status
-        namedb: status
-        type: string
-        cartodb: true
-    trigger_attributes:
-      - status
-
-  - id: parking_onstreetparking_availablespotnumber
-    subservice_id: parking_simulations
-    schemaname: distrito_telefonica
-    subsduration: P8M
-    substhrottling: PT0S
-    fetchDataOnCreated: false
-    entityTypes:
-      - typeName: OnStreetParking
-    mode: append
-    attributes:
-      - name: dateModified
-        namedb: TimeInstant
-        type: ISO8601
-        indexdb: true
-        cartodb: true
-        constraint: true
-      - name: availableSpotNumber
-        namedb: availablespotnumber
-        type: integer
-        cartodb: true
-    trigger_attributes:
-      - availableSpotNumber
-
-  - id: parking_onstreetparking
-    subservice_id: parking_simulations
-    schemaname: distrito_telefonica
-    subsduration: P8M
-    substhrottling: PT0S
-    fetchDataOnCreated: false
-    entityTypes:
-      - typeName: OnStreetParking
-    mode: append
-    attributes:
-      - name: location
-        namedb: position
-        type: geojson-multipolygon
-        cartodb: true
-      - name: dateModified
-        namedb: TimeInstant
-        type: ISO8601
-        indexdb: true
-        cartodb: true
-        constraint: true
-      - name: occupancyDetectionType
-        namedb: occupancydetectiontype
-        type: list-string
-        cartodb: true
-      - name: allowedVehicleType
-        namedb: allowedvehicletype
-        type: list-string
-        cartodb: true
-      - name: areaServed
-        type: string
-        cartodb: true
-      - name: category
-        type: list-string
-        cartodb: true
-      - name: chargeType
-        namedb: chargetype
-        type: list-string
-        cartodb: true
-      - name: maximumParkingDuration
-        namedb: maximumparkingduration
-        type: string
-        cartodb: true
-      - name: name
-        type: string
-        cartodb: true
-      - name: refParkingGroup
-        namedb: refparkinggroup
-        type: list-string
-        cartodb: true
-      - name: requiredPermit
-        namedb: requiredpermit
-        type: list-string
-        cartodb: true
-      - name: totalSpotNumber
-        namedb: totalspotnumber
-        type: integer
-        cartodb: true
-      - name: averagespotlength
-        namedb: averagespotlength
-        type: integer
-        cartodb: true
-      - name: averagespotwidth
-        namedb: averagespotwidth
-        type: integer
-        cartodb: true
-      - name: firstAvailableFloor
-        namedb: firstavailablefloor
-        type: integer
-        cartodb: true
-      - name: highestFloor
-        namedb: highestfloor
-        type: integer
-        cartodb: true
-      - name: lowestFloor
-        namedb: lowestfloor
-        type: integer
-        cartodb: true
-      - name: maximumallowedheight
-        namedb: maximumallowedheight
-        type: integer
-        cartodb: true
-      - name: maximumallowedwidth
-        namedb: maximumallowedwidth
-        type: integer
-        cartodb: true
-    trigger_attributes:
-      - location
-      - allowedVehicleType
-      - areaServed
-      - occupancyDetectionType
-      - category
-      - chargeType
-      - maximumParkingDuration
-      - name
-      - refParkingGroup
-      - requiredPermit
-      - totalSpotNumber
-      - averagespotlength
-      - averagespotwidth
-      - firstAvailableFloor
-      - highestFloor
-      - lowestFloor
-      - maximumallowedheight
-      - maximumallowedwidth
-
-  # ParkingGroup ######################
-  - id: parking_parkinggroup_lastdata
-    subservice_id: parking_simulations
-    schemaname: distrito_telefonica
-    subsduration: P8M
-    substhrottling: PT0S
-    fetchDataOnCreated: false
-    entityTypes:
-      - typeName: ParkingGroup
-    mode: update
-    attributes:
-      - name: location
-        namedb: position
-        type: geojson-multipolygon
-        cartodb: true
-      - name: dateModified
-        namedb: TimeInstant
-        type: ISO8601
-        indexdb: true
-        cartodb: true
-        constraint: true
-      - name: occupancyDetectionType
-        namedb: occupancydetectiontype
-        type: string
-        cartodb: true
-      - name: allowedVehicleType
-        namedb: allowedvehicletype
-        type: string
-        cartodb: true
-      - name: category
-        type: list-string
-        cartodb: true
-      - name: chargeType
-        namedb: chargetype
-        type: list-string
-        cartodb: true
-      - name: name
-        type: string
-        cartodb: true
-      - name: refParkingSite
-        namedb: refparkingsite
-        type: string
-        cartodb: true
-      - name: requiredPermit
-        namedb: requiredpermit
-        type: list-string
-        cartodb: true
-      - name: totalSpotNumber
-        namedb: totalspotnumber
-        type: integer
-        cartodb: true
-      - name: availableSpotNumber
-        namedb: availablespotnumber
-        type: integer
-        cartodb: true
-      - name: status
-        namedb: status
-        type: string
-        cartodb: true
-      - name: floor
-        type: integer
-        cartodb: true
-    trigger_attributes:
-      - dateModified
-
-  - id: parking_parkinggroup_status
-    subservice_id: parking_simulations
-    schemaname: distrito_telefonica
-    subsduration: P8M
-    substhrottling: PT0S
-    fetchDataOnCreated: false
-    entityTypes:
-      - typeName: ParkingGroup
-    mode: append
-    attributes:
-      - name: dateModified
-        namedb: TimeInstant
-        type: ISO8601
-        indexdb: true
-        cartodb: true
-        constraint: true
-      - name: status
-        namedb: status
-        type: string
-        cartodb: true
-    trigger_attributes:
-      - status
-
-  - id: parking_parkinggroup_availablespotnumber
-    subservice_id: parking_simulations
-    schemaname: distrito_telefonica
-    subsduration: P8M
-    substhrottling: PT0S
-    fetchDataOnCreated: false
-    entityTypes:
-      - typeName: ParkingGroup
-    mode: append
-    attributes:
-      - name: dateModified
-        namedb: TimeInstant
-        type: ISO8601
-        indexdb: true
-        cartodb: true
-        constraint: true
-      - name: availableSpotNumber
-        namedb: availablespotnumber
-        type: integer
-        cartodb: true
-    trigger_attributes:
-      - availableSpotNumber
-
-  - id: parking_parkinggroup
-    subservice_id: parking_simulations
-    schemaname: distrito_telefonica
-    subsduration: P8M
-    substhrottling: PT0S
-    fetchDataOnCreated: false
-    entityTypes:
-      - typeName: ParkingGroup
-    mode: append
-    attributes:
-      - name: location
-        namedb: position
-        type: geojson-multipolygon
-        cartodb: true
-      - name: dateModified
-        namedb: TimeInstant
-        type: ISO8601
-        indexdb: true
-        cartodb: true
-        constraint: true
-      - name: occupancyDetectionType
-        namedb: occupancydetectiontype
-        type: string
-        cartodb: true
-      - name: allowedVehicleType
-        namedb: allowedvehicletype
-        type: string
-        cartodb: true
-      - name: category
-        type: list-string
-        cartodb: true
-      - name: chargeType
-        namedb: chargetype
-        type: list-string
-        cartodb: true
-      - name: name
-        type: string
-        cartodb: true
-      - name: refParkingSite
-        namedb: refparkingsite
-        type: string
-        cartodb: true
-      - name: requiredPermit
-        namedb: requiredpermit
-        type: list-string
-        cartodb: true
-      - name: totalSpotNumber
-        namedb: totalspotnumber
-        type: integer
-        cartodb: true
-      - name: floor
-        type: integer
-        cartodb: true
-    trigger_attributes:
-      - location
-      - allowedVehicleType
-      - occupancyDetectionType
-      - category
-      - chargeType
-      - name
-      - refParkingSite
-      - requiredPermit
-      - totalSpotNumber
-      - floor
-
-  # ParkingSpot #########################
-  - id: parking_parkingspot_lastdata
-    subservice_id: parking_simulations
-    schemaname: distrito_telefonica
-    subsduration: P8M
-    substhrottling: PT0S
-    fetchDataOnCreated: false
-    entityTypes:
-      - typeName: ParkingSpot
-    mode: update
-    attributes:
-      - name: location
-        namedb: position
+      - name: position
         type: geojson-point
         cartodb: true
-      - name: dateModified
+      - name: timeInstant
         namedb: TimeInstant
         type: ISO8601
         indexdb: true
         cartodb: true
         constraint: true
-      - name: category
-        type: list-string
-        cartodb: true
-      - name: name
+      - name: customerId
+        namedb: customerid
         type: string
         cartodb: true
-      - name: refParkingGroup
-        namedb: refparkinggroup
+      - name: premisesId
+        namedb: premisesid
         type: string
         cartodb: true
-      - name: refParkingSite
-        namedb: refparkingsite
+      - name: groupId
+        namedb: groupid
         type: string
         cartodb: true
-      - name: status
+      - name: deviceType
+        namedb: devicetype
         type: string
         cartodb: true
-      - name: length
-        type: float
+      - name: energyType
+        namedb: energytype
+        type: string
         cartodb: true
-      - name: width
-        type: float
+      - name: energyUse
+        namedb: energyuse
+        type: string
         cartodb: true
-    trigger_attributes:
-      - dateModified
 
-  - id: parking_parkingspot_status
-    subservice_id: parking_simulations
+    trigger_attributes:
+      - position
+      - customerId
+      - premisesId
+      - groupId
+      - deviceType
+      - energyType
+      - energyUse
+
+  - id: lighting_stcabinet_lastdata
+    subservice_id: lighting_simulations
     schemaname: distrito_telefonica
     subsduration: P8M
     substhrottling: PT0S
     fetchDataOnCreated: false
     entityTypes:
-      - typeName: ParkingSpot
-    mode: append
+      - typeName: ht_6
+    mode: update
     attributes:
-      - name: dateModified
-        namedb: TimeInstant
-        type: ISO8601
-        indexdb: true
-        cartodb: true
-        constraint: true
-      - name: status
-        type: string
-        cartodb: true
-    trigger_attributes:
-      - status
-
-  - id: parking_parkingspot
-    subservice_id: parking_simulations
-    schemaname: distrito_telefonica
-    subsduration: P8M
-    substhrottling: PT0S
-    fetchDataOnCreated: false
-    entityTypes:
-      - typeName: ParkingSpot
-    mode: append
-    attributes:
-      - name: location
-        namedb: position
+      - name: position
         type: geojson-point
         cartodb: true
-      - name: dateModified
+      - name: timeInstant
         namedb: TimeInstant
         type: ISO8601
         indexdb: true
         cartodb: true
         constraint: true
-      - name: category
-        type: list-string
-        cartodb: true
-      - name: name
-        type: string
-        cartodb: true
-      - name: refParkingGroup
-        namedb: refparkinggroup
-        type: string
-        cartodb: true
-      - name: refParkingSite
-        namedb: refparkingsite
-        type: string
-        cartodb: true
-      - name: status
-        type: string
-        cartodb: true
-      - name: length
+      - name: energyConsumed
+        namedb: energyconsumed
         type: float
         cartodb: true
-      - name: width
+      - name: reactiveEnergyConsumed
+        namedb: reactiveenergyconsumed
+        type: float
+        cartodb: true
+      - name: totalActivePower
+        namedb: totalactivepower
+        type: float
+        cartodb: true
+      - name: customerId
+        namedb: customerid
+        type: string
+        cartodb: true
+      - name: powerState_general
+        namedb: powerstate_general
+        type: float
+        cartodb: true
+      - name: powerState_reduced
+        namedb: powerstate_reduced
+        type: float
+        cartodb: true
+      - name: premisesId
+        namedb: premisesid
+        type: string
+        cartodb: true
+      - name: groupId
+        namedb: groupid
+        type: string
+        cartodb: true
+      - name: deviceType
+        namedb: devicetype
+        type: string
+        cartodb: true
+      - name: energyType
+        namedb: energytype
+        type: string
+        cartodb: true
+      - name: energyUse
+        namedb: energyuse
+        type: string
+        cartodb: true
+
+    trigger_attributes:
+      - timeInstant
+
+  # StreetlightControlCabinet ######################
+  - id: lighting_stcabinet_state
+    subservice_id: lighting_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: ht_6
+    mode: append
+    attributes:
+      - name: timeInstant
+        namedb: "TimeInstant"
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: energyConsumed
+        namedb: energyconsumed
+        type: float
+        cartodb: true
+      - name: reactiveEnergyConsumed
+        namedb: reactiveenergyconsumed
+        type: float
+        cartodb: true
+      - name: totalActivePower
+        namedb: totalactivepower
+        type: float
+        cartodb: true
+
+    trigger_attributes:
+      - totalActivePower
+
+
+  # StreetlightControlCabinet ######################
+  - id: lighting_stcabinet_powerstate
+    subservice_id: lighting_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: ht_6
+    mode: append
+    attributes:
+      - name: timeInstant
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: powerState_general
+        namedb: powerstate_general
+        type: float
+        cartodb: true
+      - name: powerState_reduced
+        namedb: powerstate_reduced
         type: float
         cartodb: true
     trigger_attributes:
-      - location
-      - category
-      - name
-      - refParkingGroup
-      - refParkingSite
-      - length
-      - width
+      - powerState_general
+      - powerState_reduced
