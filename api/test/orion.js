@@ -24,18 +24,18 @@ describe('ORION', function(){
     done();
   });
 
-  it('Initialize subscriptions', function(done){
-    this.timeout(0);
-    subscriptions.initialize(function(error, subs){
-      if(error instanceof Array) {
-        error[0].should.be.equal(null);
-      }
-      else {
-       error.should.be.equal(null);
-      }
+  // it('Initialize subscriptions', function(done){
+  //   this.timeout(0);
+  //   subscriptions.initialize(function(error, subs){
+  //     if(error instanceof Array) {
+  //       error[0].should.be.equal(null);
+  //     }
+  //     else {
+  //      error.should.be.equal(null);
+  //     }
 
-      done();
-    });
-  });
+  //     done();
+  //   });
+  // });
 
 });
