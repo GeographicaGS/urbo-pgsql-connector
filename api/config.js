@@ -136,6 +136,7 @@ function Config(){
   this.getCtxBrUrls = function(optype){
     var urlCtxBrBase = this._data.contextBrokerUrls.urlCtxBrBase;
     if (optype == 'authtk'){
+      if(!this._data.contextBrokerUrls.portAuthtk) return null;
       var portAuthtk = this._data.contextBrokerUrls.portAuthtk;
       return urlCtxBrBase + ':' + portAuthtk + URL_AUTHTK
     }
