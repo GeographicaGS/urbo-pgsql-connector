@@ -30,7 +30,7 @@ node("docker") {
             sh "docker run -d --name orion_mongo--${build_name} mongo:3.2 --nojournal"
 
             echo "Running orion"
-            sh "docker run -d --name urbo_orion--${build_name} --link orion_mongo-${build_name}:mongo -p 1026:1026 fiware/orion -dbhost mongo"
+            sh "docker run -d --name urbo_orion--${build_name} --link orion_mongo--${build_name}:mongo -p 1026:1026 fiware/orion -dbhost mongo"
 
             sleep 20
 
