@@ -126,7 +126,7 @@ describe('ORION', function(){
       request(reku, function(error, response, body){
         should.equal(error, null);
         body.contextResponses[0].statusCode.code.should.be.equal('200');
-        var sql = new SQL();
+        var sql = new SQL(config.getData().pgsql);
         var query = "SELECT COUNT(*) FROM distrito_telefonica.lighting_stcabinet_state";
         sql.query(query, null, function(error, data){
           console.log(data);
