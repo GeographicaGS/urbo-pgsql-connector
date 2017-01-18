@@ -7,7 +7,7 @@ var config = require('../config');
 var subscriptions = require('../orion/subscriptions');
 
 var SQL = require('../models/pgsqlmodel');
-var app = require('..(app');
+var app = require('../app');
 var srv = config.getSubService('lighting_simulations');
 var headers = {
   'Content-Type': 'application/json',
