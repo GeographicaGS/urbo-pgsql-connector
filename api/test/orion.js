@@ -5,7 +5,7 @@ var should = require('chai').should();  // actually call the function
 var config = require('../config');
 var subscriptions = require('../orion/subscriptions');
 
-var srv = config.getSubService('parking_simulations');
+var srv = config.getSubService('lighting_simulations');
 var headers = {
   'Content-Type': 'application/json',
   'Accept': 'application/json',
