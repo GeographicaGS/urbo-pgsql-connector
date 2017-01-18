@@ -1,11 +1,8 @@
 'use strict';
 
-var request = require('supertest');
-var cluster = require('cluster');
+var request = require('request');
 var should = require('chai').should();  // actually call the function
-var process = require('process');
 var config = require('../config');
-var getLargeSubscriptions = require('../orion/subscriptiondata')
 var subscriptions = require('../orion/subscriptions');
 
 var srv = config.getSubService('parking_simulations');
