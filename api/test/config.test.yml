@@ -13,7 +13,7 @@ logging:
 
 # PostgreSQL configuration parameters
 pgsql:
-  host: 192.168.99.100
+  host: postgis
   user: urbo_admin
   password: urbo
   database: urbo
