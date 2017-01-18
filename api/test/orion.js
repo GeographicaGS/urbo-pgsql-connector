@@ -5,13 +5,13 @@ var should = require('chai').should();  // actually call the function
 var config = require('../config');
 var subscriptions = require('../orion/subscriptions');
 
-var srv = config.getSubService('lighting_simulations');
-var headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json',
-  'Fiware-Service': srv.service,
-  'Fiware-ServicePath': srv.subservice
-};
+// var srv = config.getSubService('lighting_simulations');
+// var headers = {
+//   'Content-Type': 'application/json',
+//   'Accept': 'application/json',
+//   'Fiware-Service': srv.service,
+//   'Fiware-ServicePath': srv.subservice
+// };
 
 describe('ORION', function(){
 
