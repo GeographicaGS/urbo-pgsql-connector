@@ -26,6 +26,11 @@ node("docker") {
             echo "Creating database"
             sh "docker run -d --name urbo_pgsql--${build_name} -v ${workspace}/db:/connector_db -e \"LOCALE=es_ES\" -e \"CREATE_USER=urbo_admin;urbo\" geographica/postgis:awkward_aardvark"
 
+            sleep 10
+            echo "Populating database"
+            sh "docker exec -i urbo_pgsql--${build_name} psql -U postgres -f /connector_db/all.sql"
+
+
             echo "Starting up mongodb"
             sh "docker run -d --name orion_mongo--${build_name} mongo:3.2 --nojournal"
 
