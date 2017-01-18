@@ -1,12 +1,13 @@
 'use strict';
 
 var request = require('request');
+var supertest = require('supertest');
 var should = require('chai').should();  // actually call the function
 var config = require('../config');
 var subscriptions = require('../orion/subscriptions');
 
 var SQL = require('../models/pgsqlmodel');
-
+var app = require('..(app');
 var srv = config.getSubService('lighting_simulations');
 var headers = {
   'Content-Type': 'application/json',
@@ -115,14 +116,10 @@ describe('ORION', function(){
 
   it('Initialize subscriptions', function(done){
     this.timeout(0);
-    subscriptions.initialize(function(error, subs){
-      if(error instanceof Array) {
-        should.equal(error[0], null);
-      }
-      else {
-        should.equal(error, null);
-      }
 
+    supertest(app)
+    .get('/')
+    .expect(function(res){
       request(reku, function(error, response, body){
         should.equal(error, null);
         body.contextResponses[0].statusCode.code.should.be.equal('200');
@@ -132,8 +129,31 @@ describe('ORION', function(){
           console.log(data);
           done();
         });
-      });
+      })
     });
+
+
+    // subscriptions.initialize(function(error, subs){
+    //   if(error instanceof Array) {
+    //     should.equal(error[0], null);
+    //   }
+    //   else {
+    //     should.equal(error, null);
+    //   }
+
+    //   request(reku, function(error, response, body){
+    //     should.equal(error, null);
+    //     body.contextResponses[0].statusCode.code.should.be.equal('200');
+    //     var sql = new SQL(config.getData().pgsql);
+    //     var query = "SELECT COUNT(*) FROM distrito_telefonica.lighting_stcabinet_state";
+    //     sql.query(query, null, function(error, data){
+    //       console.log(data);
+    //       done();
+    //     });
+    //   });
+    // });
+
+
   });
 
 });
