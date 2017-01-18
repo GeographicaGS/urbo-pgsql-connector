@@ -15,7 +15,9 @@ var headers = {
 
 var requestBody = {
  updateAction: 'APPEND',
- contextElement:{
+ contextElements:
+ [
+  {
     "type":"ht_6",
     "isPattern":"false",
     "id":"sepulveda-01",
@@ -87,14 +89,14 @@ var requestBody = {
           ]
        }
     ]
- }
+  }
+]
 }
 
 var reku = {
   headers: headers,
-  url: config.getCtxBrUrls('subscr'),
+  url: config.getCtxBrUrls('update'),
   method: 'POST',
-  rejectUnauthorized: false,
   json: requestBody
 
 }
