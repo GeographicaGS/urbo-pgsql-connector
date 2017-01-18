@@ -58,9 +58,9 @@ node("docker") {
 
         stage "Cleaning"
             echo "Cleaning urbo-connector/${build_name}"
-            sh "docker rm -v urbo_orion--${build_name}"
-            sh "docker rm -v orion_mongo--${build_name}"
-            sh "docker rm -v urbo_pgsql--${build_name}"
+            sh "docker rm -f urbo_orion--${build_name}"
+            sh "docker rm -f orion_mongo--${build_name}"
+            sh "docker rm -f -v urbo_pgsql--${build_name}"
 
 
 
