@@ -30,19 +30,21 @@ node("docker") {
             echo "Populating database"
             sh "docker exec -i urbo_pgsql--${build_name} psql -U postgres -f /connector_db/all.sql"
 
+            # Docker network
+            sh "docker network create connector-network"
 
             echo "Starting up mongodb"
             sh "docker run -d --name orion_mongo--${build_name} mongo:3.2 --nojournal"
 
             echo "Running orion"
-            sh "docker run -d --name urbo_orion--${build_name} --link orion_mongo--${build_name}:mongo -p 1026:1026 fiware/orion -dbhost mongo"
+            sh "docker run -d --name urbo_orion--${build_name} --net=connector-network --net-alias=orion --link orion_mongo--${build_name}:mongo -p 1026:1026 fiware/orion -dbhost mongo"
 
             sleep 20
 
         stage "Testing"
 
             echo "Testing urbo-connector/${build_name}"
-            sh "docker run -i --rm --name urbo_connector--${build_name} --link urbo_pgsql--${build_name}:postgis --link urbo_orion--${build_name}:orion geographica/urbo_connector npm test"
+            sh "docker run -i --rm --name urbo_connector--${build_name} --net=connector-network --net-alias=urbo_connector --link urbo_pgsql--${build_name}:postgis geographica/urbo_connector npm test"
 
     } catch (error) {
 
