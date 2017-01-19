@@ -106,6 +106,12 @@ var reku = {
 
 }
 
+var testAPI = {
+  url: 'http://urbo_connector:3000/subscriptions/lighting_stcabinet_state',
+  method: 'POST',
+  json: {}
+}
+
 describe('ORION', function(){
 
   it('Dummy headers check', function(done){
@@ -134,13 +140,18 @@ describe('ORION', function(){
         request(reku, function(error, response, body){
           should.equal(error, null);
           body.contextResponses[0].statusCode.code.should.be.equal('200');
-          var sql = new SQL(config.getData().pgsql);
-          var query = "SELECT * from public.subscriptions";
-          sql.query(query, null, function(error, data){
-            should.equal(error, null);
-            console.log(JSON.stringify(data));
-            done();
-          });
+          request(testAPI, function(error, response, body){
+            console.log(error, response, body);
+
+            var sql = new SQL(config.getData().pgsql);
+            var query = "SELECT * from public.subscriptions";
+            sql.query(query, null, function(error, data){
+              should.equal(error, null);
+              console.log(JSON.stringify(data));
+              done();
+            });
+          })
+
         });
       });
     });
