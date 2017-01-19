@@ -154,7 +154,8 @@ describe('ORION', function(){
 
     request({url: url, method: 'GET'}, function(err, res, body){
 
-
+      console.log(err);
+      should.equal(err, null);
       res.text.should.be.equal('"URBO - PGSQL Connector"');
 
       subscriptions.initialize(function(error, data){
