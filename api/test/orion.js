@@ -121,9 +121,10 @@ describe('ORION', function(){
     this.timeout(0);
     app.set('port', 3000);
     server = http.createServer(app);
-    server.listen(function(s){
+    server.listen(function(){
 
-      console.log(s);
+      console.log(server);
+
       url = 'http://localhost:3000';
 
       // if(s && s.address() && s.address().port)  {
