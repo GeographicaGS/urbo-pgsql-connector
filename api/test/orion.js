@@ -115,21 +115,14 @@ var testAPI = {
 describe('ORION', function(){
 
   var url;
-  var server;
+  // var server;
 
   before(function(){
     this.timeout(0);
-    app.set('port', 3000);
-    server = http.createServer(app);
-    server.listen(function(){
-
-      console.log(server);
-
-      url = 'http://localhost:3000';
-
-      // if(s && s.address() && s.address().port)  {
-      //   url = 'http://localhost:' + s.address().port;
-      // }
+    app.listen(3000, function(s){
+      if(s && s.address() && s.address().port)  {
+        url = 'http://localhost:' + s.address().port;
+      }
     });
   });
 
@@ -137,26 +130,21 @@ describe('ORION', function(){
     server.close();
   });
 
-  // it('Dummy headers check', function(done){
-  //   headers['Content-Type'].should.be.equal('application/json');
-  //   headers['Fiware-Service'].should.be.equal('urbo');
-  //   headers['Fiware-ServicePath'].should.be.equal('/geographica_dev');
-  //   done();
-  // });
+  it('Dummy headers check', function(done){
+    headers['Content-Type'].should.be.equal('application/json');
+    headers['Fiware-Service'].should.be.equal('urbo');
+    headers['Fiware-ServicePath'].should.be.equal('/geographica_dev');
+    done();
+  });
 
   it('Initialize subscriptions', function(done){
     this.timeout(0);
 
-    // _request(url)
-    // .get('/')
-    // .expect(200)
-    // .expect('Content-Type', /json/)
-    // .expect(function(res){
-
-    request({url: url, method: 'GET'}, function(err, res, body){
-
-      console.log(err);
-      should.equal(err, null);
+    _request(url)
+    .get('/')
+    .expect(200)
+    .expect('Content-Type', /json/)
+    .expect(function(res){
       res.text.should.be.equal('"URBO - PGSQL Connector"');
 
       subscriptions.initialize(function(error, data){
@@ -179,7 +167,7 @@ describe('ORION', function(){
         });
       });
     })
-    // .end(function(req, res){});
+    .end(function(req, res){});
 
   });
 
