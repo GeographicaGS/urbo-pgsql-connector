@@ -121,13 +121,10 @@ describe('ORION', function(){
     this.timeout(0);
     app.set('port', 3000);
     server = http.createServer(app);
-    server.listen();
-    server.on('listening', function() {
-      var addr = server.address();
-      var bind = typeof addr === 'string'
-        ? 'pipe ' + addr
-        : 'port ' + addr.port;
-      url = bind;
+    server.listen(function(s){
+      if(s && s.address() && s.address().port)  {
+        url = 'http://localhost:' + s.address().port;
+      }
     });
   });
 
