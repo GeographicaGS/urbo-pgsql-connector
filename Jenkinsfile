@@ -30,7 +30,7 @@ node("docker") {
             echo "Populating database"
             sh "docker exec -i urbo_pgsql--${build_name} psql -U postgres -f /connector_db/all.sql"
 
-            # Docker network
+            echo "Docker network"
             sh "docker network create connector-network"
 
             echo "Starting up mongodb"
