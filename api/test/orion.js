@@ -151,7 +151,8 @@ describe('ORION', function(){
 
         });
       });
-    }).end();
+    })
+    .end(function(req, res){});
 
   });
 
