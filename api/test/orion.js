@@ -1,7 +1,7 @@
 'use strict';
 
 var request = require('request');
-var supertest = require('supertest');
+var _request = require('supertest');
 var should = require('chai').should();  // actually call the function
 var config = require('../config');
 var subscriptions = require('../orion/subscriptions');
@@ -117,7 +117,7 @@ describe('ORION', function(){
   it('Initialize subscriptions', function(done){
     this.timeout(0);
 
-    supertest(app)
+    _request(app)
     .get('/')
     .expect(200)
     .expect(function(res){
@@ -137,7 +137,7 @@ describe('ORION', function(){
       });
 
     })
-    .end();
+    .end(done);
 
 
     // subscriptions.initialize(function(error, subs){
