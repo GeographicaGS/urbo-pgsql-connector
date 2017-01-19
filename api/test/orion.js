@@ -156,7 +156,7 @@ describe('ORION', function(){
             var query = "SELECT COUNT(*) from distrito_telefonica.lighting_stcabinet_state";
             sql.query(query, null, function(error, data){
               should.equal(error, null);
-              console.log(JSON.stringify(data));
+              should.equal(data.rowCount, 1);
               done();
             });
           })
