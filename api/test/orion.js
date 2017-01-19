@@ -5,7 +5,7 @@ var _request = require('supertest');
 var should = require('chai').should();  // actually call the function
 var config = require('../config');
 var subscriptions = require('../orion/subscriptions');
-
+var http = require('http');
 var SQL = require('../models/pgsqlmodel');
 var app = require('../app').app;
 var subscriptions = require('../app').subscriptions;
@@ -114,6 +114,27 @@ var testAPI = {
 
 describe('ORION', function(){
 
+  var url;
+  var server;
+
+  before(function(){
+    this.timeout(0);
+    app.set('port', 3000);
+    server = http.createServer(app);
+    server.listen();
+    server.on('listening', function() {
+      var addr = server.address();
+      var bind = typeof addr === 'string'
+        ? 'pipe ' + addr
+        : 'port ' + addr.port;
+      url = bind;
+    });
+  });
+
+  after(function(){
+    server.close();
+  });
+
   it('Dummy headers check', function(done){
     headers['Content-Type'].should.be.equal('application/json');
     headers['Fiware-Service'].should.be.equal('urbo');
@@ -121,11 +142,10 @@ describe('ORION', function(){
     done();
   });
 
-
   it('Initialize subscriptions', function(done){
     this.timeout(0);
 
-    _request(app)
+    _request(url)
     .get('/')
     .expect(200)
     .expect('Content-Type', /json/)
@@ -155,5 +175,6 @@ describe('ORION', function(){
     .end(function(req, res){});
 
   });
+
 
 });
