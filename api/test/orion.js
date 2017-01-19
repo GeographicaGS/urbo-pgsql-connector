@@ -136,12 +136,12 @@ describe('ORION', function(){
     server.close();
   });
 
-  it('Dummy headers check', function(done){
-    headers['Content-Type'].should.be.equal('application/json');
-    headers['Fiware-Service'].should.be.equal('urbo');
-    headers['Fiware-ServicePath'].should.be.equal('/geographica_dev');
-    done();
-  });
+  // it('Dummy headers check', function(done){
+  //   headers['Content-Type'].should.be.equal('application/json');
+  //   headers['Fiware-Service'].should.be.equal('urbo');
+  //   headers['Fiware-ServicePath'].should.be.equal('/geographica_dev');
+  //   done();
+  // });
 
   it('Initialize subscriptions', function(done){
     this.timeout(0);
