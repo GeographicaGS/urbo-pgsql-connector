@@ -23,28 +23,30 @@ node("docker") {
             sh "cp api/test/config.test.yml api/config.yml"
             sh "docker build --pull=true -t geographica/urbo_connector -f api/Dockerfile.test api"
 
+            echo "Docker network"
+            sh "docker network create connector-network"
+
             echo "Creating database"
-            sh "docker run -d --name urbo_pgsql--${build_name} -v ${workspace}/db:/connector_db -e \"LOCALE=es_ES\" -e \"CREATE_USER=urbo_admin;urbo\" geographica/postgis:awkward_aardvark"
+            sh "docker run -d --name urbo_pgsql--${build_name} --net=connector-network --net-alias=postgis -v ${workspace}/db:/connector_db -e \"LOCALE=es_ES\" -e \"CREATE_USER=urbo_admin;urbo\" geographica/postgis:awkward_aardvark"
 
             sleep 10
             echo "Populating database"
             sh "docker exec -i urbo_pgsql--${build_name} psql -U postgres -f /connector_db/all.sql"
 
-            echo "Docker network"
-            sh "docker network create connector-network"
+
 
             echo "Starting up mongodb"
-            sh "docker run -d --name orion_mongo--${build_name} mongo:3.2 --nojournal"
+            sh "docker run -d --name orion_mongo--${build_name} --net=connector-network --net-alias=mongo mongo:3.2 --nojournal"
 
             echo "Running orion"
-            sh "docker run -d --name urbo_orion--${build_name} --net=connector-network --net-alias=orion --link orion_mongo--${build_name}:mongo -p 1026:1026 fiware/orion -dbhost mongo"
+            sh "docker run -d --name urbo_orion--${build_name} --net=connector-network --net-alias=orion fiware/orion -dbhost mongo"
 
             sleep 20
 
         stage "Testing"
 
             echo "Testing urbo-connector/${build_name}"
-            sh "docker run -i --rm --name urbo_connector--${build_name} --net=connector-network --net-alias=urbo_connector --link urbo_pgsql--${build_name}:postgis geographica/urbo_connector npm test"
+            sh "docker run -i --rm --name urbo_connector--${build_name} --net=connector-network --net-alias=urbo_connector geographica/urbo_connector npm test"
 
     } catch (error) {
 
@@ -63,6 +65,7 @@ node("docker") {
             sh "docker rm -f urbo_orion--${build_name}"
             sh "docker rm -f orion_mongo--${build_name}"
             sh "docker rm -f -v urbo_pgsql--${build_name}"
+            sh "docker network rm connector-network"
 
 
 
