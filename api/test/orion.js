@@ -114,18 +114,18 @@ var testAPI = {
 
 describe('ORION', function(){
 
-  var url;
+  var url = 'http://localhost:3000';
   // var server;
 
   before(function(){
     this.timeout(0);
     app.listen(3000, function(s){
 
-      console.log(s);
+      console.log("Listening...");
 
-      if(s && s.address() && s.address().port)  {
-        url = 'http://localhost:' + s.address().port;
-      }
+      // if(s && s.address() && s.address().port)  {
+        // url = 'http://localhost:' + s.address().port;
+      // }
     });
   });
 
