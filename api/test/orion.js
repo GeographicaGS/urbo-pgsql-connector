@@ -146,11 +146,15 @@ describe('ORION', function(){
   it('Initialize subscriptions', function(done){
     this.timeout(0);
 
-    _request(url)
-    .get('/')
-    .expect(200)
-    .expect('Content-Type', /json/)
-    .expect(function(res){
+    // _request(url)
+    // .get('/')
+    // .expect(200)
+    // .expect('Content-Type', /json/)
+    // .expect(function(res){
+
+    request({url: url, method: 'GET'}, function(err, res, body){
+
+
       res.text.should.be.equal('"URBO - PGSQL Connector"');
 
       subscriptions.initialize(function(error, data){
@@ -173,7 +177,7 @@ describe('ORION', function(){
         });
       });
     })
-    .end(function(req, res){});
+    // .end(function(req, res){});
 
   });
 
