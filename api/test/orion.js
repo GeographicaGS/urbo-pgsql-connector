@@ -151,7 +151,8 @@ describe('ORION', function(){
           should.equal(error, null);
           body.contextResponses[0].statusCode.code.should.be.equal('200');
           request(testAPI, function(error, response, body){
-            // console.log(error, response, body);
+
+            console.log(error);
 
             var sql = new SQL(config.getData().pgsql);
             var query = "SELECT * from public.subscriptions";
