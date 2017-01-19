@@ -39,7 +39,7 @@ node("docker") {
             sh "docker run -d --name orion_mongo--${build_name} --net=connector-network --net-alias=mongo mongo:3.2 --nojournal"
 
             echo "Running orion"
-            sh "docker run -d --name urbo_orion--${build_name} --net=connector-network --net-alias=orion fiware/orion -dbhost mongo"
+            sh "docker run -d --name urbo_orion--${build_name} --net=connector-network --net-alias=orion fiware/orion -dbhost mongo -logLevel DEBUG"
 
             sleep 20
 
