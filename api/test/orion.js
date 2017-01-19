@@ -115,7 +115,8 @@ var testAPI = {
 describe('ORION', function(){
 
   var url = 'http://localhost:3000';
-  var server,
+  var server;
+
   before(function(){
     this.timeout(0);
     server = app.listen(3000, function(s){
