@@ -128,6 +128,9 @@ describe('ORION', function(){
 
       subscriptions.initialize(function(error, data){
         should.equal(error, null);
+
+        console.log(data);
+
         request(reku, function(error, response, body){
           should.equal(error, null);
           body.contextResponses[0].statusCode.code.should.be.equal('200');
