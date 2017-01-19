@@ -132,10 +132,10 @@ describe('ORION', function(){
           should.equal(error, null);
           body.contextResponses[0].statusCode.code.should.be.equal('200');
           var sql = new SQL(config.getData().pgsql);
-          var query = "SELECT COUNT(*) FROM distrito_telefonica.lighting_stcabinet";
+          var query = "SELECT * from public.subscriptions";
           sql.query(query, null, function(error, data){
             should.equal(error, null);
-            console.log(data);
+            console.log(JSON.stringify(data));
             done();
           });
         });
