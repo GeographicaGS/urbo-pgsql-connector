@@ -115,22 +115,16 @@ var testAPI = {
 describe('ORION', function(){
 
   var url = 'http://localhost:3000';
-  // var server;
-
+  var server,
   before(function(){
     this.timeout(0);
-    app.listen(3000, function(s){
-
+    server = app.listen(3000, function(s){
       console.log("Listening...");
-
-      // if(s && s.address() && s.address().port)  {
-        // url = 'http://localhost:' + s.address().port;
-      // }
     });
   });
 
   after(function(){
-    app.close();
+    server.close();
   });
 
   it('Dummy headers check', function(done){
@@ -156,7 +150,7 @@ describe('ORION', function(){
           should.equal(error, null);
           body.contextResponses[0].statusCode.code.should.be.equal('200');
           request(testAPI, function(error, response, body){
-            console.log(error, response, body);
+            // console.log(error, response, body);
 
             var sql = new SQL(config.getData().pgsql);
             var query = "SELECT * from public.subscriptions";
