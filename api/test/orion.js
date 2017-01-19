@@ -107,7 +107,7 @@ var reku = {
 }
 
 var testAPI = {
-  url: 'http://urbo_connector:3000/subscriptions/lighting_stcabinet_state',
+  url: 'http://urbo_connector/subscriptions/lighting_stcabinet_state',
   method: 'POST',
   json: {}
 }
