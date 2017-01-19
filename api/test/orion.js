@@ -120,6 +120,9 @@ describe('ORION', function(){
   before(function(){
     this.timeout(0);
     app.listen(3000, function(s){
+
+      console.log(s);
+
       if(s && s.address() && s.address().port)  {
         url = 'http://localhost:' + s.address().port;
       }
@@ -127,7 +130,7 @@ describe('ORION', function(){
   });
 
   after(function(){
-    server.close();
+    app.close();
   });
 
   it('Dummy headers check', function(done){
