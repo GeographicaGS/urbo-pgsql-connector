@@ -124,10 +124,11 @@ describe('ORION', function(){
     server.listen(function(s){
 
       console.log(s);
+      url = 'http://localhost:3000';
 
-      if(s && s.address() && s.address().port)  {
-        url = 'http://localhost:' + s.address().port;
-      }
+      // if(s && s.address() && s.address().port)  {
+      //   url = 'http://localhost:' + s.address().port;
+      // }
     });
   });
 
