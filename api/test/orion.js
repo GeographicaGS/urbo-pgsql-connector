@@ -153,8 +153,7 @@ describe('ORION', function(){
           request(testAPI, function(error, response, body){
             should.equal(error, null);
             var sql = new SQL(config.getData().pgsql);
-            var query = "SELECT * from distrito_telefonica.lighting_stcabinet_state";
-
+            var query = "SELECT COUNT(*) from distrito_telefonica.lighting_stcabinet_state";
             sql.query(query, null, function(error, data){
               should.equal(error, null);
               console.log(JSON.stringify(data));
