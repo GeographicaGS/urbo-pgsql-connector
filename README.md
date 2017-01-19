@@ -1,4 +1,11 @@
 # URBO PGSQL connector
+
+Status **master** branch: [![Build Status](http://jenkins.geographica.gs/buildStatus/icon?job=urbo-connector/master)](http://jenkins.geographica.gs/job/urbo-connector/job/master/)
+
+Status **staging** branch: [![Build Status](http://jenkins.geographica.gs/buildStatus/icon?job=urbo-connector/staging)](http://jenkins.geographica.gs/job/urbo-connector/job/staging/)
+
+Status **dev** branch: [![Build Status](http://jenkins.geographica.gs/buildStatus/icon?job=urbo-connector/dev)](http://jenkins.geographica.gs/job/urbo-connector/job/dev/)
+
 This project is a connector between Fiware and PostgreSQL. It supports spatial features with PostGIS and CartoDB.
 
 You choose which part of Fiware do you want to listen to, you specify how to map the information and you'll get this information ready on a PostgreSQL database. Furthermore, if you want to have great maps you can also have this information at CartoDB, it's up to you.
