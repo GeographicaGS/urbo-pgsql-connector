@@ -7,7 +7,9 @@ var config = require('../config');
 var subscriptions = require('../orion/subscriptions');
 
 var SQL = require('../models/pgsqlmodel');
-var app = require('../app');
+var app = require('../app').app;
+var subscriptions = require('../app').subscriptions;
+
 var srv = config.getSubService('lighting_simulations');
 var headers = {
   'Content-Type': 'application/json',
@@ -124,16 +126,18 @@ describe('ORION', function(){
     .end(function(err, res){
       res.text.should.be.equal('"URBO - PGSQL Connector"');
 
-      request(reku, function(error, response, body){
+      subscriptions.initialize(function(error, data){
         should.equal(error, null);
-        body.contextResponses[0].statusCode.code.should.be.equal('200');
-
-        var sql = new SQL(config.getData().pgsql);
-        var query = "SELECT COUNT(*) FROM distrito_telefonica.lighting_stcabinet_state";
-        sql.query(query, null, function(error, data){
+        request(reku, function(error, response, body){
           should.equal(error, null);
-          console.log(data);
-          done();
+          body.contextResponses[0].statusCode.code.should.be.equal('200');
+          var sql = new SQL(config.getData().pgsql);
+          var query = "SELECT COUNT(*) FROM distrito_telefonica.lighting_stcabinet_state";
+          sql.query(query, null, function(error, data){
+            should.equal(error, null);
+            console.log(data);
+            done();
+          });
         });
       });
     });
