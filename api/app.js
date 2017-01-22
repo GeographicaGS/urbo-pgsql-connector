@@ -29,7 +29,7 @@ app.use('/', routes);
 
 var subscriptions = require('./orion/subscriptions.js');
 app.use('/subscriptions',subscriptions.routes());
-subscriptions.initialize();
+// subscriptions.initialize();
 
 
 // catch 404 and forward to error handler
@@ -66,4 +66,5 @@ app.use(function(err, req, res, next) {
 });
 
 
-module.exports = app;
+module.exports.app = app;
+module.exports.subscriptions = subscriptions;
