@@ -1,6 +1,6 @@
-# lucena- HYDRA - STREET LIGHTING DASHBOARD CONFIGURATION FILE
+  # FIWARE URBO WASTE DASHBOARD CONFIGURATION FILE
 
-baseURL: http://url:port
+baseURL: http://urbo_connector:3000
 
 # debugAccessToken:
 
@@ -14,48 +14,47 @@ logging:
 # PostgreSQL configuration parameters
 pgsql:
   host: postgis
-  user: xxxxx
-  password: xxxxx
-  database: xxxxx
+  user: urbo_admin
+  password: urbo
+  database: urbo
   port: 5432
 
 # CartoDB configuration parameters
 cartodb:
-  apiKey: xxxxxxxxxxxxxxxxxxxxxx
-  user: xxxxxxxxxxxxx
+  apiKey: XXXX
+  user: urbo-admin
   active: false
-  enterprise: true
+  enterprise: false
 
 # urbo-processing parameters
 processing:
   active: false
-  url: http://localhost:XXXX
-  requestAttempts: 5
-  psqlJob: connectorPsql
-  cartoJob: connectorCarto
-  jobAttempts: 3
-  priority: critical
 
 # Orion Context Broker API URLs
 contextBrokerUrls:
-  portAuthtk: xxxxxxxxxxxxx
-  portCtxApi: xxxxxxxxx
-  urlCtxBrBase: https://xxxxxxxxxxxxxxxxxxxxxxxx
+  portAuthtk: false
+  portCtxApi: 1026
+  urlCtxBrBase: http://orion
+
 
 # Fiware subservices subscriptions configuration
 subservices:
-  - id: lighting
-    service: XXX
-    subservice: /and_sr_lucena
+  - id: lighting_simulations
+    service: urbo
+    subservice: /geographica_dev
     auth:
-      user: XXX
-      password: XXX
+      user: geographica_admin
+      password: S1m9l4d0r3sAAA
+
+
+# recreateSubscriptions: global
+
 
 subscriptions:
-  ###StreetlightControlCabinet ######################
+  # StreetlightControlCabinet ######################
   - id: lighting_stcabinet
-    subservice_id: lighting
-    schemaname: lucena
+    subservice_id: lighting_simulations
+    schemaname: distrito_telefonica
     subsduration: P8M
     substhrottling: PT0S
     fetchDataOnCreated: false
@@ -64,7 +63,7 @@ subscriptions:
     mode: append
     attributes:
       - name: position
-        type: coords
+        type: geojson-point
         cartodb: true
       - name: timeInstant
         namedb: TimeInstant
@@ -107,8 +106,8 @@ subscriptions:
       - energyUse
 
   - id: lighting_stcabinet_lastdata
-    subservice_id: lighting
-    schemaname: lucena
+    subservice_id: lighting_simulations
+    schemaname: distrito_telefonica
     subsduration: P8M
     substhrottling: PT0S
     fetchDataOnCreated: false
@@ -117,7 +116,7 @@ subscriptions:
     mode: update
     attributes:
       - name: position
-        type: coords
+        type: geojson-point
         cartodb: true
       - name: timeInstant
         namedb: TimeInstant
@@ -125,29 +124,29 @@ subscriptions:
         indexdb: true
         cartodb: true
         constraint: true
-      - name: ENERGIA:ConsumoModBusenergiaacumuladaactiva
+      - name: energyConsumed
         namedb: energyconsumed
         type: float
         cartodb: true
-      - name: ENERGIA:ConsumoModBusenergiaacumuladareactiva
+      - name: reactiveEnergyConsumed
         namedb: reactiveenergyconsumed
         type: float
         cartodb: true
-      - name: ENERGIA:ConsumoactivoinstantaneoR+S+T
+      - name: totalActivePower
         namedb: totalactivepower
         type: float
-        cartodb: true
-      - name: ACTUACION:EncendidoconSeguridad2ONOFF
-        namedb: powerstate_general
-        type: string
-        cartodb: true
-      - name: ACTUACION:EncendidoconSeguridadONOFF
-        namedb: powerstate_reduced
-        type: string
         cartodb: true
       - name: customerId
         namedb: customerid
         type: string
+        cartodb: true
+      - name: powerState_general
+        namedb: powerstate_general
+        type: float
+        cartodb: true
+      - name: powerState_reduced
+        namedb: powerstate_reduced
+        type: float
         cartodb: true
       - name: premisesId
         namedb: premisesid
@@ -175,8 +174,8 @@ subscriptions:
 
   # StreetlightControlCabinet ######################
   - id: lighting_stcabinet_state
-    subservice_id: lighting
-    schemaname: lucena
+    subservice_id: lighting_simulations
+    schemaname: distrito_telefonica
     subsduration: P8M
     substhrottling: PT0S
     fetchDataOnCreated: false
@@ -190,29 +189,27 @@ subscriptions:
         indexdb: true
         cartodb: true
         constraint: true
-      - name: ENERGIA:ConsumoModBusenergiaacumuladaactiva
+      - name: energyConsumed
         namedb: energyconsumed
         type: float
         cartodb: true
-      - name: ENERGIA:ConsumoModBusenergiaacumuladareactiva
+      - name: reactiveEnergyConsumed
         namedb: reactiveenergyconsumed
         type: float
         cartodb: true
-      - name: ENERGIA:ConsumoactivoinstantaneoR+S+T
+      - name: totalActivePower
         namedb: totalactivepower
         type: float
         cartodb: true
 
     trigger_attributes:
-      - ENERGIA:ConsumoModBusenergiaacumuladaactiva
-      - ENERGIA:ConsumoModBusenergiaacumuladareactiva
-      - ENERGIA:ConsumoactivoinstantaneoR+S+T
+      - totalActivePower
 
 
   # StreetlightControlCabinet ######################
   - id: lighting_stcabinet_powerstate
-    subservice_id: lighting
-    schemaname: lucena
+    subservice_id: lighting_simulations
+    schemaname: distrito_telefonica
     subsduration: P8M
     substhrottling: PT0S
     fetchDataOnCreated: false
@@ -226,15 +223,14 @@ subscriptions:
         indexdb: true
         cartodb: true
         constraint: true
-      - name: ACTUACION:EncendidoconSeguridad2ONOFF
+      - name: powerState_general
         namedb: powerstate_general
-        type: string
+        type: float
         cartodb: true
-      - name: ACTUACION:EncendidoconSeguridadONOFF
+      - name: powerState_reduced
         namedb: powerstate_reduced
-        type: string
+        type: float
         cartodb: true
-
     trigger_attributes:
-      - ACTUACION:EncendidoconSeguridad2ONOFF
-      - ACTUACION:EncendidoconSeguridadONOFF
+      - powerState_general
+      - powerState_reduced

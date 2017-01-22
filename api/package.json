@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "test": "mocha",
     "start": "node ./bin/www",
     "debug": "node-debug --web-host 0.0.0.0 ./bin/www"
   },
@@ -19,5 +20,9 @@
     "squel": "^4.3.3",
     "underscore": "^1.8.3",
     "request": "^2.69.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "supertest": "^2.0.1"
   }
 }
