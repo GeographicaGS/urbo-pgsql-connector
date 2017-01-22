@@ -23,22 +23,28 @@ function getAuthToken(sub, cb){
     }
   };
 
-  var options = {
-    'url': config.getCtxBrUrls('authtk'),
-    'method': 'POST',
-    'rejectUnauthorized': false,
-    'json': data
-  };
+  var url = config.getCtxBrUrls('authtk');
+  if(url){
+    var options = {
+      'url': url,
+      'method': 'POST',
+      'rejectUnauthorized': false,
+      'json': data
+    };
 
-  request(options, function (error, response, body) {
-    if (!error) {
-      var resp = JSON.parse(JSON.stringify(response));
-      cb(null,resp.headers['x-subject-token']);
-    }
-    else{
-      cb(error,null);
-    }
-  });
+    request(options, function (error, response, body) {
+      if (!error) {
+        var resp = JSON.parse(JSON.stringify(response));
+        cb(null,resp.headers['x-subject-token']);
+      }
+      else{
+        cb(error,null);
+      }
+    });
+  } else {
+    return cb(null, undefined);
+  }
+
 }
 function getSubServiceToken(idx,resp,cb){
   var subservices = config.getData().subservices;

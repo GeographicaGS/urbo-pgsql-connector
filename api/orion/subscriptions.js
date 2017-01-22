@@ -307,23 +307,31 @@ function createTable(sub,cb){
   });
 }
 
-function initialize(){
+function initialize(cb){
   tokenManager.createTokens(function(error,tokens){
-    if (error)
+    if (error) {
       return log.error('Error, cannot create tokens for the provided credentials: '+error);
+      if(cb) return cb(error);
+    }
 
     servicesTokens = tokens;
     var subscriptions = config.getSubs();
     var schemas = _.uniq(_.pluck(subscriptions,'schemaname'));
     createSchemas(schemas,function(error){
-      if (error)
+      if (error) {
         return log.error('Error, cannot create schemas stopping:'+error);
+        if(cb) return cb(error);
+      }
 
       createSubscriptionSerial(0,function(err){
-        if (err)
+        if (err) {
           log.error('Cannot created all subscriptions. Something went wrong.');
-        else
+          if(cb) return cb(err);
+        }
+        else {
           log.info('All subscriptions created succesfully');
+          if(cb) return cb(null, subscriptions);
+        }
       });
     });
   });
