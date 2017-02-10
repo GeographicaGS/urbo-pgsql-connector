@@ -124,10 +124,10 @@ function newOrionSubscription(sub, cb){
           log.error('Error handling subscription');
           return cb(err);
         }
-        log.debug('##########');
-        log.debug(`Subscription ${sub.id} created, create data: ${sub.fetchDataOnCreated}`);
+        log.info('##########');
+        log.info(`Subscription ${sub.id} created, create data: ${sub.fetchDataOnCreated}`);
         if (sub.fetchDataOnCreated) {
-          log.debug(`Calling to subscriptionData.getDataLargeSubscriptions()`);
+          log.info(`Calling to subscriptionData.getDataLargeSubscriptions()`);
           subscriptionData.getDataLargeSubscriptions(sub, headers,cb);
         } else {
           cb();
