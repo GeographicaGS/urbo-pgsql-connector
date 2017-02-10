@@ -32,11 +32,15 @@ function getDataPage(sub, headers, page, cb) {
   log.debug(`Context broker request: ${JSON.stringify(options)}`);
 
   request(options, function (error, response, body) {
+    log.debug('%%%%%%%%%%');
+    log.debug(`Context broker response error: ${JSON.stringify(error)}`);
+    log.debug(`Context broker response.statusCode: ${JSON.stringify(response.statusCode)}`);
+    log.debug(`Context broker response.body: ${JSON.stringify(response.body)}`);
     if (!error && response.statusCode == 200) {
       if (response.body.errorCode.code == "200") {
         if (config.getData().processing.active) {
           log.debug('$$$$$$$$$$');
-          log.debug(`Context broker response: ${JSON.stringify(response.body)}`);
+          log.debug('Sending response to processing');
           utils.storeData(sub, response.body.contextResponses);
 
         } else {
