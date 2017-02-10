@@ -6,7 +6,6 @@ var log = require('log4js').getLogger(config.getLogOpt().output);
 var utils = require('../models/utils.js');
 
 function getDataPage(sub, headers, page, cb) {
-  log.info('@@@@@@@@@@');
   var pageSize = 500;
   var startOffset = 20;
 
@@ -29,16 +28,18 @@ function getDataPage(sub, headers, page, cb) {
     'headers': headers,
     'json': data
   };
-  log.info(`Context broker request: ${options}`);
+  log.debug('@@@@@@@@@@');
+  log.debug(`Context broker request: ${JSON.stringify(options)}`);
 
   request(options, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       if (response.body.errorCode.code == "200") {
         if (config.getData().processing.active) {
+          log.debug('$$$$$$$$$$');
+          log.debug(`Context broker response: ${JSON.stringify(response.body)}`);
           utils.storeData(sub, response.body.contextResponses);
 
         } else {
-          log.info(`Context broker response: ${response.body}`);
           psqlmodel = new SubscriptionsModel(config.getData().pgsql);
           psqlmodel.storeData(sub,response.body.contextResponses);
 
