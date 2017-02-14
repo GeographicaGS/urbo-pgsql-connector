@@ -73,19 +73,6 @@ subscriptions:
         indexdb: true
         cartodb: true
         constraint: true
-      - name: intensity
-        type: integer
-        cartodb: true
-      - name: averageVehicleSpeed
-        type: float
-        cartodb: true
-      - name: averageVehicleLength
-        type: float
-        cartodb: true
-      - name: congested
-        type: string
-        cartodb: true
-
     trigger_attributes:
       - location
 
@@ -113,9 +100,11 @@ subscriptions:
         type: integer
         cartodb: true
       - name: averageVehicleSpeed
+        namedb: averagevehiclespeed
         type: float
         cartodb: true
       - name: averageVehicleLength
+        namedb: averagevehiclelength
         type: float
         cartodb: true
       - name: congested
@@ -145,9 +134,11 @@ subscriptions:
         type: integer
         cartodb: true
       - name: averageVehicleSpeed
+        namedb: averagevehiclespeed
         type: float
         cartodb: true
       - name: averageVehicleLength
+        namedb: averagevehiclelength
         type: float
         cartodb: true
       - name: congested
