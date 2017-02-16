@@ -110,6 +110,9 @@ module.exports.getValueForType = function(value, type, outcome){
     return value * 100;
 
   } else if (type === 'outcome') {
+
+    console.log(outcome);
+
     if(outcome && outcome.factor && outcome.operation){
       if(operation==='SUM'){
         return value + outcome.factor;
