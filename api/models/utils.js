@@ -11,7 +11,7 @@ module.exports.getPostgresType = function(type){
     return 'text';
   else if (type === 'integer')
     return 'integer';
-  else if (type === 'float' || type === 'percent')
+  else if (type === 'float' || type === 'percent' || type === 'outcome')
     return 'double precision';
   else if (type === 'ISO8601' || type === 'timestamp')
     return 'timestamp without time zone';
@@ -47,7 +47,7 @@ module.exports.getPostgresGeoJSONType = function(type) {
     return 'Geometry';
 };
 
-module.exports.getValueForType = function(value, type){
+module.exports.getValueForType = function(value, type, outcome){
   if (type === 'coords') {
     var s = value.split(',');
     return 'ST_SetSRID(ST_MakePoint(' + s[1].trim() + ',' + s[0].trim() + '), 4326)';
@@ -108,6 +108,24 @@ module.exports.getValueForType = function(value, type){
 
   } else if (type === 'percent') {
     return value * 100;
+
+  } else if (type === 'outcome') {
+    if(outcome && outcome.factor && outcome.operation){
+      if(operation==='SUM'){
+        return value + outcome.factor;
+      }
+      else if(operation ==='PROD'){
+        return value * outcome.factor;
+      }
+      else if(operation === 'MIN'){
+        return value - outcome.factor;
+      }
+      else if(operation === 'DIV'){
+        return value / outcome.factor;
+      }
+    }
+    return value;
+  }
 
   } else {
     log.error('Unknown type: ' + type);

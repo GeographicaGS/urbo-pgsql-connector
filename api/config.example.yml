@@ -114,7 +114,11 @@ subscriptions:
         indexdb: true
         # Optional. Default to false. If true, it will be added in a UNIQUE constraint.
         # Note: 'id_entity' always is part of the constraint, but if it's the only attribute for the constraint, the constraint won't be created.
+        outcome:
+          factor: CONST
+          operation: SUM|PROD|MIN|DIV
         constraint: true
+        # Optional. Applies operation(factor) when inserting data
       - name: position
         type: coords
         cartodb: true

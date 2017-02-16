@@ -414,7 +414,7 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses,cb){
       if (attrSub){
         var attrName = attrSub.namedb || attr.name;
         var attrType = attrSub.type;
-        var v = utils.getValueForType(attr.value, attrType);
+        var v = utils.getValueForType(attr.value, attrType, attrSub.outcome);
         if (utils.isTypeQuoted(attrType))
           obj[attrName] = v;
         else
