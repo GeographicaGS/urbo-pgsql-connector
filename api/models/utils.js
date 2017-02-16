@@ -48,6 +48,9 @@ module.exports.getPostgresGeoJSONType = function(type) {
 };
 
 module.exports.getValueForType = function(value, type, outcome){
+
+  console.log(value, type, outcome);
+
   if (type === 'coords') {
     var s = value.split(',');
     return 'ST_SetSRID(ST_MakePoint(' + s[1].trim() + ',' + s[0].trim() + '), 4326)';
