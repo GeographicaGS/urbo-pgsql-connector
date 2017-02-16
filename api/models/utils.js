@@ -125,7 +125,6 @@ module.exports.getValueForType = function(value, type, outcome){
       }
     }
     return value;
-  }
 
   } else {
     log.error('Unknown type: ' + type);
