@@ -114,6 +114,7 @@ module.exports.getValueForType = function(value, type, outcome){
   } else if (type === 'outcome') {
 
     if(outcome && outcome.factor && outcome.operation){
+      var operation = outcome.operation;
       if(operation==='SUM'){
         return value + outcome.factor;
       }
