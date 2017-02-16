@@ -137,7 +137,7 @@ module.exports.getValueForType = function(value, type, outcome){
 };
 
 module.exports.isTypeQuoted = function(type){
-  if (type === 'coords' || type.startsWith('geojson') || type.startsWith('list') || type === 'integer' || type === 'float' || type === 'percent') {
+  if (type === 'coords' || type.startsWith('geojson') || type.startsWith('list') || type === 'integer' || type === 'float' || type === 'percent' || type === 'outcome') {
     return false;
 
   } else if (type === 'string' || type === 'ISO8601' || type === 'timestamp' || type === 'json') {
