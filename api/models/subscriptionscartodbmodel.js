@@ -335,7 +335,7 @@ SubscriptionsCartoDBModel.prototype.storeData = function(sub,contextResponses,cb
       if (attrSub){
         var attrName = "namedb" in attrSub ? attrSub.namedb : attr.name;
         var attrType = attrSub.type;
-        var attrOutcome = attrSub.outcome || {};
+        var attrOutcome = ('outcome' in attrSub) ? attrSub.outcome : {};
         if (valid_attrs.indexOf(attr.name)!=-1){
           var v = utils.getValueForType(attr.value,attrType, attrOutcome);
           var name = (attrType !== 'coords' && !attrType.startsWith('geojson')) ? attrName : 'the_geom';
