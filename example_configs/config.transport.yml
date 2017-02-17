@@ -97,7 +97,10 @@ subscriptions:
         cartodb: true
         constraint: true
       - name: intensity
-        type: integer
+        type: outcome
+        outcome:
+          factor: 12
+          operation: PROD
         cartodb: true
       - name: averageVehicleSpeed
         namedb: averagevehiclespeed
@@ -130,8 +133,10 @@ subscriptions:
         indexdb: true
         cartodb: true
         constraint: true
-      - name: intensity
-        type: integer
+      - name: outcome
+        outcome:
+          factor: 12
+          operation: PROD
         cartodb: true
       - name: averageVehicleSpeed
         namedb: averagevehiclespeed
