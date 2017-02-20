@@ -177,15 +177,15 @@ subscriptions:
         cartodb: true
         constraint: true
       - name: name
-        type: Text
+        type: string
         cartodb: true
       - name: vehicleType
         namedb: vehicletype
-        type: Text
+        type: string
         cartodb: true
       - name: serviceProvided
         namedb: serviceprovided
-        type: Text
+        type: string
         cartodb: true
       - name: speed
         type: float
