@@ -155,3 +155,44 @@ subscriptions:
       - averageVehicleSpeed
       - averageVehicleLength
       - congested
+
+  - id: transport_vehicle_lastdata
+    subservice_id: transport_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: Vehicle
+    mode: update
+    attributes:
+      - name: location
+        namedb: position
+        type: geojson-point
+        cartodb: true
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: name
+        type: Text
+        cartodb: true
+      - name: vehicleType
+        namedb: vehicletype
+        type: Text
+        cartodb: true
+      - name: serviceProvided
+        namedb: serviceprovided
+        type: Text
+        cartodb: true
+      - name: speed
+        type: float
+        cartodb: true
+      - name: heading
+        type: float
+        cartodb: true
+
+    trigger_attributes:
+      - dateModified
