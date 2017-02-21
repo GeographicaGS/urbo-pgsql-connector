@@ -134,8 +134,11 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
           var fields = [];
           for (var i in attributes){
             var attr = attributes[i];
-            if (toadd.indexOf(attr.name)!=-1){
-              fields.push('ADD COLUMN ' + utils.wrapStrings(attr.name,['"']) + ' ' + utils.getPostgresType(attr.type));
+            if (toadd.indexOf(attr.namedb)!==-1){
+              fields.push('ADD COLUMN '+utils.wrapStrings(attr.namedb,['"']) +' '+utils.getPostgresType(attr.type));
+            }
+            else if (toadd.indexOf(attr.name)!==-1){
+              fields.push('ADD COLUMN '+utils.wrapStrings(attr.name,['"']) +' '+utils.getPostgresType(attr.type));
             }
           }
           sql = 'ALTER TABLE ' + schemaTable + ' ' + fields.join(',');
