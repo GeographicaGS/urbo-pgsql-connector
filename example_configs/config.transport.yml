@@ -36,6 +36,13 @@ processing:
   jobAttempts: 3
   priority: critical
 
+# Notifier (to the api) configuration
+notifier:
+  url: http://<api direction>/notifier
+  requestAttempts: 3
+  tokenSecret: XXXXXX
+  tokenExpiration: 30  # seconds
+
 # Orion Context Broker API URLs
 contextBrokerUrls:
   portAuthtk: xxxxxxxxxx
@@ -155,3 +162,49 @@ subscriptions:
       - averageVehicleSpeed
       - averageVehicleLength
       - congested
+
+  - id: transport_vehicle_lastdata
+    subservice_id: transport_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    recreateSubscription: false
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: Vehicle
+    mode: update
+    notifier:
+      namespace: distrito_telefonica.transport.vehicle.lastdata
+      asGeoJSONFeature: true
+      attributes: global
+    attributes:
+      - name: location
+        namedb: position
+        type: geojson-point
+        cartodb: true
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: name
+        type: string
+        cartodb: true
+      - name: vehicleType
+        namedb: vehicletype
+        type: string
+        cartodb: true
+      - name: serviceProvided
+        namedb: serviceprovided
+        type: string
+        cartodb: true
+      - name: speed
+        type: float
+        cartodb: true
+      - name: heading
+        type: float
+        cartodb: true
+
+    trigger_attributes:
+      - dateModified

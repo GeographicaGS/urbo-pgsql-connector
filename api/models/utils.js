@@ -214,7 +214,7 @@ module.exports.storeData = function(subscription, contextResponses) {
   };
 
   contextResponses.forEach(function(contextResponse) {
-    var psqlOptions = JSON.parse(JSON.stringify(options));  // Cheap deeo clone
+    var psqlOptions = JSON.parse(JSON.stringify(options));  // Cheap deep clone
     psqlOptions.json.type = processingConfig.psqlJob;
     psqlOptions.json.data.title = subscription.id + ' to PSQL';
     psqlOptions.json.data.contextResponses = [contextResponse];
@@ -242,4 +242,85 @@ module.exports.storeData = function(subscription, contextResponses) {
 
     }
   }.bind(this));
+};
+
+module.exports.toArrayOfNumbers = function(coordinates) {
+  var result = [];
+  for (var coordinate of coordinates) {
+    if (Array.isArray(coordinate)) {
+      result.push(this.toArrayOfNumbers(coordinate));
+    } else {
+      result.push(Number(coordinate));
+    }
+  }
+
+  return result;
+};
+
+module.exports.getNotificationValueForType = function(value, type, outcome) {
+  if (type === 'coords') {
+    value = value.split(',');
+    return {
+        type: 'Point',
+        coordinates: [
+            Number(value[1]),
+            Number(value[0])
+        ]
+    };
+
+  } else if (type === 'json' || type.startsWith('geojson')) {
+    if (value.constructor !== {}.constructor) {
+      return JSON.parse(value);
+    }
+
+    if (type.startsWith('geojson')) {
+      value.coordinates = this.toArrayOfNumbers(value.coordinates);
+    }
+
+    return value;
+
+  } else if (type.startsWith('list')) {
+    if (!Array.isArray(value)) {
+      if (value.startsWith('[') && value.endsWith(']')) {
+        value = value.slice(1, -1);
+      }
+      value = value.split(',');
+
+      if (type === 'list-numeric') {
+        value = value.map(Number);
+      }
+    }
+
+    return value;
+
+  } else if (type === 'integer') {
+    return parseInt(value);
+
+  } else if (type === 'float') {
+    return parseFloat(value);
+
+  } else if (type === 'percent') {
+    return  Number(value) * 100;
+
+  } else if (type === 'outcome') {
+    if (outcome && outcome.factor && outcome.operation) {
+      value = Number(value);
+      if (outcome.operation === 'SUM') {
+        return value + outcome.factor;
+
+      } else if (outcome.operation === 'PROD') {
+        return value * outcome.factor;
+
+      } else if (outcome.operation === 'MIN') {
+        return value - outcome.factor;
+
+      } else if (outcome.operation === 'DIV') {
+        return value / outcome.factor;
+      }
+    }
+    return value;
+
+  } else {  // As it comes: strings, timestamps, ...
+    return value;  // As it comes
+  }
 };
