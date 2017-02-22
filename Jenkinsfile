@@ -75,9 +75,9 @@ node("docker") {
                     echo "Deploying master ..."
                     sh "ansible urbo-production -a 'sh /data/app/urbo/deploy_connectors.sh'"
 
-                } else if (branch_name == "staging") {
-                    echo "Deploying staging ..."
-                    sh "ansible urbo-staging -a 'sh /data/app/urbo/deploy_connectors.sh'"
+//                } else if (branch_name == "staging") {
+//                   echo "Deploying staging ..."
+//                    sh "ansible urbo-staging -a 'sh /data/app/urbo/deploy_connectors.sh'"
 
                 } else if (branch_name == "dev") {
                     echo "Deploying dev ..."
