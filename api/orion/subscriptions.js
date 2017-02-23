@@ -5,6 +5,7 @@ var request = require('request');
 var _ = require('underscore');
 var SubscriptionsModel = require('../models/subscriptionsmodel');
 var SubscriptionsCartoDBModel = require('../models/subscriptionscartodbmodel');
+var NotificationsApiModel = require('../models/notificationsapimodel');
 var log = require('log4js').getLogger(config.getLogOpt().output);
 var util = require('util');
 var tokenManager = require('./tokenmanager.js');
@@ -227,6 +228,11 @@ function createSubscriptionCallback(sub) {
   log.info('Set router: ' + sub.id);
 
   router.post('/' + sub.id,function(req, res, next) {
+    if (config.getData().notifier && config.getData().notifier.length
+        && sub.notifier.attributes !== 'none') {
+      new NotificationsApiModel().notifyData(sub, req.body.contextResponses);
+    }
+
     if (config.getData().processing.active) {
       utils.storeData(sub, req.body.contextResponses);
 
