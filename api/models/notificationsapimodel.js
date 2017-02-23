@@ -74,8 +74,11 @@ class NotificationsApiModel {
         subscriptionAttributes.push({name:'position', type:'coords'});
       }
 
-      var data = {};
       var positionExists = false;
+      var data = {
+        id_entity: contextResponse.contextElement.id
+      };
+
       for (var contextAttribute of contextAttributes) {
         var subscriptionAttribute = subscriptionAttributes.find(this._isByParam('name', contextAttribute.name));
 
