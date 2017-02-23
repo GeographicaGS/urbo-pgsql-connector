@@ -173,7 +173,6 @@ subscriptions:
     schemaname: distrito_telefonica
     subsduration: P8M
     substhrottling: PT0S
-    recreateSubscription: false
     fetchDataOnCreated: false
     entityTypes:
       - typeName: Vehicle

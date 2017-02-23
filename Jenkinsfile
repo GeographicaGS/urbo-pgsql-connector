@@ -67,17 +67,13 @@ node("docker") {
             sh "docker rm -f -v urbo_pgsql--${build_name}"
             sh "docker network rm connector-network"
 
-        if (currentBuild.result == "SUCCESS" && ["master", "staging", "dev"].contains(branch_name)) {
+        if (currentBuild.result == "SUCCESS" && ["master", "dev"].contains(branch_name)) {
 
             stage "Deploying"
 
                 if (branch_name == "master") {
                     echo "Deploying master ..."
                     sh "ansible urbo-production -a 'sh /data/app/urbo/deploy_connectors.sh'"
-
-                } else if (branch_name == "staging") {
-                    echo "Deploying staging ..."
-                    sh "ansible urbo-staging -a 'sh /data/app/urbo/deploy_connectors.sh'"
 
                 } else if (branch_name == "dev") {
                     echo "Deploying dev ..."
