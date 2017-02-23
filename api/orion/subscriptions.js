@@ -228,7 +228,8 @@ function createSubscriptionCallback(sub) {
   log.info('Set router: ' + sub.id);
 
   router.post('/' + sub.id,function(req, res, next) {
-    if (config.getData().notifier.url && sub.notifier.attributes !== 'none') {
+    if (config.getData().notifier && config.getData().notifier.length
+        && sub.notifier.attributes !== 'none') {
       new NotificationsApiModel().notifyData(sub, req.body.contextResponses);
     }
 

@@ -36,12 +36,12 @@ processing:
   jobAttempts: 3
   priority: critical
 
-# Notifier (to the api) configuration
+# Notifiers array (to the API) configuration
 notifier:
-  url: http://<api direction>/notifier
-  requestAttempts: 3
-  tokenSecret: XXXXXX
-  tokenExpiration: 30  # seconds
+  - url: http://<api direction>/notifier
+    requestAttempts: 3
+    tokenSecret: XXXXXX
+    tokenExpiration: 30  # seconds
 
 # Orion Context Broker API URLs
 contextBrokerUrls:

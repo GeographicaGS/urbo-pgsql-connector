@@ -21,31 +21,38 @@ class NotificationsApiModel {
     }
   }
 
-  notifyData(subscription, contextResponses) {
-    var notifierConfig = config.getData().notifier;
-
-    var tokenExpiration = notifierConfig.tokenExpiration || 10;
+  _createToken(tokenSecret, tokenExpiration) {
+    var tokenExpiration = tokenExpiration || 10;
     tokenExpiration = moment().add(tokenExpiration, 'seconds').valueOf();
     var token = jwt.encode({
       exp: tokenExpiration
-    }, notifierConfig.tokenSecret);
+    }, tokenSecret);
+    return token;
+  }
 
-    var options = {
-      'url': notifierConfig.url,
+  _sendRequest(options, attempts) {
+    utils.retryRequest(options, attempts,
+        function(error, response, body) {
+      if (error) {
+        log.error('Error notifiyng to the API');
+        log.error(error);
+      }
+    });
+  }
+
+  notifyData(subscription, contextResponses) {
+    var requestOptions = {
+      'url': null,
       'method': 'POST',
       'headers': {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'X-Access-Token': token
+        'X-Access-Token': null
       },
       'json': null
     };
 
     for (var contextResponse of contextResponses) {
-      var apiOptions = JSON.parse(JSON.stringify(options));  // Cheap deep clone
-      var data = {};
-      var positionExists = false;
-
       var subscriptionAttributes = subscription.attributes.slice();
       var contextAttributes = contextResponse.contextElement.attributes.slice();
 
@@ -55,7 +62,7 @@ class NotificationsApiModel {
         var lonName = subscriptionAttributes.find(this._isLngCoords).name;
         var lat = contextAttributes.find(this._isByParam('name', latName));
         var lon = contextAttributes.find(this._isByParam('name', lonName));
-        if (lat && lon){
+        if (lat && lon) {
           contextAttributes.push({
             name: 'position',
             type: 'coords',
@@ -67,6 +74,8 @@ class NotificationsApiModel {
         subscriptionAttributes.push({name:'position', type:'coords'});
       }
 
+      var data = {};
+      var positionExists = false;
       for (var contextAttribute of contextAttributes) {
         var subscriptionAttribute = subscriptionAttributes.find(this._isByParam('name', contextAttribute.name));
 
@@ -96,18 +105,20 @@ class NotificationsApiModel {
         };
       }
 
-      apiOptions.json = {
-        namespace: subscription.notifier.namespace,
-        data: data
-      };
+      for (var notifierConfig of config.getData().notifier) {
+        var options = JSON.parse(JSON.stringify(requestOptions));  // Cheap deep clone
 
-      utils.retryRequest(apiOptions, notifierConfig.requestAttempts,
-          function(error, response, body) {
-        if (error) {
-          log.error('Error notifiyng to the API');
-          log.error(error);
-        }
-      });
+        options.url = notifierConfig.url;
+        options.headers['X-Access-Token'] = this._createToken(
+          notifierConfig.tokenSecret, notifierConfig.tokenExpiration);
+
+        options.json = {
+          namespace: subscription.notifier.namespace,
+          data: data
+        };
+
+        this._sendRequest(options, notifierConfig.requestAttempts);
+      }
     }
   }
 

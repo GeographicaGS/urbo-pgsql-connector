@@ -80,8 +80,12 @@ subscriptions:
         indexdb: true
         cartodb: true
         constraint: true
+      - name: name
+        type: string
+        cartodb: true
     trigger_attributes:
       - location
+      - name
 
   - id: transport_trafficflowobserved_lastdata
     subservice_id: transport_simulations
@@ -120,7 +124,9 @@ subscriptions:
       - name: congested
         type: string
         cartodb: true
-
+      - name: name
+        type: string
+        cartodb: true
     trigger_attributes:
       - dateModified
 
@@ -156,7 +162,6 @@ subscriptions:
       - name: congested
         type: string
         cartodb: true
-
     trigger_attributes:
       - intensity
       - averageVehicleSpeed
@@ -205,6 +210,5 @@ subscriptions:
       - name: heading
         type: float
         cartodb: true
-
     trigger_attributes:
       - dateModified
