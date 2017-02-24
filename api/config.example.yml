@@ -36,6 +36,13 @@ processing:
   jobAttempts: 3
   priority: critical
 
+# Notifiers array (to the API) configuration
+notifier:
+  - url: http://<api direction>/notifier
+    requestAttempts: 3
+    tokenSecret: XXXXXX
+    tokenExpiration: 30  # seconds
+
 # Orion Context Broker API URLs
 contextBrokerUrls:
   portAuthtk: XXXXX
@@ -96,7 +103,12 @@ subscriptions:
     mode: append
     # Default to false. IF set to true it fetches all the data from Fiware when the subscription is created the first time.
     fetchDataOnCreated: false
-    # List of attributes. These are the attributes of the subscription and how they're mapped into the PostgreSQL database and CartoDB
+    # Configuration for sending "real time socket data' to the API via POST.
+    notifier:
+      namespace: namespace  # The namespace for the socket.
+      asGeoJSONFeature: true  # If an attirbute position is sent, the rest of the attributes will be added as properties in the GeoJSON.
+      attributes: global  # Options: global|single|none. Default: none. Note: When 'single' is set, each attribute can have a 'notifier' boolean attribute.
+    # List of attributes. These are the attributes of the subscription and how they're mapped into the PostgreSQL database and CartoDB.
     attributes:
       - # Attribute name (Fiware attribute name)
         name: name
@@ -114,7 +126,11 @@ subscriptions:
         indexdb: true
         # Optional. Default to false. If true, it will be added in a UNIQUE constraint.
         # Note: 'id_entity' always is part of the constraint, but if it's the only attribute for the constraint, the constraint won't be created.
+        outcome:
+          factor: CONST
+          operation: SUM|PROD|MIN|DIV
         constraint: true
+        # Optional. Applies operation(factor) when inserting data
       - name: position
         type: coords
         cartodb: true
@@ -122,6 +138,8 @@ subscriptions:
         type: ISO8601
       - name: valor_01
         type: string
+        # Default to false. Related to 'notifier' in the subscription.
+        notifier: false
     # Mandatory: List of trigger attributes. A notification will be sent by Context Broker when the value of one of the following attributes change.
     trigger_attributes:
       - timeinstant
