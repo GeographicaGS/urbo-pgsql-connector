@@ -147,7 +147,10 @@ SubscriptionsModel.prototype.createTable = function(sub,cb){
           var fields = [];
           for (var i in subAttr){
             var attr = subAttr[i];
-            if (toadd.indexOf(attr.name)!=-1){
+            if (toadd.indexOf(attr.namedb)!==-1){
+              fields.push('ADD COLUMN '+utils.wrapStrings(attr.namedb,['"']) +' '+utils.getPostgresType(attr.type));
+            }
+            else if (toadd.indexOf(attr.name)!==-1){
               fields.push('ADD COLUMN '+utils.wrapStrings(attr.name,['"']) +' '+utils.getPostgresType(attr.type));
             }
           }
@@ -414,7 +417,8 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses,cb){
       if (attrSub){
         var attrName = attrSub.namedb || attr.name;
         var attrType = attrSub.type;
-        var v = utils.getValueForType(attr.value, attrType);
+        var attrOutcome = ('outcome' in attrSub) ? attrSub.outcome : undefined;
+        var v = utils.getValueForType(attr.value, attrType, attrOutcome);
         if (utils.isTypeQuoted(attrType))
           obj[attrName] = v;
         else

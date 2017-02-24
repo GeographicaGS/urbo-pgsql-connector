@@ -1,0 +1,213 @@
+  # FIWARE URBO TRANSPORT CONNECTOR CONFIGURATION FILE
+
+baseURL: http://url:port
+
+# debugAccessToken:
+
+# Logging configuration parameters
+logging:
+  # Level options: INFO|ERROR|DEBUG. Default: INFO
+  level: DEBUG
+  # Output options: console|file. Default: console
+  output: file
+
+# PostgreSQL configuration parameters
+pgsql:
+  host: postgis
+  user: xxxxxxxxxx
+  password: xxxxxxxxxx
+  database: xxxxxxxxxx
+  port: 5432
+
+# CartoDB configuration parameters
+cartodb:
+  apiKey: xxxxxxxxxx
+  user: xxxxxxxxxx
+  active: false
+  enterprise: true
+
+# urbo-processing parameters
+processing:
+  active: false
+  url: http://localhost:XXXX
+  requestAttempts: 5
+  psqlJob: connectorPsql
+  cartoJob: connectorCarto
+  jobAttempts: 3
+  priority: critical
+
+# Notifier (to the api) configuration
+notifier:
+  url: http://<api direction>/notifier
+  requestAttempts: 3
+  tokenSecret: XXXXXX
+  tokenExpiration: 30  # seconds
+
+# Orion Context Broker API URLs
+contextBrokerUrls:
+  portAuthtk: xxxxxxxxxx
+  portCtxApi: xxxxxxxxxx
+  urlCtxBrBase: https://xxxxxxxxxx
+
+# Fiware subservices subscriptions configuration
+subservices:
+  - id: transport_simulations
+    service: urbo
+    subservice: /geographica
+    auth:
+      user: xxxxxxxxxx
+      password: xxxxxxxxxx
+
+subscriptions:
+  # TrafficFlowObserved ######################
+  - id: transport_trafficflowobserved
+    subservice_id: transport_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: TrafficFlowObserved
+    mode: append
+    attributes:
+      - name: location
+        namedb: position
+        type: geojson-line
+        cartodb: true
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: name
+        type: string
+        cartodb: true
+    trigger_attributes:
+      - location
+      - name
+
+  - id: transport_trafficflowobserved_lastdata
+    subservice_id: transport_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: TrafficFlowObserved
+    mode: update
+    attributes:
+      - name: location
+        namedb: position
+        type: geojson-line
+        cartodb: true
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: intensity
+        type: outcome
+        outcome:
+          factor: 12
+          operation: PROD
+        cartodb: true
+      - name: averageVehicleSpeed
+        namedb: averagevehiclespeed
+        type: float
+        cartodb: true
+      - name: averageVehicleLength
+        namedb: averagevehiclelength
+        type: float
+        cartodb: true
+      - name: congested
+        type: string
+        cartodb: true
+      - name: name
+        type: string
+        cartodb: true
+    trigger_attributes:
+      - dateModified
+
+  - id: transport_trafficflowobserved_measurand
+    subservice_id: transport_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: TrafficFlowObserved
+    mode: append
+    attributes:
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: outcome
+        outcome:
+          factor: 12
+          operation: PROD
+        cartodb: true
+      - name: averageVehicleSpeed
+        namedb: averagevehiclespeed
+        type: float
+        cartodb: true
+      - name: averageVehicleLength
+        namedb: averagevehiclelength
+        type: float
+        cartodb: true
+      - name: congested
+        type: string
+        cartodb: true
+    trigger_attributes:
+      - intensity
+      - averageVehicleSpeed
+      - averageVehicleLength
+      - congested
+
+  - id: transport_vehicle_lastdata
+    subservice_id: transport_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: Vehicle
+    mode: update
+    notifier:
+      namespace: distrito_telefonica.transport.vehicle.lastdata
+      asGeoJSONFeature: true
+      attributes: global
+    attributes:
+      - name: location
+        namedb: position
+        type: geojson-point
+        cartodb: true
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: name
+        type: string
+        cartodb: true
+      - name: vehicleType
+        namedb: vehicletype
+        type: string
+        cartodb: true
+      - name: serviceProvided
+        namedb: serviceprovided
+        type: string
+        cartodb: true
+      - name: speed
+        type: float
+        cartodb: true
+      - name: heading
+        type: float
+        cartodb: true
+    trigger_attributes:
+      - dateModified

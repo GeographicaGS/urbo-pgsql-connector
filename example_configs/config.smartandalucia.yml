@@ -44,6 +44,12 @@ contextBrokerUrls:
 
 # Fiware subservices subscriptions configuration
 subservices:
+  - id: estepa_watermetering
+    service: sc_smart_region_andalucia
+    subservice: /and_sr_estepa
+    auth:
+      user: xxxxxxxxxxxxx
+      password: xxxxxxxxxxxxxx
   - id: osuna_riego
     service: sc_smart_region_andalucia
     subservice: /and_sr_osuna
@@ -64,6 +70,66 @@ subservices:
       password: xxxxxxxxxxxxxx
 
 subscriptions:
+  - id: watmeter_a
+    subservice_id: estepa_watermetering
+    schemaname: estepa
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: true
+    entityTypes:
+      - typeName: watermetering.adevice.watermetering
+    mode: append
+    attributes:
+      - name: TimeInstant
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: vol
+        type: float
+        cartodb: true
+      - name: consumption
+        type: float
+        cartodb: true
+    trigger_attributes:
+      - TimeInstant
+      - vol
+
+  - id: watmeter_a_lastdata
+    subservice_id: estepa_watermetering
+    schemaname: estepa
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: true
+    entityTypes:
+      - typeName: watermetering.adevice.watermetering
+    mode: update
+    attributes:
+      - name: position
+        type: coords
+        cartodb: true
+      - name: TimeInstant
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: vol
+        type: float
+        cartodb: true
+      - name: Address
+        namedb: address
+        type: string
+        cartodb: true
+      - name: consumption
+        type: float
+        cartodb: true
+      - name: Serial_Number
+        namedb: serialnumber
+        type: string
+    trigger_attributes:
+      - TimeInstant
+      - vol
+      - Address
+      - Serial_Number
+
   - id: riego
     subservice_id: osuna_riego
     schemaname: osuna

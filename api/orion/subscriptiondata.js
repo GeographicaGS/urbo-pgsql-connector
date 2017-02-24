@@ -7,7 +7,7 @@ var utils = require('../models/utils.js');
 
 function getDataPage(sub, headers, page, cb) {
   var pageSize = 500;
-  var startOffset = 20;
+  var startOffset = 0;
 
   var offset = pageSize*page + startOffset;
 
