@@ -200,10 +200,10 @@ module.exports.storeData = function(subscription, contextResponses) {
       'Accept': 'application/json',
     },
     'json': {
-      'type': 'undefined',
+      'type': undefined,
       'data': {
-        'title': 'undefined',
-        'contextResponses': 'undefined',
+        'title': undefined,
+        'contextResponses': undefined,
         'subscription': subscription
       },
       'options' : {
@@ -216,7 +216,7 @@ module.exports.storeData = function(subscription, contextResponses) {
   contextResponses.forEach(function(contextResponse) {
     var psqlOptions = JSON.parse(JSON.stringify(options));  // Cheap deep clone
     psqlOptions.json.type = processingConfig.psqlJob;
-    psqlOptions.json.data.title = subscription.id + ' to PSQL';
+    psqlOptions.json.data.title = `${subscription.schemaname} ${subscription.id} to PSQL'`;
     psqlOptions.json.data.contextResponses = [contextResponse];
     this.retryRequest(psqlOptions, processingConfig.requestAttempts, function(error, response, body) {
       if (error) {
@@ -229,10 +229,11 @@ module.exports.storeData = function(subscription, contextResponses) {
     var cdbActive = config.getData().cartodb.active;
     if (cdbActive && cdbActiveFields) {
 
-      var cartoOptions = JSON.parse(JSON.stringify(options));  // Cheap deeo clone
+      var cartoOptions = JSON.parse(JSON.stringify(options));  // Cheap deep clone
       cartoOptions.json.type = processingConfig.cartoJob;
-      cartoOptions.json.data.title = subscription.id + ' to CARTO';
+      cartoOptions.json.data.title = `${subscription.schemaname} ${subscription.id} to CARTO'`;
       cartoOptions.json.data.contextResponses = [contextResponse];
+      cartoOptions.json.data.cartoUser = config.getData().cartodb.user;
       this.retryRequest(cartoOptions, processingConfig.requestAttempts, function(error, response, body) {
         if (error) {
           log.error('Error inserting at CARTO');
