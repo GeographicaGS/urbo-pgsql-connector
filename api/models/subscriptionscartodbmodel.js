@@ -344,7 +344,7 @@ SubscriptionsCartoDBModel.prototype.storeData = function(sub,contextResponses,cb
           var name = (attrType !== 'coords' && !attrType.startsWith('geojson')) ? attrName : 'the_geom';
 
           if (value == null) {
-            objdq[name] = value;
+            objdq[name] = 'NULL';
 
           } else if (utils.isTypeQuoted(attrType)) {
             obj[name] = value;
