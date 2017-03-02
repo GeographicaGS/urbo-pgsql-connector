@@ -48,7 +48,9 @@ module.exports.getPostgresGeoJSONType = function(type) {
 };
 
 module.exports.getValueForType = function(value, type, outcome){
-
+  if (value.toLowerCase() === 'null') {
+    return null;
+  }
 
   if (type === 'coords') {
     var s = value.split(',');
