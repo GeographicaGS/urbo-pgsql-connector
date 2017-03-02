@@ -419,7 +419,7 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses,cb){
         var value = utils.getValueForType(attr.value, attrType, attrOutcome);
 
         if (value == null) {
-          objdq[attrName] = value;
+          objdq[attrName] = 'NULL';
 
         } else if (utils.isTypeQuoted(attrType)) {
           obj[attrName] = value;
