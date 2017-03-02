@@ -8,11 +8,11 @@ Context management using NGSI10 standard operations:
 https://github.com/telefonicaid/fiware-orion/blob/develop/doc/manuals/user/walkthrough_apiv1.md#ngsi10-standard-operations
 */
 var URL_AUTHTK = '/v3/auth/tokens';
-var URL_QRY = '/NGSI10/queryContext';
-var URL_UDT = '/NGSI10/updateContext';
-var URL_SBC = '/NGSI10/subscribeContext';
-var URL_SBC_UPDATE = '/NGSI10/updateContextSubscription';
-var URL_SBC_DELETE = '/NGSI10/unsubscribeContext';
+var URL_QRY = '/v1/queryContext';
+var URL_UDT = '/v1/updateContext';
+var URL_SBC = '/v1/subscribeContext';
+var URL_SBC_UPDATE = '/v1/updateContextSubscription';
+var URL_SBC_DELETE = '/v1/unsubscribeContext';
 
 /*
 Logs params
