@@ -20,7 +20,7 @@ export AUTHTOKEN=XXXX
 ## Execute queries
 Request
 ```
-curl -v --insecure -i https://195.235.93.224:10027/NGSI10/queryContext -s -S --header "Content-Type: application/json" --header "Accept: application/json" --header "Fiware-Service: $SERVICENAME" --header "Fiware-ServicePath: /$SUBSERVICENAME" --header "x-auth-token: $AUTHTOKEN" -d '
+curl -v --insecure -i https://195.235.93.224:10027/v1/queryContext -s -S --header "Content-Type: application/json" --header "Accept: application/json" --header "Fiware-Service: $SERVICENAME" --header "Fiware-ServicePath: /$SUBSERVICENAME" --header "x-auth-token: $AUTHTOKEN" -d '
   {"entities": [
     {
       "type": "test",
@@ -33,7 +33,7 @@ curl -v --insecure -i https://195.235.93.224:10027/NGSI10/queryContext -s -S --h
 
 Subscription
 ```
-curl --insecure -i https://195.235.93.224:10027/NGSI10/subscribeContext -s -S --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'Fiware-Service: $SERVICENAME' --header 'Fiware-ServicePath: /$SUBSERVICENAME' --header 'x-auth-token: $AUTHTOKEN' -d '
+curl --insecure -i https://195.235.93.224:10027/v1/subscribeContext -s -S --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'Fiware-Service: $SERVICENAME' --header 'Fiware-ServicePath: /$SUBSERVICENAME' --header 'x-auth-token: $AUTHTOKEN' -d '
 {
     "entities": [
         {
