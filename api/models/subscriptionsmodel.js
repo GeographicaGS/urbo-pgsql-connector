@@ -410,21 +410,24 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses,cb){
       subAttr.push({name:'position',type:'coords',cartodb:true});
     }
 
-    _.each(crAttr,function(attr){
-
+    _.each(crAttr,function(attr) {
       var attrSub = _.findWhere(subAttr, {'name': attr.name});
-
       if (attrSub){
         var attrName = attrSub.namedb || attr.name;
         var attrType = attrSub.type;
         var attrOutcome = ('outcome' in attrSub) ? attrSub.outcome : undefined;
-        var v = utils.getValueForType(attr.value, attrType, attrOutcome);
-        if (utils.isTypeQuoted(attrType))
-          obj[attrName] = v;
-        else
-          objdq[attrName] = v;
-      }
+        var value = utils.getValueForType(attr.value, attrType, attrOutcome);
 
+        if (value == null) {
+          objdq[attrName] = 'NULL';
+
+        } else if (utils.isTypeQuoted(attrType)) {
+          obj[attrName] = value;
+
+        } else {
+          objdq[attrName] = value;
+        }
+      }
     });
 
     var schemaName = sub.schemaname;
