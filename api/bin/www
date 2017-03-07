@@ -107,7 +107,7 @@ var normalizePort = function(val) {
 /**
  * Event listener for HTTP server "error" event.
  */
-var onError = function((error) {
+var onError = function(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
