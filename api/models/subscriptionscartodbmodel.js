@@ -124,9 +124,7 @@ SubscriptionsCartoDBModel.prototype.createTable = function(sub,cb){
         var toremove = _.difference(current,needed);
 
         if (toremove.length){
-          // TODO: REMOVE element.
-          // log.debug('TOREMOVE CDB');
-          // log.debug(toremove);
+          // TODO: REMOVE element
         }
 
         // Add element
@@ -191,79 +189,80 @@ SubscriptionsCartoDBModel.prototype.createAttrIndexes = function(sub, attribs){
   });
 }
 
-// SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(table, obj, objdq,cb){
-//   /*
-//   Upsert SQL example:
-//
-//   WITH upsert AS
-//       (
-//           UPDATE dev_agua
-//           SET id_entity='dispositivo_k01',
-//               value='18',
-//               timeinstant='2016-03-04T16:09:54.01',
-//               position=ST_SetSRID(ST_MakePoint(-4.45,37.09),4326),
-//               updated_at=now()
-//           WHERE cartodb_id=(SELECT MAX(cartodb_id) FROM dev_agua WHERE id_entity='dispositivo_k01')
-//           RETURNING *
-//       )
-//   INSERT INTO dev_agua (id_entity, value, timeinstant, position)
-//       SELECT 'dispositivo_k01' AS id_entity,
-//              '0.234' AS value,
-//              '2015-03-04T16:09:54.01' AS timeinstant,
-//              ST_SetSRID(ST_MakePoint(-4.45,37.09),4326) AS position,
-//              now() AS updated_at
-//       WHERE NOT EXISTS (SELECT * FROM upsert);
-//   */
-//
-//   var sqpg = this._squel.useFlavour('postgres');
-//
-//   var updtConstructor = sqpg.update().table(table);
-//   var slConstructor = this._squel.select();
-//
-//   for (var i in obj){
-//       updtConstructor.set(utils.wrapStrings(i,['"']),obj[i]);
-//       if (i == "TimeInstant" && (!obj[i] || obj[i] == ''))
-//         obj[i] = '1970-01-01T00:00Z';
-//       slConstructor.field(utils.wrapStrings(obj[i],["'"]),i);
-//   }
-//   for (var i in objdq){
-//       updtConstructor.set(utils.wrapStrings(i,['"']),objdq[i],{dontQuote: true});
-//       slConstructor.field(String(objdq[i]),i,{dontQuote: true});
-//   }
-//
-//   updtConstructor.set("updated_at","now()");
-//   slConstructor.field("now()","updated_at");
-//
-//   var slMaxid = sqpg.select()
-//                   .field('MAX(cartodb_id)')
-//                   .from(table)
-//                   .where("id_entity = ?",obj.id_entity)
-//
-//   var udtQry = updtConstructor.where('cartodb_id = ?', slMaxid)
-//                 .returning("*")
-//                 .toString();
-//
-//   var slUpsrt = this._squel.select().from("upsert");
-//   // var slCon = slConstructor.from("").where("NOT EXISTS ?", slUpsrt);  // OLD -> .from("")
-//   var slCon = slConstructor.where("NOT EXISTS ?", slUpsrt);
-//
-//   var dataKeys = _.keys(_.extend(obj, objdq));
-//   dataKeys.push("updated_at");
-//   dataKeys = _.map(dataKeys, function(dkey){return utils.wrapStrings(dkey,['"']);});
-//
-//   var insQry = this._squel.insert()
-//                  .into(table)
-//                  .fromQuery(dataKeys, slCon)
-//                  .toString();
-//
-//   var sql = ["WITH upsert AS ",utils.wrapStrings(udtQry,["(",")"]),insQry]
-//   var q = sql.join(' ')
-//   this.query({ 'query' : q}, function(err, r){
-//     if (err)
-//       log.error('Cannot execute upsert query for table [%s] - CartoDB',table);
-//     if (cb) cb(err);
-//   });
-// }
+/*
+SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(table, obj, objdq,cb){
+
+  // Upsert SQL example:
+  //
+  // WITH upsert AS
+  //     (
+  //         UPDATE dev_agua
+  //         SET id_entity='dispositivo_k01',
+  //             value='18',
+  //             timeinstant='2016-03-04T16:09:54.01',
+  //             position=ST_SetSRID(ST_MakePoint(-4.45,37.09),4326),
+  //             updated_at=now()
+  //         WHERE cartodb_id=(SELECT MAX(cartodb_id) FROM dev_agua WHERE id_entity='dispositivo_k01')
+  //         RETURNING *
+  //     )
+  // INSERT INTO dev_agua (id_entity, value, timeinstant, position)
+  //     SELECT 'dispositivo_k01' AS id_entity,
+  //            '0.234' AS value,
+  //            '2015-03-04T16:09:54.01' AS timeinstant,
+  //            ST_SetSRID(ST_MakePoint(-4.45,37.09),4326) AS position,
+  //            now() AS updated_at
+  //     WHERE NOT EXISTS (SELECT * FROM upsert);
+
+  var sqpg = this._squel.useFlavour('postgres');
+
+  var updtConstructor = sqpg.update().table(table);
+  var slConstructor = this._squel.select();
+
+  for (var i in obj){
+      updtConstructor.set(utils.wrapStrings(i,['"']),obj[i]);
+      if (i == "TimeInstant" && (!obj[i] || obj[i] == ''))
+        obj[i] = '1970-01-01T00:00Z';
+      slConstructor.field(utils.wrapStrings(obj[i],["'"]),i);
+  }
+  for (var i in objdq){
+      updtConstructor.set(utils.wrapStrings(i,['"']),objdq[i],{dontQuote: true});
+      slConstructor.field(String(objdq[i]),i,{dontQuote: true});
+  }
+
+  updtConstructor.set("updated_at","now()");
+  slConstructor.field("now()","updated_at");
+
+  var slMaxid = sqpg.select()
+                  .field('MAX(cartodb_id)')
+                  .from(table)
+                  .where("id_entity = ?",obj.id_entity)
+
+  var udtQry = updtConstructor.where('cartodb_id = ?', slMaxid)
+                .returning("*")
+                .toString();
+
+  var slUpsrt = this._squel.select().from("upsert");
+  // var slCon = slConstructor.from("").where("NOT EXISTS ?", slUpsrt);  // OLD -> .from("")
+  var slCon = slConstructor.where("NOT EXISTS ?", slUpsrt);
+
+  var dataKeys = _.keys(_.extend(obj, objdq));
+  dataKeys.push("updated_at");
+  dataKeys = _.map(dataKeys, function(dkey){return utils.wrapStrings(dkey,['"']);});
+
+  var insQry = this._squel.insert()
+                 .into(table)
+                 .fromQuery(dataKeys, slCon)
+                 .toString();
+
+  var sql = ["WITH upsert AS ",utils.wrapStrings(udtQry,["(",")"]),insQry]
+  var q = sql.join(' ')
+  this.query({ 'query' : q}, function(err, r){
+    if (err)
+      log.error('Cannot execute upsert query for table [%s] - CartoDB',table);
+    if (cb) cb(err);
+  });
+}
+*/
 
 SubscriptionsCartoDBModel.prototype.upsertSubscriptedData = function(table, obj, objdq,cb){
   /*

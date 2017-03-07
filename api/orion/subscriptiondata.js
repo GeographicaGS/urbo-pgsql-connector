@@ -47,8 +47,7 @@ function getDataPage(sub, headers, page, cb) {
           }
         }
 
-        //log.info(util.format('Large subscription (> 20 entities) for [%s]. New data added.',sub.id));
-        log.debug('Retrieved paged %d for subscription [%s]',page,sub.id);
+        log.info('Retrieved paged %d for subscription [%s]',page,sub.id);
         getDataPage(sub, headers, page+1,cb);
 
       } else {
