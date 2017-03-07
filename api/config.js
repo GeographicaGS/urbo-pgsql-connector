@@ -149,7 +149,7 @@ function Config() {
         }
 
         // Creating a message for the console
-        errorFilename = _file.separateError ? ' & ' + errorFilename : '';
+        errorFilename = _file && _file.separateError ? ' & ' + errorFilename : '';
         logParams.consoleMessage = `Logging into files: ${ filename }${ errorFilename }`;
       }
     }
