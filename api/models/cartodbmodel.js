@@ -25,23 +25,13 @@ CartoDBModel.prototype.query = function(opts,cb){
   if (err){
     log.error(err);
     cb(err);
-  }
-  else{
-    // console.log('BEFORE EXECUTE');
-    // console.log(this._sql.sql_api_url);
-    // console.log(opts.query);
-    // var self = this;
 
+  } else{
     this._sql.execute(opts.query, opts.params)
       .done(function(data){
-        // console.log('On DONE');
-        // console.log(self._sql.sql_api_url);
-        // console.log(opts.query);
         if (cb) cb(null,data);
       })
       .error(function(err){
-        // console.log('here');
-        // console.log(err);
         log.error(err);
         log.error(valueTemplate(opts.query, opts.params));
         if (cb) cb(err);
