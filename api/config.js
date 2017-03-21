@@ -89,7 +89,7 @@ function Config() {
       {
         type: 'dateFile',
         filename: filename,
-        pattern: '-dd'
+        pattern: '.yyyy-MM-dd'
       }
     ];
 
