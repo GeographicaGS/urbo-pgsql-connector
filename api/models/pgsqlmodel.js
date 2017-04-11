@@ -14,7 +14,7 @@ function PGSQLModel(cfg){
 // data:{field: 'value'}
 PGSQLModel.prototype.insertBatch = function(table,data,cb){
   if (!data || (data.isArray && data.length==0)){
-    log.warning('Trying to insert data with no data. Ignoring.')
+    log.warn('Trying to insert data with no data. Ignoring.')
     return;
   }
 
@@ -76,7 +76,7 @@ PGSQLModel.prototype.insert = function(table,data,dontquotedata,cb){
 
 PGSQLModel.prototype.update = function(table,data,cb){
   if (!data || (data.isArray && data.length==0)){
-    log.warning('Trying to update data with no data. Ignoring.')
+    log.warn('Trying to update data with no data. Ignoring.')
     return;
   }
 

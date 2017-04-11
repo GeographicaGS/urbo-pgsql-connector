@@ -3,12 +3,34 @@
 # BASE URL
 baseURL: http://url:port
 
-# Logging configuration parameters
+# Logging parameters.
 logging:
-  # Level options: INFO|ERROR|DEBUG. Default: INFO
-  level: INFO
-  # Output options: console|file. Default: console
+  # Options: ALL | TRACE | DEBUG | INFO | WARN | ERROR | FATAL | OFF. Default: INFO.
+  level: DEBUG
+  # Options: console | file | dailyRotatingFile | sizeRotatingFile. Default: console.
   output: console
+  # Configure the log file.
+  file:
+    # Default: `./logs`
+    dir: ./logs
+    # Default: `the_log`.
+    name: connector
+    # File size in MB for `sizeRotatingFile` log type. Default: 20 MB.
+    maxSize: 20
+    # Number of old files to keep for `sizeRotatingFile` log type. Default: 5.
+    oldFiles: 5
+    # Boolean. If true, it'll create a separate file for errors. Default: false.
+    separateError: true
+  # Configure the access log. If its level is inferior than the main level it won't be logged.
+  # Documentaiton: https://github.com/nomiddlename/log4js-node/wiki/Connect-Logger
+  access:
+    # Options: Same as the main level. Default: The one used in the main level.
+    level: INFO
+    # Optional. For using log4js default format: false.
+    format: :remote-addr - ":method :url HTTP/:http-version" :status :res[content-length] :response-time ":user-agent"
+    # Optional array: each element it's like a regex. Default: empty.
+    nolog:
+      - ^/subscriptions/transport_vehicle
 
 # PostgreSQL configuration parameters
 pgsql:
