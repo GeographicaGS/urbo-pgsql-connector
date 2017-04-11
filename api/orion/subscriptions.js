@@ -38,10 +38,6 @@ function createSubscription(sub,cb){
   });
 }
 
-// function getRandomInt(min, max) {
-//     return Math.floor(Math.random() * (max - min + 1)) + min;
-// }
-
 function registerSubscription(sub,cb){
 
   var cfg = config.getData(),
@@ -173,7 +169,6 @@ function updateOrionSubscription(sub, subs_id,cb){
       else{
         log.error(util.format('Subscription [%s] cannot be updated',sub.id));
         log.error('Request error: ' + error);
-        //log.debug(response);
         cb(error);
       }
     });
