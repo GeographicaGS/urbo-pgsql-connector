@@ -57,6 +57,12 @@ subservices:
     auth:
       user: xxxxxxxxxx
       password: xxxxxxxxxx
+  - id: malaga_bikes
+    service: sc_malaga
+    subservice: /malaga_transport
+    auth:
+      user: xxxxxxxxxx
+      password: xxxxxxxxxx
 
 subscriptions:
   # TrafficFlowObserved ######################
@@ -211,3 +217,107 @@ subscriptions:
         cartodb: true
     trigger_attributes:
       - dateModified
+
+
+  # BikeHireDockingStation ######################
+  - id: transport_bikehiredockingstation
+    subservice_id: malaga_bikes
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: BikeHireDockingStation
+    mode: append
+    attributes:
+      - name: location
+        namedb: position
+        type: geojson-multipolygon
+        cartodb: true
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: name
+        type: string
+        cartodb: true
+      - name: address
+        namedb: address
+        type: json
+        cartodb: true
+    trigger_attributes:
+      - location
+      - name
+
+  - id: transport_bikehiredockingstation_lastdata
+    subservice_id: transport_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: BikeHireDockingStation
+    mode: update
+    attributes:
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: totalSlotNumber
+        namedb: totalslotnumber
+        type: float
+        cartodb: true
+      - name: freeSlotNumber
+        namedb: freeslotnumber
+        type: float
+        cartodb: true
+      - name: availableSlotNumber
+        namedb: availableslotnumber
+        type: float
+        cartodb: true
+      - name: status
+        type: string
+        cartodb: true
+    trigger_attributes:
+      - dateModified
+
+  - id: transport_bikehiredockingstation_measurand
+    subservice_id: transport_simulations
+    schemaname: distrito_telefonica
+    subsduration: P8M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: BikeHireDockingStation
+    mode: append
+    attributes:
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        cartodb: true
+        constraint: true
+      - name: totalSlotNumber
+        namedb: totalslotnumber
+        type: float
+        cartodb: true
+      - name: freeSlotNumber
+        namedb: freeslotnumber
+        type: float
+        cartodb: true
+      - name: availableSlotNumber
+        namedb: availableslotnumber
+        type: float
+        cartodb: true
+      - name: status
+        type: string
+        cartodb: true
+    trigger_attributes:
+      - totalSlotNumber
+      - freeSlotNumber
+      - availableSlotNumber
+      - status
