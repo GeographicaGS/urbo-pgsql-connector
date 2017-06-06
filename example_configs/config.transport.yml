@@ -176,7 +176,7 @@ subscriptions:
 
   - id: transport_vehicle_lastdata
     subservice_id: transport_simulations
-    schemaname: distrito_telefonica
+    schemaname: malaga
     subsduration: P8M
     substhrottling: PT0S
     fetchDataOnCreated: false
@@ -222,7 +222,7 @@ subscriptions:
   # BikeHireDockingStation ######################
   - id: transport_bikehiredockingstation
     subservice_id: malaga_bikes
-    schemaname: distrito_telefonica
+    schemaname: malaga
     subsduration: P8M
     substhrottling: PT0S
     fetchDataOnCreated: false
@@ -252,8 +252,8 @@ subscriptions:
       - name
 
   - id: transport_bikehiredockingstation_lastdata
-    subservice_id: transport_simulations
-    schemaname: distrito_telefonica
+    subservice_id: malaga_bikes
+    schemaname: malaga
     subsduration: P8M
     substhrottling: PT0S
     fetchDataOnCreated: false
@@ -286,8 +286,8 @@ subscriptions:
       - dateModified
 
   - id: transport_bikehiredockingstation_measurand
-    subservice_id: transport_simulations
-    schemaname: distrito_telefonica
+    subservice_id: malaga_bikes
+    schemaname: malaga
     subsduration: P8M
     substhrottling: PT0S
     fetchDataOnCreated: false
