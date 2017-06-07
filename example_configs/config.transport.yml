@@ -226,14 +226,14 @@ subscriptions:
     schemaname: malaga
     subsduration: P8M
     substhrottling: PT0S
-    fetchDataOnCreated: false
+    fetchDataOnCreated: true
     entityTypes:
       - typeName: BikeHireDockingStation
     mode: append
     attributes:
       - name: location
         namedb: position
-        type: geojson-multipolygon
+        type: geojson
         cartodb: true
       - name: dateModified
         namedb: TimeInstant
@@ -257,11 +257,15 @@ subscriptions:
     schemaname: malaga
     subsduration: P8M
     substhrottling: PT0S
-    fetchDataOnCreated: false
+    fetchDataOnCreated: true
     entityTypes:
       - typeName: BikeHireDockingStation
     mode: update
     attributes:
+      - name: location
+        namedb: position
+        type: geojson
+        cartodb: true
       - name: dateModified
         namedb: TimeInstant
         type: ISO8601
@@ -276,12 +280,19 @@ subscriptions:
         namedb: freeslotnumber
         type: float
         cartodb: true
-      - name: availableSlotNumber
-        namedb: availableslotnumber
+      - name: availableBikeNumber
+        namedb: availablebikenumber
         type: float
         cartodb: true
       - name: status
         type: string
+        cartodb: true
+      - name: name
+        type: string
+        cartodb: true
+      - name: address
+        namedb: address
+        type: json
         cartodb: true
     trigger_attributes:
       - dateModified
@@ -310,8 +321,8 @@ subscriptions:
         namedb: freeslotnumber
         type: float
         cartodb: true
-      - name: availableSlotNumber
-        namedb: availableslotnumber
+      - name: availableBikeNumber
+        namedb: availablebikenumber
         type: float
         cartodb: true
       - name: status
@@ -320,5 +331,5 @@ subscriptions:
     trigger_attributes:
       - totalSlotNumber
       - freeSlotNumber
-      - availableSlotNumber
+      - availableBikeNumber
       - status
