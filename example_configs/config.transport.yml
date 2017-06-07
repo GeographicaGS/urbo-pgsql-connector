@@ -48,6 +48,7 @@ contextBrokerUrls:
   portAuthtk: xxxxxxxxxx
   portCtxApi: xxxxxxxxxx
   urlCtxBrBase: https://xxxxxxxxxx
+  urlCtxAuthBase: https://xxxxxxxxxx
 
 # Fiware subservices subscriptions configuration
 subservices:
