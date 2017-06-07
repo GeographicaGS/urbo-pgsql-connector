@@ -177,7 +177,7 @@ subscriptions:
 
   - id: transport_vehicle_lastdata
     subservice_id: transport_simulations
-    schemaname: malaga
+    schemaname: distrito_telefonica
     subsduration: P8M
     substhrottling: PT0S
     fetchDataOnCreated: false
