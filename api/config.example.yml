@@ -70,6 +70,7 @@ contextBrokerUrls:
   portAuthtk: XXXXX
   portCtxApi: XXXXX
   urlCtxBrBase: https://url
+  urlCtxAuthBase: https://url
 
 # Configuration for recreating (delete and create) subscriptions.
 # Optional. Options: global|single|none. Default: none.
