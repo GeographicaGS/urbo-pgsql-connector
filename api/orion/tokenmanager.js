@@ -31,6 +31,7 @@ function getAuthToken(sub, cb){
       'rejectUnauthorized': false,
       'json': data
     };
+    log.debug(options);
 
     request(options, function (error, response, body) {
       if (!error) {
