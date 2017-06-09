@@ -75,7 +75,7 @@ subscriptions:
     fetchDataOnCreated: false
     entityTypes:
       - typeName: TrafficFlowObserved
-    mode: append
+    mode: update
     attributes:
       - name: location
         namedb: position
