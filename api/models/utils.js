@@ -225,6 +225,7 @@ module.exports.storeData = function(subscription, contextResponses) {
         log.error('Error inserting at PGSQL');
         log.error(error);
       }
+      log.debug('Data inserted in KUE');
     });
 
     var cdbActiveFields = config.cdbActiveFields(subscription);
@@ -241,6 +242,7 @@ module.exports.storeData = function(subscription, contextResponses) {
           log.error('Error inserting at CARTO');
           log.error(error);
         }
+        log.debug('Data CARTO inserted in KUE');
       });
 
     }

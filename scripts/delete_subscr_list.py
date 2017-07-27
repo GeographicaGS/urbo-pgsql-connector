@@ -110,9 +110,9 @@ def main():
     print(auth_token)
 
     url_subs = 'https://195.235.93.224:10027/v1/unsubscribeContext'
-    fiw_serv = 'sc_smart_region_andalucia'
-    fiw_subsserv = '/and_sr_torrox'
-    subs = ['580f43b9fdc8301538a65ab4']
+    fiw_serv = 'urbo'
+    fiw_subsserv = '/distritotelefonica'
+    subs = ['5979c0c89644e23e44e5e5c3','5979c0c69644e23e44e5e5c0','5979c0c79644e23e44e5e5c1','5979c0c89644e23e44e5e5c2']
 
     deleteSubscriptions(subs, url_subs, fiw_serv, fiw_subsserv, auth_token)
 
