@@ -62,7 +62,7 @@ var startServer = function() {
       var bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
-      debug('Listening on ' + bind);
+      log.info('Listening on ' + bind);
     });
   });
 };
