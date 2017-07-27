@@ -220,10 +220,12 @@ module.exports.storeData = function(subscription, contextResponses) {
     psqlOptions.json.type = processingConfig.psqlJob;
     psqlOptions.json.data.title = `${subscription.schemaname} ${subscription.id} to PSQL'`;
     psqlOptions.json.data.contextResponses = [contextResponse];
+
     this.retryRequest(psqlOptions, processingConfig.requestAttempts, function(error, response, body) {
-      if (error) {
-        log.error('Error inserting at PGSQL');
+      if (error || response.statusCode!=200) {
+        log.error('Error inserting at PGSQL. StatusCode [%s]',response.statusCode);
         log.error(error);
+
       }
       log.debug('Data inserted in KUE');
     });
@@ -238,8 +240,8 @@ module.exports.storeData = function(subscription, contextResponses) {
       cartoOptions.json.data.contextResponses = [contextResponse];
       cartoOptions.json.data.cartoUser = config.getData().cartodb.user;
       this.retryRequest(cartoOptions, processingConfig.requestAttempts, function(error, response, body) {
-        if (error) {
-          log.error('Error inserting at CARTO');
+        if (error || response.statusCode!=200) {
+          log.error('Error inserting at CARTO. StatusCode [%s]',response.statusCode);
           log.error(error);
         }
         log.debug('Data CARTO inserted in KUE');
