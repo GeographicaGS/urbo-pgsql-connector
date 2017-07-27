@@ -222,12 +222,17 @@ module.exports.storeData = function(subscription, contextResponses) {
     psqlOptions.json.data.contextResponses = [contextResponse];
 
     this.retryRequest(psqlOptions, processingConfig.requestAttempts, function(error, response, body) {
-      if (error || response.statusCode!=200) {
-        log.error('Error inserting at PGSQL. StatusCode [%s]',response.statusCode);
+      if (error) {
+        log.error('Error inserting at PGSQL');
         log.error(error);
-
       }
-      log.debug('Data inserted in KUE');
+      else if (response.statusCode!=200) {
+        log.error('Error inserting at PGSQL. StatusCode [%s]',response.statusCode);
+      }
+      else {
+        log.debug('Data inserted in KUE');
+      }
+
     });
 
     var cdbActiveFields = config.cdbActiveFields(subscription);
@@ -240,11 +245,17 @@ module.exports.storeData = function(subscription, contextResponses) {
       cartoOptions.json.data.contextResponses = [contextResponse];
       cartoOptions.json.data.cartoUser = config.getData().cartodb.user;
       this.retryRequest(cartoOptions, processingConfig.requestAttempts, function(error, response, body) {
-        if (error || response.statusCode!=200) {
-          log.error('Error inserting at CARTO. StatusCode [%s]',response.statusCode);
+        if (error ) {
+          log.error('Error inserting at CARTO');
           log.error(error);
         }
-        log.debug('Data CARTO inserted in KUE');
+        else if (response.statusCode!=200) {
+          log.error('Error inserting at CARTO. StatusCode [%s]',response.statusCode);
+        }
+        else {
+          log.debug('Data CARTO inserted in KUE');
+        }
+
       });
 
     }
