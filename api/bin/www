@@ -33,6 +33,7 @@ var startLogger = function() {
 
   log.setLevel(logParams.level);
   log.info('Logger successfully started');
+  log.debug('Using debug mode');
 
   return log;
 };
