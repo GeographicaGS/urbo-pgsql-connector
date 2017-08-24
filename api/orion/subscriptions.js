@@ -15,7 +15,7 @@ var utils = require('../models/utils.js');
 
 function createSubscriptionSerial(idx,cb){
   var subscriptions = config.getSubs();
-
+  
   createSubscription(subscriptions[idx],function(err){
     if (err)
       return cb(err);
@@ -29,17 +29,19 @@ function createSubscriptionSerial(idx,cb){
 }
 
 function createSubscription(sub,cb){
+  log.debug('Creating subscription [%s]',sub.id);
   createTable(sub,function(err){
     if (err){
       log.error('Cannot create table for subscription [%s]',sub.id);
       return cb(err);
     }
+    log.debug('Created table completed  [%s]',sub.id);
     registerSubscription(sub,cb);
   });
 }
 
 function registerSubscription(sub,cb){
-
+  log.debug('Register subscription [%s]',sub.id);
   var cfg = config.getData(),
     model = new SubscriptionsModel(cfg.pgsql);
 
@@ -49,12 +51,15 @@ function registerSubscription(sub,cb){
       return cb(err);
     }
     else if (d && config.recreateSubscription(sub)){
+      log.debug('Recreate subscription [%s]',sub.id);
       recreateSubscription(sub,d.subs_id,cb);
     }
     else if (d){
+      log.debug('Update orion subscription [%s]',sub.id);
       updateOrionSubscription(sub,d.subs_id,cb);
     }
     else{
+      log.debug('New orion subscription [%s]',sub.id);
       newOrionSubscription(sub,cb);
     }
   });
@@ -110,6 +115,7 @@ function newOrionSubscription(sub, cb){
   };
 
   request(options, function (error, response, body) {
+    log.debug('Orion new subscription respose [%s]',sub.id);
     if (!error && response.statusCode == 200) {
 
       var cfg = config.getData(),
@@ -275,6 +281,7 @@ function createSchemas(schemanames, cb){
 }
 
 function createTable(sub,cb){
+  log.debug('Creating table [%s]',sub.id);
   model = new SubscriptionsModel(config.getData().pgsql);
   model.createTable(sub,function(err){
     if (err){

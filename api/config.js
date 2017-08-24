@@ -185,11 +185,13 @@ function Config() {
   };
 
   this.getCtxBrUrls = function(optype){
+    // Just because we need to handle different servers
+    var urlCtxAuthBase = this._data.contextBrokerUrls.urlCtxAuthBase || this._data.contextBrokerUrls.urlCtxBrBase;
     var urlCtxBrBase = this._data.contextBrokerUrls.urlCtxBrBase;
     if (optype == 'authtk'){
       if(!this._data.contextBrokerUrls.portAuthtk) return null;
       var portAuthtk = this._data.contextBrokerUrls.portAuthtk;
-      return urlCtxBrBase + ':' + portAuthtk + URL_AUTHTK
+      return urlCtxAuthBase + ':' + portAuthtk + URL_AUTHTK
     }
     else{
       var portCtxApi = this._data.contextBrokerUrls.portCtxApi;
