@@ -1,7 +1,7 @@
 postgis:
   image: geographica/postgis:breezy_badger
   volumes_from:
-     - urbo_pgdata_
+     - urbo_pgdata
   volumes:
     - ./:/usr/src
 
