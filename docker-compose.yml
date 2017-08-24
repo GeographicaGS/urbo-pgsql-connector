@@ -1,7 +1,7 @@
 postgis:
-  image: geographica/postgis:postgresql-9.4.5-postgis-2.2.0-gdal-2.0.1-patched-es_ES
+  image: geographica/postgis:breezy_badger
   volumes_from:
-     - urbo_pgdata
+     - urbo_pgdata_
   volumes:
     - ./:/usr/src
 
