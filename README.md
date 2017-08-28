@@ -33,7 +33,7 @@ docker-compose exec -T  postgis psql -U postgres -f /usr/src/db/all.sql
 At this file you specify which part of fiware you want to listen to and how to map the info.
 
 ```
-cp api/config.sample.yml api/config.yml
+cp api/config.example.yml api/config.yml
 ```
 
 Now, you can edit this file using your favourite text editor.
