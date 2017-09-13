@@ -311,7 +311,6 @@ module.exports.getNotificationValueForType = function(value, type, outcome) {
         value = value.slice(1, -1);
       }
 
-      log.error(value);
       value = value.split(',');
 
       if (type === 'list-numeric') {
