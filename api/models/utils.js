@@ -53,6 +53,7 @@ module.exports.getValueForType = function(value, type, outcome){
   }
 
   if (type === 'coords') {
+    log.error(value);
     var s = value.split(',');
     return 'ST_SetSRID(ST_MakePoint(' + s[1].trim() + ',' + s[0].trim() + '), 4326)';
 
@@ -275,6 +276,7 @@ module.exports.toArrayOfNumbers = function(coordinates) {
 
 module.exports.getNotificationValueForType = function(value, type, outcome) {
   if (type === 'coords') {
+    log.error(value);
     value = value.split(',');
     return {
         type: 'Point',
@@ -300,6 +302,8 @@ module.exports.getNotificationValueForType = function(value, type, outcome) {
       if (value.startsWith('[') && value.endsWith(']')) {
         value = value.slice(1, -1);
       }
+
+      log.error(value);
       value = value.split(',');
 
       if (type === 'list-numeric') {
