@@ -52,9 +52,13 @@ module.exports.getValueForType = function(value, type, outcome){
     return null;
   }
 
+
   if (type === 'coords') {
-    log.error(value);
-    var s = value.split(',');
+    var s = value;
+    if(typeof value === 'object' && Array.isArray(value)){
+      s = s.join(',');
+    }
+    s = s.split(',');
     return 'ST_SetSRID(ST_MakePoint(' + s[1].trim() + ',' + s[0].trim() + '), 4326)';
 
   } else if (type.startsWith('geojson')) {
@@ -276,8 +280,12 @@ module.exports.toArrayOfNumbers = function(coordinates) {
 
 module.exports.getNotificationValueForType = function(value, type, outcome) {
   if (type === 'coords') {
-    log.error(value);
-    value = value.split(',');
+
+    var s = value;
+    if(typeof value === 'object' && Array.isArray(value)){
+      s = s.join(',');
+    }
+    value = s.split(',');
     return {
         type: 'Point',
         coordinates: [
