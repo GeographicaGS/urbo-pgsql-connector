@@ -7,7 +7,7 @@ var _ = require('underscore');
 module.exports.getPostgresType = function(type){
   if (type === 'coords')
     return 'geometry(Point,4326)';
-  else if (type === 'string')
+  else if (type === 'string' || type === 'stringOrList')
     return 'text';
   else if (type === 'integer')
     return 'integer';
@@ -106,6 +106,19 @@ module.exports.getValueForType = function(value, type, outcome){
 
   } else if (type === 'string' || type === 'integer' || type === 'float') {
     return value;
+  }
+  else  if (type === 'stringOrList') {
+    if(typeof value === 'string'){
+      return value;
+    }
+    else {
+      if(!Array.isArray(value)){
+        var errorMsg =  type + ' isn\'t a valid Array';
+        log.error(errorMsg);
+        throw Error(errorMsg);
+      }
+      return value[0];
+    }
 
   } else if (type === 'json') {
     return JSON.stringify(value);
@@ -142,7 +155,7 @@ module.exports.isTypeQuoted = function(type){
   if (type === 'coords' || type.startsWith('geojson') || type.startsWith('list') || type === 'integer' || type === 'float' || type === 'percent' || type === 'outcome') {
     return false;
 
-  } else if (type === 'string' || type === 'ISO8601' || type === 'timestamp' || type === 'json') {
+  } else if (type === 'string' || type === 'ISO8601' || type === 'timestamp' || type === 'json' || type === 'stringOrList' ) {
     return true;
 
   } else {
