@@ -80,3 +80,7 @@ cp api/config.sample.yml api/config.yml
 ```
 dcp up
 ```
+
+### License
+
+URBO PGSQL connector is licensed under Affero General Public License (GPL) version 3.
