@@ -12,7 +12,7 @@ You choose which part of Fiware do you want to listen to, you specify how to map
 
 ## How to use
 
-It's your lucky day, we use Docker to deploy (also for development stages).
+It's your lucky day, we use Docker to deploy, also for development stages.
 
 You need the following dependencies to run this project:
 * Docker: https://docs.docker.com/engine/installation/
@@ -80,3 +80,7 @@ cp api/config.sample.yml api/config.yml
 ```
 dcp up
 ```
+
+### License
+
+URBO PGSQL connector is licensed under Affero General Public License (GPL) version 3.
