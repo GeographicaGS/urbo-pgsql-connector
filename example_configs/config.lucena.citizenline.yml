@@ -64,6 +64,7 @@ subscriptions:
     mode: append
     attributes:
       - name: location
+        namedb: position
         type: geojson-point
         cartodb: true
       - name: updateddatetime
@@ -126,6 +127,7 @@ subscriptions:
     mode: update
     attributes:
       - name: location
+        namedb: position
         type: geojson-point
         cartodb: true
       - name: updateddatetime
@@ -189,6 +191,7 @@ subscriptions:
     mode: append
     attributes:
       - name: location
+        namedb: position
         type: geojson-point
         cartodb: true
       - name: updateddatetime
@@ -245,6 +248,7 @@ subscriptions:
     mode: update
     attributes:
       - name: location
+        namedb: position
         type: geojson-point
         cartodb: true
       - name: updateddatetime
