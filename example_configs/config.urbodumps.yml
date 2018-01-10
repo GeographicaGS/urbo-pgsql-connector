@@ -48,8 +48,8 @@ subservices:
     service: urbo
     subservice: /geographica
     auth:
-      user: geographica_admin
-      password: S1m9l4d0r3s
+      user: xxxxxxxxxxx
+      password: xxxxxxxxxxxxx
 
 subscriptions:
   - id: dumps_wastecontainer
