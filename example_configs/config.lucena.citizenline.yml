@@ -1,0 +1,361 @@
+  # CITIZEN LINE DASHBOARD CONFIGURATION FILE
+
+baseURL: http://url:port
+
+# debugAccessToken:
+
+# Logging configuration parameters
+logging:
+  # Level options: INFO|ERROR|DEBUG. Default: INFO
+  level: DEBUG
+  # Output options: console|file. Default: console
+  output: file
+
+# PostgreSQL configuration parameters
+pgsql:
+  host: postgis
+  user: xxxxx
+  password: xxxxx
+  database: xxxxx
+  port: 5432
+
+# CartoDB configuration parameters
+cartodb:
+  apiKey: xxxxxxxxxxxxxxxxxxxxxx
+  user: xxxxxxxxxxxxx
+  active: false
+  enterprise: true
+
+# urbo-processing parameters
+processing:
+  active: false
+  url: http://localhost:XXXX
+  requestAttempts: 5
+  psqlJob: connectorPsql
+  cartoJob: connectorCarto
+  jobAttempts: 3
+  priority: critical
+
+# Orion Context Broker API URLs
+contextBrokerUrls:
+  portAuthtk: xxxxxxxxxxxxx
+  portCtxApi: xxxxxxxxx
+  urlCtxBrBase: https://xxxxxxxxxxxxxxxxxxxxxxxx
+
+# Fiware subservices subscriptions configuration
+subservices:
+  - id: citizenline
+    service: sc_smart_region_andalucia
+    subservice: /and_sr_lucena_pc
+    auth:
+      user: xxxxxxxxxxxxxxxxxxxx
+      password: xxxxxxxxxxxxxxxxxxxx
+
+subscriptions:
+  # Issues #######################
+  - id: citizenline_issues
+    subservice_id: citizenline
+    schemaname: lucena
+    subsduration: P12M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: incidencia
+    mode: append
+    attributes:
+      - name: location
+        type: geojson-point
+        cartodb: true
+      - name: timeinstant
+        namedb: TimeInstant
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+        constraint: true
+      - name: updateddatetime
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: createddatetime
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: ref
+        type: integer
+        cartodb: true
+      - name: status
+        type: string
+        cartodb: true
+      - name: priority
+        type: integer
+        cartodb: true
+      - name: category
+        type: string
+        cartodb: true
+      - name: subcategory
+        type: string
+        cartodb: true
+      - name: description
+        type: string
+        cartodb: true
+      - name: image
+        type: string
+        cartodb: true
+      - name: owner
+        type: string
+        cartodb: true
+      - name: emailowner
+        type: string
+        cartodb: true
+      - name: timefirstresponse
+        type: integer
+        cartodb: true
+      - name: timetotalresponse
+        type: integer
+        cartodb: true
+      - name: valuation
+        type: integer
+        cartodb: true
+    trigger_attributes:
+      - timeinstant
+
+  - id: citizenline_issues_lastdata
+    subservice_id: citizenline
+    schemaname: lucena
+    subsduration: P12M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: incidencia
+    mode: update
+    attributes:
+      - name: location
+        type: geojson-point
+        cartodb: true
+      - name: timeinstant
+        namedb: TimeInstant
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+        constraint: true
+      - name: updateddatetime
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: createddatetime
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: ref
+        type: integer
+        cartodb: true
+      - name: status
+        type: string
+        cartodb: true
+      - name: priority
+        type: integer
+        cartodb: true
+      - name: category
+        type: string
+        cartodb: true
+      - name: subcategory
+        type: string
+        cartodb: true
+      - name: description
+        type: string
+        cartodb: true
+      - name: image
+        type: string
+        cartodb: true
+      - name: owner
+        type: string
+        cartodb: true
+      - name: emailowner
+        type: string
+        cartodb: true
+      - name: timefirstresponse
+        type: integer
+        cartodb: true
+      - name: timetotalresponse
+        type: integer
+        cartodb: true
+      - name: valuation
+        type: integer
+        cartodb: true
+    trigger_attributes:
+      - timeinstant
+
+  # Proposals #######################
+  - id: citizenline_proposals
+    subservice_id: citizenline
+    schemaname: lucena
+    subsduration: P12M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: propuesta
+    mode: append
+    attributes:
+      - name: location
+        type: geojson-point
+        cartodb: true
+      - name: timeinstant
+        namedb: TimeInstant
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+        constraint: true
+      - name: updateddatetime
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: createddatetime
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: ref
+        type: integer
+        cartodb: true
+      - name: status
+        type: string
+        cartodb: true
+      - name: category
+        type: string
+        cartodb: true
+      - name: description
+        type: string
+        cartodb: true
+      - name: image
+        type: string
+        cartodb: true
+      - name: owner
+        type: string
+        cartodb: true
+      - name: emailowner
+        type: string
+        cartodb: true
+      - name: timefirstresponse
+        type: integer
+        cartodb: true
+      - name: timetotalresponse
+        type: integer
+        cartodb: true
+      - name: relevance
+        type: integer
+        cartodb: true
+    trigger_attributes:
+      - timeinstant
+
+  - id: citizenline_proposals_lastdata
+    subservice_id: citizenline
+    schemaname: lucena
+    subsduration: P12M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: propuesta
+    mode: update
+    attributes:
+      - name: location
+        type: geojson-point
+        cartodb: true
+      - name: timeinstant
+        namedb: TimeInstant
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+        constraint: true
+      - name: updateddatetime
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: createddatetime
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: ref
+        type: integer
+        cartodb: true
+      - name: status
+        type: string
+        cartodb: true
+      - name: category
+        type: string
+        cartodb: true
+      - name: description
+        type: string
+        cartodb: true
+      - name: image
+        type: string
+        cartodb: true
+      - name: owner
+        type: string
+        cartodb: true
+      - name: emailowner
+        type: string
+        cartodb: true
+      - name: timefirstresponse
+        type: integer
+        cartodb: true
+      - name: timetotalresponse
+        type: integer
+        cartodb: true
+      - name: relevance
+        type: integer
+        cartodb: true
+    trigger_attributes:
+      - timeinstant
+
+  # Queries ###########################
+  - id: citizenline_queries_lastdata
+    subservice_id: citizenline
+    schemaname: lucena
+    subsduration: P12M
+    substhrottling: PT0S
+    fetchDataOnCreated: false
+    entityTypes:
+      - typeName: consulta
+    mode: update
+    attributes:
+      - name: timeinstant
+        namedb: TimeInstant
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+        constraint: true
+      - name: updateddatetime
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: createddatetime
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: startdate
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: enddate
+        type: ISO8601
+        cartodb: true
+        indexdb: true
+      - name: status
+        type: string
+        cartodb: true
+      - name: title
+        type: string
+        cartodb: true
+      - name: description
+        type: string
+        cartodb: true
+      - name: image
+        type: string
+        cartodb: true
+      - name: responsenum
+        type: integer
+        cartodb: true
+      - name: share
+        type: integer
+        cartodb: true
+    trigger_attributes:
+      - timeinstant
