@@ -44,7 +44,7 @@ contextBrokerUrls:
 
 # Fiware subservices subscriptions configuration
 subservices:
-  - id: streetlight_simulations
+  - id: environment_simulations
     service: urbo
     subservice: /geographica
     auth:
