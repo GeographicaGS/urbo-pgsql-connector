@@ -66,16 +66,12 @@ subscriptions:
       - name: location
         type: geojson-point
         cartodb: true
-      - name: timeinstant
+      - name: updateddatetime
         namedb: TimeInstant
         type: ISO8601
         cartodb: true
         indexdb: true
         constraint: true
-      - name: updateddatetime
-        type: ISO8601
-        cartodb: true
-        indexdb: true
       - name: createddatetime
         type: ISO8601
         cartodb: true
@@ -117,7 +113,7 @@ subscriptions:
         type: integer
         cartodb: true
     trigger_attributes:
-      - timeinstant
+      - updateddatetime
 
   - id: citizenline_issues_lastdata
     subservice_id: citizenline
@@ -132,16 +128,12 @@ subscriptions:
       - name: location
         type: geojson-point
         cartodb: true
-      - name: timeinstant
+      - name: updateddatetime
         namedb: TimeInstant
         type: ISO8601
         cartodb: true
         indexdb: true
         constraint: true
-      - name: updateddatetime
-        type: ISO8601
-        cartodb: true
-        indexdb: true
       - name: createddatetime
         type: ISO8601
         cartodb: true
@@ -183,7 +175,7 @@ subscriptions:
         type: integer
         cartodb: true
     trigger_attributes:
-      - timeinstant
+      - updateddatetime
 
   # Proposals #######################
   - id: citizenline_proposals
@@ -199,16 +191,12 @@ subscriptions:
       - name: location
         type: geojson-point
         cartodb: true
-      - name: timeinstant
+      - name: updateddatetime
         namedb: TimeInstant
         type: ISO8601
         cartodb: true
         indexdb: true
         constraint: true
-      - name: updateddatetime
-        type: ISO8601
-        cartodb: true
-        indexdb: true
       - name: createddatetime
         type: ISO8601
         cartodb: true
@@ -244,7 +232,7 @@ subscriptions:
         type: integer
         cartodb: true
     trigger_attributes:
-      - timeinstant
+      - updateddatetime
 
   - id: citizenline_proposals_lastdata
     subservice_id: citizenline
@@ -259,16 +247,12 @@ subscriptions:
       - name: location
         type: geojson-point
         cartodb: true
-      - name: timeinstant
+      - name: updateddatetime
         namedb: TimeInstant
         type: ISO8601
         cartodb: true
         indexdb: true
         constraint: true
-      - name: updateddatetime
-        type: ISO8601
-        cartodb: true
-        indexdb: true
       - name: createddatetime
         type: ISO8601
         cartodb: true
@@ -304,7 +288,7 @@ subscriptions:
         type: integer
         cartodb: true
     trigger_attributes:
-      - timeinstant
+      - updateddatetime
 
   # Queries ###########################
   - id: citizenline_queries_lastdata
@@ -317,16 +301,12 @@ subscriptions:
       - typeName: consulta
     mode: update
     attributes:
-      - name: timeinstant
+      - name: updateddatetime
         namedb: TimeInstant
         type: ISO8601
         cartodb: true
         indexdb: true
         constraint: true
-      - name: updateddatetime
-        type: ISO8601
-        cartodb: true
-        indexdb: true
       - name: createddatetime
         type: ISO8601
         cartodb: true
@@ -358,4 +338,4 @@ subscriptions:
         type: integer
         cartodb: true
     trigger_attributes:
-      - timeinstant
+      - updateddatetime
