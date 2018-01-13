@@ -1,0 +1,361 @@
+baseURL: http://urbo-aquagis-backend.geographica.gs/connector/aljarafe/aquagis
+
+logging:
+  level: INFO
+  output: dailyRotatingFile
+  file:
+    dir: /logs
+    name: aljarafe-aquagis-connector
+    maxSize: 20
+    oldFiles: 5
+    separateError: true
+  access:
+    level: INFO
+    format: false
+    nolog:
+      - ^/subscriptions/transport_vehicle
+
+# PostgreSQL configuration parameters
+pgsql:
+  host: 172.17.0.1
+  user: urbo_admin
+  password: termopausa2099
+  database: urbo
+  port: 5432
+
+# CartoDB configuration parameters
+cartodb:
+  apiKey: xxx
+  user: urbo-default
+  active: true
+  enterprise: true
+
+processing:
+  active: true
+  url: http://172.17.0.1:3001/job
+  requestAttempts: 5
+  psqlJob: connectorPsql
+  cartoJob: connectorCarto
+  jobAttempts: 3
+  priority: critical
+
+contextBrokerUrls:
+  portAuthtk: false
+  portCtxApi: 2999
+  urlCtxBrBase: http://172.17.0.1
+
+recreateSubscriptions: single
+
+subservices:
+  - id: aljarafe_aquagis
+    service: aljarafe
+    subservice: /aquagis
+    auth:
+      user: not_in_use
+      password: not_in_use
+
+subscriptions:
+  ## CATALOGUE
+  # Sector catalogue
+  - id: aq_cons_sector
+    subservice_id: aljarafe_aquagis
+    schemaname: aljarafe
+    subsduration: P8M
+    substhrottling: PT0S
+    recreateSubscription: false
+    fetchDataOnCreated: true
+    entityTypes:
+      - typeName: Sector
+    mode: append
+    attributes:
+      - name: location
+        namedb: position
+        type: geojson-multipolygon
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        constraint: true
+      - name: name
+        type: string
+    trigger_attributes:
+      - dateModified
+      - location
+      - name
+      # We need all of them, because in Orion, the entity has only catalogue data
+
+  # Sector lastdata
+  - id: aq_cons_sector_lastdata
+    subservice_id: aljarafe_aquagis
+    schemaname: aljarafe
+    subsduration: P8M
+    substhrottling: PT0S
+    recreateSubscription: false
+    fetchDataOnCreated: true
+    entityTypes:
+      - typeName: Sector
+    mode: update
+    attributes:
+      - name: location
+        namedb: position
+        type: geojson-multipolygon
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        constraint: true
+      - name: name
+        type: string
+    trigger_attributes:
+      - dateModified
+      - location
+      - name
+      # We need all of them, because in Orion, the entity has only catalogue data
+
+  # Plot catalogue
+  - id: aq_cons_plot
+    subservice_id: aljarafe_aquagis
+    schemaname: aljarafe
+    subsduration: P8M
+    substhrottling: PT0S
+    recreateSubscription: false
+    fetchDataOnCreated: true
+    entityTypes:
+      - typeName: Plot
+    mode: append
+    attributes:
+      - name: location
+        namedb: position
+        type: geojson-multipolygon
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        constraint: true
+      - name: refSector
+        namedb: refsector
+        type: string
+      - name: description
+        type: json
+      - name: area
+        type: float
+      - name: floors
+        type: integer
+    trigger_attributes:
+      - dateModified
+      - location
+      - refSector
+      - description
+      - area
+      - floors
+      # We need all of them, because in Orion, the entity has only catalogue data
+
+  # Plot lastdata
+  - id: aq_cons_plot_lastdata
+    subservice_id: aljarafe_aquagis
+    schemaname: aljarafe
+    subsduration: P8M
+    substhrottling: PT0S
+    recreateSubscription: false
+    fetchDataOnCreated: true
+    entityTypes:
+      - typeName: Plot
+    mode: update
+    attributes:
+      - name: location
+        namedb: position
+        type: geojson-multipolygon
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        constraint: true
+      - name: refSector
+        namedb: refsector
+        type: string
+      - name: description
+        type: json
+      - name: area
+        type: float
+      - name: floors
+        type: integer
+    trigger_attributes:
+      - dateModified
+      - location
+      - refSector
+      - description
+      - area
+      - floors
+      # We need all of them, because in Orion, the entity has only catalogue data
+
+  ## AUX
+  # ConstructionFuture
+  - id: aq_aux_const_futu
+    subservice_id: aljarafe_aquagis
+    schemaname: aljarafe
+    subsduration: P8M
+    substhrottling: PT0S
+    recreateSubscription: false
+    fetchDataOnCreated: true
+    entityTypes:
+      - typeName: AuxConstructionFuture
+    mode: append
+    attributes:
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        constraint: true
+      - name: flow
+        type: float
+      - name: pressure
+        type: float
+    trigger_attributes:
+      - dateModified
+
+  # Leakage
+  - id: aq_aux_leak
+    subservice_id: aljarafe_aquagis
+    schemaname: aljarafe
+    subsduration: P8M
+    substhrottling: PT0S
+    recreateSubscription: false
+    fetchDataOnCreated: true
+    entityTypes:
+      - typeName: AuxLeakage
+    mode: append
+    attributes:
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        constraint: true
+      - name: isLeakage
+        namedb: is_leakage
+        type: boolean
+      - name: hours
+        type: integer
+      - name: flowPerc
+        namedb: flow_perc
+        type: float
+      - name: pressurePerc
+        namedb: pressure_perc
+        type: float
+      - name: pressureVariability
+        namedb: pressure_variability
+        type: float
+    trigger_attributes:
+      - dateModified
+
+  ## REGULAR ENTITIES
+  # Construction catalogue
+  - id: aq_cons_const
+    subservice_id: aljarafe_aquagis
+    schemaname: aljarafe
+    subsduration: P8M
+    substhrottling: PT0S
+    recreateSubscription: false
+    fetchDataOnCreated: true
+    entityTypes:
+      - typeName: Construction
+    mode: append
+    attributes:
+      - name: location
+        namedb: position
+        type: geojson-point
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        constraint: true
+      - name: refSector
+        namedb: refsector
+        type: string
+      - name: refPlot
+        namedb: refplot
+        type: string
+      - name: name
+        type: string
+      - name: floor
+        type: integer
+      - name: completePlot
+        namedb: complete_plot
+        type: boolean
+      - name: usage
+        type: string
+    trigger_attributes:
+      - location
+      - refSector
+      - refPlot
+      - name
+      - floor
+      - completePlot
+      - usage
+
+  # Construction lastdata
+  - id: aq_cons_const_lastdata
+    subservice_id: aljarafe_aquagis
+    schemaname: aljarafe
+    subsduration: P8M
+    substhrottling: PT0S
+    recreateSubscription: false
+    fetchDataOnCreated: true
+    entityTypes:
+      - typeName: Construction
+    mode: update
+    attributes:
+      - name: location
+        namedb: position
+        type: geojson-point
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        constraint: true
+      - name: refSector
+        namedb: refsector
+        type: string
+      - name: refPlot
+        namedb: refplot
+        type: string
+      - name: name
+        type: string
+      - name: floor
+        type: integer
+      - name: completePlot
+        namedb: complete_plot
+        type: boolean
+      - name: usage
+        type: string
+      - name: flow
+        type: float
+      - name: pressure
+        type: float
+    trigger_attributes:
+      - dateModified
+
+  # Construction variables
+  - id: aq_cons_const_measurand
+    subservice_id: aljarafe_aquagis
+    schemaname: aljarafe
+    subsduration: P8M
+    substhrottling: PT0S
+    recreateSubscription: false
+    fetchDataOnCreated: true
+    entityTypes:
+      - typeName: Construction
+    mode: append
+    attributes:
+      - name: dateModified
+        namedb: TimeInstant
+        type: ISO8601
+        indexdb: true
+        constraint: true
+      - name: flow
+        type: float
+      - name: pressure
+        type: float
+    trigger_attributes:
+      - dateModified
+      - flow
+      - pressure
