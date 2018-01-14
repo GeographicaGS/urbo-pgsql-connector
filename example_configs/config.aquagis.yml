@@ -208,8 +208,6 @@ subscriptions:
         constraint: true
       - name: flow
         type: float
-      - name: pressure
-        type: float
     trigger_attributes:
       - dateModified
 
