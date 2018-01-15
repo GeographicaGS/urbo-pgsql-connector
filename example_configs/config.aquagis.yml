@@ -208,6 +208,8 @@ subscriptions:
         constraint: true
       - name: flow
         type: float
+      - name: pressure
+        type: float
     trigger_attributes:
       - dateModified
 
@@ -228,19 +230,11 @@ subscriptions:
         type: ISO8601
         indexdb: true
         constraint: true
-      - name: isLeakage
-        namedb: is_leakage
-        type: boolean
-      - name: hours
-        type: integer
       - name: flowPerc
         namedb: flow_perc
         type: float
       - name: pressurePerc
         namedb: pressure_perc
-        type: float
-      - name: pressureVariability
-        namedb: pressure_variability
         type: float
     trigger_attributes:
       - dateModified
