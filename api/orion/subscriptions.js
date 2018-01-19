@@ -251,19 +251,21 @@ function createSubscriptionCallback(sub) {
   router.post('/' + sub.id,function(req, res, next) {
     log.debug(`Received notifiction to ${ sub.schemaname } ${ sub.id }`);
 
-    var contextResponses = req.body.contextResponses.map(utils.fixContextResponse);
+    if (req.body.contextResponses) {
+      req.body.contextResponses = req.body.contextResponses.map(utils.fixContextResponse);
+    }
 
     if ((config.getData().notifier && config.getData().notifier.length)
         && (sub.notifier && sub.notifier.attributes !== 'none')) {
-      new NotificationsApiModel().notifyData(sub, contextResponses);
+      new NotificationsApiModel().notifyData(sub, req.body.contextResponses);
     }
 
     if (config.getData().processing.active) {
-      utils.storeData(sub, contextResponses);
+      utils.storeData(sub, req.body.contextResponses);
 
     } else {
       psqlmodel = new SubscriptionsModel(config.getData().pgsql);
-      psqlmodel.storeData(sub,contextResponses,function(err){
+      psqlmodel.storeData(sub,req.body.contextResponses,function(err){
         if (err){
           log.error('Error inserting at PGSQL');
           log.warn('Ignoring data, not writting to Carto (alasarr idea)');
@@ -273,7 +275,7 @@ function createSubscriptionCallback(sub) {
         var cdbActive = config.getData().cartodb.active;
         if (cdbActive && cdbActiveFields){
           cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
-          cdbmodel.storeData(sub,contextResponses,function(err){
+          cdbmodel.storeData(sub,req.body.contextResponses,function(err){
             if (err)
               log.error('Error inserting at CARTO');
           });
