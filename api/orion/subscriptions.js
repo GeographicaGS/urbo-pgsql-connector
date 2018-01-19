@@ -251,7 +251,7 @@ function createSubscriptionCallback(sub) {
   router.post('/' + sub.id,function(req, res, next) {
     log.debug(`Received notifiction to ${ sub.schemaname } ${ sub.id }`);
 
-    var contextResponses = contextResponses.map(utils.fixContextResponse);
+    var contextResponses = req.body.contextResponses.map(utils.fixContextResponse);
 
     if ((config.getData().notifier && config.getData().notifier.length)
         && (sub.notifier && sub.notifier.attributes !== 'none')) {
