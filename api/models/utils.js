@@ -236,7 +236,7 @@ module.exports.fixContextResponse = function(contextResponse) {
   var newAttributes = [];
   for (var attribute of contextResponse.contextElement.attributes) {
     if (!currentKeys.includes(attribute.name)) {
-      currentKeys.push((attribute.name);
+      currentKeys.push(attribute.name);
       newAttributes.push(attribute);
     }
   }
