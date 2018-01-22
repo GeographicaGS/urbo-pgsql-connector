@@ -19,7 +19,7 @@ logging:
 pgsql:
   host: 172.17.0.1
   user: urbo_admin
-  password: termopausa2099
+  password: termopausa3099
   database: urbo
   port: 5432
 
@@ -44,7 +44,7 @@ contextBrokerUrls:
   portCtxApi: 2999
   urlCtxBrBase: http://172.17.0.1
 
-recreateSubscriptions: single
+recreateSubscriptions: global
 
 subservices:
   - id: aljarafe_aquagis
@@ -63,7 +63,7 @@ subscriptions:
     subsduration: P8M
     substhrottling: PT0S
     recreateSubscription: false
-    fetchDataOnCreated: true
+    fetchDataOnCreated: false
     entityTypes:
       - typeName: Sector
     mode: append
@@ -79,7 +79,6 @@ subscriptions:
       - name: name
         type: string
     trigger_attributes:
-      - dateModified
       - location
       - name
       # We need all of them, because in Orion, the entity has only catalogue data
@@ -91,7 +90,7 @@ subscriptions:
     subsduration: P8M
     substhrottling: PT0S
     recreateSubscription: false
-    fetchDataOnCreated: true
+    fetchDataOnCreated: false
     entityTypes:
       - typeName: Sector
     mode: update
@@ -107,7 +106,6 @@ subscriptions:
       - name: name
         type: string
     trigger_attributes:
-      - dateModified
       - location
       - name
       # We need all of them, because in Orion, the entity has only catalogue data
@@ -119,7 +117,7 @@ subscriptions:
     subsduration: P8M
     substhrottling: PT0S
     recreateSubscription: false
-    fetchDataOnCreated: true
+    fetchDataOnCreated: false
     entityTypes:
       - typeName: Plot
     mode: append
@@ -142,7 +140,6 @@ subscriptions:
       - name: floors
         type: integer
     trigger_attributes:
-      - dateModified
       - location
       - refSector
       - description
@@ -157,7 +154,7 @@ subscriptions:
     subsduration: P8M
     substhrottling: PT0S
     recreateSubscription: false
-    fetchDataOnCreated: true
+    fetchDataOnCreated: false
     entityTypes:
       - typeName: Plot
     mode: update
@@ -180,7 +177,6 @@ subscriptions:
       - name: floors
         type: integer
     trigger_attributes:
-      - dateModified
       - location
       - refSector
       - description
@@ -196,7 +192,7 @@ subscriptions:
     subsduration: P8M
     substhrottling: PT0S
     recreateSubscription: false
-    fetchDataOnCreated: true
+    fetchDataOnCreated: false
     entityTypes:
       - typeName: AuxConstructionFuture
     mode: append
@@ -220,7 +216,7 @@ subscriptions:
     subsduration: P8M
     substhrottling: PT0S
     recreateSubscription: false
-    fetchDataOnCreated: true
+    fetchDataOnCreated: false
     entityTypes:
       - typeName: AuxLeakage
     mode: append
@@ -236,6 +232,8 @@ subscriptions:
       - name: pressurePerc
         namedb: pressure_perc
         type: float
+      - name: performance
+        type: float
     trigger_attributes:
       - dateModified
 
@@ -247,7 +245,7 @@ subscriptions:
     subsduration: P8M
     substhrottling: PT0S
     recreateSubscription: false
-    fetchDataOnCreated: true
+    fetchDataOnCreated: false
     entityTypes:
       - typeName: Construction
     mode: append
@@ -291,7 +289,7 @@ subscriptions:
     subsduration: P8M
     substhrottling: PT0S
     recreateSubscription: false
-    fetchDataOnCreated: true
+    fetchDataOnCreated: false
     entityTypes:
       - typeName: Construction
     mode: update
@@ -333,7 +331,7 @@ subscriptions:
     subsduration: P8M
     substhrottling: PT0S
     recreateSubscription: false
-    fetchDataOnCreated: true
+    fetchDataOnCreated: false
     entityTypes:
       - typeName: Construction
     mode: append
@@ -349,5 +347,3 @@ subscriptions:
         type: float
     trigger_attributes:
       - dateModified
-      - flow
-      - pressure

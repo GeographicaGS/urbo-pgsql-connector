@@ -247,24 +247,25 @@ function recreateSubscription(sub, subs_id, cb) {
 
 function createSubscriptionCallback(sub) {
   log.info('Set router: ' + sub.id);
+  var cfg = config.getData();
 
   router.post('/' + sub.id,function(req, res, next) {
     log.debug(`Received notifiction to ${ sub.schemaname } ${ sub.id }`);
 
-    if (req.body.contextResponses) {
+    if (cfg.manageRepeatedAttributes && req.body.contextResponses) {
       req.body.contextResponses = req.body.contextResponses.map(utils.fixContextResponse);
     }
 
-    if ((config.getData().notifier && config.getData().notifier.length)
+    if ((cfg.notifier && cfg.notifier.length)
         && (sub.notifier && sub.notifier.attributes !== 'none')) {
       new NotificationsApiModel().notifyData(sub, req.body.contextResponses);
     }
 
-    if (config.getData().processing.active) {
+    if (cfg.processing.active) {
       utils.storeData(sub, req.body.contextResponses);
 
     } else {
-      psqlmodel = new SubscriptionsModel(config.getData().pgsql);
+      psqlmodel = new SubscriptionsModel(cfg.pgsql);
       psqlmodel.storeData(sub,req.body.contextResponses,function(err){
         if (err){
           log.error('Error inserting at PGSQL');
@@ -272,9 +273,9 @@ function createSubscriptionCallback(sub) {
           return;
         }
         var cdbActiveFields = config.cdbActiveFields(sub);
-        var cdbActive = config.getData().cartodb.active;
+        var cdbActive = cfg.cartodb.active;
         if (cdbActive && cdbActiveFields){
-          cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
+          cdbmodel = new SubscriptionsCartoDBModel(cfg.cartodb);
           cdbmodel.storeData(sub,req.body.contextResponses,function(err){
             if (err)
               log.error('Error inserting at CARTO');
