@@ -77,6 +77,12 @@ contextBrokerUrls:
 # Note: When 'single' is set, each subscription can have a 'recreateSubscription' boolean attribute.
 recreateSubscriptions: global
 
+# It looks like that with last versions of Orion we can receive repeated
+# attributes in the `contextResponses`. Setting `manageRepeatedAttributes` to
+# `true` deals with that, using only the first appearance.
+# Default value: `false`.
+manageRepeatedAttributes: false
+
 # Fiware subservices catalog.
 subservices:
     # Internal id of subservice. It must be a string without spaces or special characters. Only [a-z][A-Z]

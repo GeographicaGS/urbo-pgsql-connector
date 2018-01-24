@@ -231,6 +231,20 @@ module.exports.retryRequest = function(options, retries, cb, lastParams) {
   }
 };
 
+module.exports.fixContextResponse = function(contextResponse) {
+  var currentKeys = [];
+  var newAttributes = [];
+  for (var attribute of contextResponse.contextElement.attributes) {
+    if (!currentKeys.includes(attribute.name)) {
+      currentKeys.push(attribute.name);
+      newAttributes.push(attribute);
+    }
+  }
+
+  contextResponse.contextElement.attributes = newAttributes;
+  return contextResponse;
+};
+
 module.exports.storeData = function(subscription, contextResponses) {
   var processingConfig = config.getData().processing;
   var options = {
@@ -255,6 +269,8 @@ module.exports.storeData = function(subscription, contextResponses) {
   };
 
   contextResponses.forEach(function(contextResponse) {
+
+
     var psqlOptions = JSON.parse(JSON.stringify(options));  // Cheap deep clone
     psqlOptions.json.type = processingConfig.psqlJob;
     psqlOptions.json.data.title = `${subscription.schemaname} ${subscription.id} to PSQL'`;
