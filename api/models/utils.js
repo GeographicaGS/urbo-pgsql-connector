@@ -27,7 +27,7 @@ var _ = require('underscore');
 module.exports.getPostgresType = function(type){
   if (type === 'coords')
     return 'geometry(Point,4326)';
-  else if (type === 'string' || type === 'stringOrList')
+  else if (type === 'string' || type === 'stringOrList' || type === 'url')
     return 'text';
   else if (type === 'boolean')
     return 'boolean';
@@ -134,7 +134,7 @@ module.exports.getValueForType = function(value, type, outcome){
     return value;
 
   } else  if (type === 'stringOrList') {
-    if(typeof value === 'string') {
+    if(typeof value === 'string'){
       return value;
 
     } else {
@@ -170,7 +170,15 @@ module.exports.getValueForType = function(value, type, outcome){
       }
     }
     return value;
-
+  } else if (type === 'url') {
+    var replace = {
+      "+": "%20"
+    };
+    value = value+'';
+    for (var key in replace) {
+      value = value.split(key).join(replace[key])
+    }
+    return decodeURIComponent(value);
   } else {
     log.error('Unknown type: ' + type);
     throw Error('Unknown type: ' + type);
