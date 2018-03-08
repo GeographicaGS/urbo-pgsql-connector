@@ -1,20 +1,20 @@
 // Copyright 2017 Telefónica Digital España S.L.
-// 
+//
 // This file is part of URBO PGSQL connector.
-// 
+//
 // URBO PGSQL connector is free software: you can redistribute it and/or
 // modify it under the terms of the GNU Affero General Public License as
 // published by the Free Software Foundation, either version 3 of the
 // License, or (at your option) any later version.
-// 
+//
 // URBO PGSQL connector is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Affero General Public License
 // along with URBO PGSQL connector. If not, see http://www.gnu.org/licenses/.
-// 
+//
 // For those usages not covered by this license please contact with
 // iot_support at tid dot es
 
@@ -29,6 +29,8 @@ module.exports.getPostgresType = function(type){
     return 'geometry(Point,4326)';
   else if (type === 'string' || type === 'stringOrList' || type === 'url')
     return 'text';
+  else if (type === 'boolean')
+    return 'boolean';
   else if (type === 'integer')
     return 'integer';
   else if (type === 'float' || type === 'percent' || type === 'outcome')
@@ -71,7 +73,6 @@ module.exports.getValueForType = function(value, type, outcome){
   if (typeof value === 'string' && value.toLowerCase() === 'null') {
     return null;
   }
-
 
   if (type === 'coords') {
     var s = value;
@@ -124,19 +125,20 @@ module.exports.getValueForType = function(value, type, outcome){
   } else if (type === 'ISO8601' || type === 'timestamp') {
     if (!value || value === '' || new Date(value) == 'Invalid Date'){
       return null;
-    }
-    else {
+
+    } else {
       return value;
     }
 
-  } else if (type === 'string' || type === 'integer' || type === 'float') {
+  } else if (type === 'boolean' || type === 'integer' || type === 'float' || type === 'string') {
     return value;
+
   } else  if (type === 'stringOrList') {
     if(typeof value === 'string'){
       return value;
-    }
-    else {
-      if(!Array.isArray(value)){
+
+    } else {
+      if (!Array.isArray(value)) {
         var errorMsg =  type + ' isn\'t a valid Array';
         log.error(errorMsg);
         throw Error(errorMsg);
@@ -152,18 +154,18 @@ module.exports.getValueForType = function(value, type, outcome){
 
   } else if (type === 'outcome') {
 
-    if(outcome && outcome.factor && outcome.operation){
+    if(outcome && outcome.factor && outcome.operation) {
       var operation = outcome.operation;
-      if(operation==='SUM'){
+      if (operation === 'SUM') {
         return value + outcome.factor;
-      }
-      else if(operation ==='PROD'){
+
+      } else if(operation === 'PROD') {
         return value * outcome.factor;
-      }
-      else if(operation === 'MIN'){
+
+      } else if(operation === 'MIN') {
         return value - outcome.factor;
-      }
-      else if(operation === 'DIV'){
+
+      } else if(operation === 'DIV') {
         return value / outcome.factor;
       }
     }
@@ -184,7 +186,7 @@ module.exports.getValueForType = function(value, type, outcome){
 };
 
 module.exports.isTypeQuoted = function(type){
-  if (type === 'coords' || type.startsWith('geojson') || type.startsWith('list') || type === 'integer' || type === 'float' || type === 'percent' || type === 'outcome') {
+  if (type === 'coords' || type.startsWith('geojson') || type.startsWith('list') || type === 'boolean' || type === 'integer' || type === 'float' || type === 'percent' || type === 'outcome') {
     return false;
 
   } else if (type === 'string' || type === 'ISO8601' || type === 'timestamp' || type === 'json' || type === 'stringOrList' ) {
@@ -237,6 +239,20 @@ module.exports.retryRequest = function(options, retries, cb, lastParams) {
   }
 };
 
+module.exports.fixContextResponse = function(contextResponse) {
+  var currentKeys = [];
+  var newAttributes = [];
+  for (var attribute of contextResponse.contextElement.attributes) {
+    if (!currentKeys.includes(attribute.name)) {
+      currentKeys.push(attribute.name);
+      newAttributes.push(attribute);
+    }
+  }
+
+  contextResponse.contextElement.attributes = newAttributes;
+  return contextResponse;
+};
+
 module.exports.storeData = function(subscription, contextResponses) {
   var processingConfig = config.getData().processing;
   var options = {
@@ -261,6 +277,8 @@ module.exports.storeData = function(subscription, contextResponses) {
   };
 
   contextResponses.forEach(function(contextResponse) {
+
+
     var psqlOptions = JSON.parse(JSON.stringify(options));  // Cheap deep clone
     psqlOptions.json.type = processingConfig.psqlJob;
     psqlOptions.json.data.title = `${subscription.schemaname} ${subscription.id} to PSQL'`;

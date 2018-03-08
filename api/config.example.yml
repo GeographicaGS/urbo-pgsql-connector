@@ -77,6 +77,12 @@ contextBrokerUrls:
 # Note: When 'single' is set, each subscription can have a 'recreateSubscription' boolean attribute.
 recreateSubscriptions: global
 
+# It looks like that with last versions of Orion we can receive repeated
+# attributes in the `contextResponses`. Setting `manageRepeatedAttributes` to
+# `true` deals with that, using only the first appearance.
+# Default value: `false`.
+manageRepeatedAttributes: false
+
 # Fiware subservices catalog.
 subservices:
     # Internal id of subservice. It must be a string without spaces or special characters. Only [a-z][A-Z]
@@ -138,7 +144,7 @@ subscriptions:
         # Database attribute name (If it does not exist "name" is used)
         namedb: name
         # Mandatory: Type of attribute: Currently supported: 'coords', 'string', 'float', 'integer',
-        #            'ISO8601|timestamp', 'percent', 'url', json','geojson' (for all types oj GeoJSON),
+        #            'ISO8601|timestamp', 'percent', 'url', boolean', json','geojson' (for all types oj GeoJSON),
         #            'geojson-point', 'geojson-line', 'geojson-polygon', 'geojson-multipoint',
         #            'geojson-multiline', 'geojson-multipolygon', 'list' (it cast its content to string),
         #            'list-string', 'list-numeric'.

@@ -1,20 +1,20 @@
 // Copyright 2017 Telefónica Digital España S.L.
-// 
+//
 // This file is part of URBO PGSQL connector.
-// 
+//
 // URBO PGSQL connector is free software: you can redistribute it and/or
 // modify it under the terms of the GNU Affero General Public License as
 // published by the Free Software Foundation, either version 3 of the
 // License, or (at your option) any later version.
-// 
+//
 // URBO PGSQL connector is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Affero General Public License
 // along with URBO PGSQL connector. If not, see http://www.gnu.org/licenses/.
-// 
+//
 // For those usages not covered by this license please contact with
 // iot_support at tid dot es
 
@@ -35,7 +35,7 @@ var utils = require('../models/utils.js');
 
 function createSubscriptionSerial(idx,cb){
   var subscriptions = config.getSubs();
-  
+
   createSubscription(subscriptions[idx],function(err){
     if (err)
       return cb(err);
@@ -247,18 +247,25 @@ function recreateSubscription(sub, subs_id, cb) {
 
 function createSubscriptionCallback(sub) {
   log.info('Set router: ' + sub.id);
+  var cfg = config.getData();
 
   router.post('/' + sub.id,function(req, res, next) {
-    if ((config.getData().notifier && config.getData().notifier.length)
+    log.debug(`Received notifiction to ${ sub.schemaname } ${ sub.id }`);
+
+    if (cfg.manageRepeatedAttributes && req.body.contextResponses) {
+      req.body.contextResponses = req.body.contextResponses.map(utils.fixContextResponse);
+    }
+
+    if ((cfg.notifier && cfg.notifier.length)
         && (sub.notifier && sub.notifier.attributes !== 'none')) {
       new NotificationsApiModel().notifyData(sub, req.body.contextResponses);
     }
 
-    if (config.getData().processing.active) {
+    if (cfg.processing.active) {
       utils.storeData(sub, req.body.contextResponses);
 
     } else {
-      psqlmodel = new SubscriptionsModel(config.getData().pgsql);
+      psqlmodel = new SubscriptionsModel(cfg.pgsql);
       psqlmodel.storeData(sub,req.body.contextResponses,function(err){
         if (err){
           log.error('Error inserting at PGSQL');
@@ -266,9 +273,9 @@ function createSubscriptionCallback(sub) {
           return;
         }
         var cdbActiveFields = config.cdbActiveFields(sub);
-        var cdbActive = config.getData().cartodb.active;
+        var cdbActive = cfg.cartodb.active;
         if (cdbActive && cdbActiveFields){
-          cdbmodel = new SubscriptionsCartoDBModel(config.getData().cartodb);
+          cdbmodel = new SubscriptionsCartoDBModel(cfg.cartodb);
           cdbmodel.storeData(sub,req.body.contextResponses,function(err){
             if (err)
               log.error('Error inserting at CARTO');
