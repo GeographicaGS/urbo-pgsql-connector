@@ -1,0 +1,175 @@
+# torrox- HYDRA - STREET LIGHTING DASHBOARD CONFIGURATION FILE
+
+baseURL: http://url:port
+
+# debugAccessToken:
+
+# Logging configuration parameters
+logging:
+  # Level options: INFO|ERROR|DEBUG. Default: INFO
+  level: DEBUG
+  # Output options: console|file. Default: console
+  output: file
+
+# PostgreSQL configuration parameters
+pgsql:
+  host: postgis
+  user: xxxxx
+  password: xxxxx
+  database: xxxxx
+  port: 5432
+
+# CartoDB configuration parameters
+cartodb:
+  apiKey: xxxxxxxxxxxxxxxxxxxxxx
+  user: xxxxxxxxxxxxx
+  active: false
+  enterprise: true
+
+# urbo-processing parameters
+processing:
+  active: false
+  url: http://localhost:XXXX
+  requestAttempts: 5
+  psqlJob: connectorPsql
+  cartoJob: connectorCarto
+  jobAttempts: 3
+  priority: critical
+
+# Orion Context Broker API URLs
+contextBrokerUrls:
+  portAuthtk: xxxxxxxxxxxxx
+  portCtxApi: xxxxxxxxx
+  urlCtxBrBase: https://xxxxxxxxxxxxxxxxxxxxxxxx
+
+# Fiware subservices subscriptions configuration
+subservices:
+  - id: madrid_mobility
+    service: madrid
+    subservice: /analytics_kpis
+
+subscriptions:
+  - id: mobility_measurand
+    subservice_id: madrid_mobility
+    schemaname: madrid
+    fetchDataOnCreated: true
+    subsduration: P8M
+    substhrottling: PT0S
+    entityTypes:
+      - typeName: TrafficFlowObserved
+    mode: append
+
+    attributes:
+      - name: code
+        type: string
+        cartodb: true
+
+      - name: congested
+        type: boolean
+        cartodb: true
+
+      - name: dateModified
+        type: ISO8601
+        cartodb: true
+
+      - name: intensidadSat
+        type: integer
+        cartodb: true
+
+      - name: intensity
+        type: integer
+        cartodb: true
+
+      - name: isHoliday
+        type: boolean
+        cartodb: true
+
+      - name: load
+        type: integer
+        cartodb: true
+
+      - name: nivelServicio
+        type: integer
+        cartodb: true
+
+      - name: occupancy
+        type: integer
+        cartodb: true
+
+    trigger_attributes:
+      - dateModified
+
+  - id: mobility_lastdata
+    subservice_id: madrid_mobility
+    schemaname: madrid
+    fetchDataOnCreated: false
+    subsduration: P8M
+    substhrottling: PT0S
+    entityTypes:
+      - typeName: TrafficFlowObserved
+    mode: update
+
+    attributes:
+      - name: address
+        type: json
+        cartodb: true
+
+      - name: code
+        type: string
+        cartodb: true
+
+      - name: congested
+        type: boolean
+        cartodb: true
+
+      - name: dateModified
+        type: ISO8601
+        cartodb: true
+
+#      - name: dateObserved
+#        type: ISO8601
+#        cartodb: true
+
+      - name: description
+        type: string
+        cartodb: true
+
+      - name: intensidadSat
+        type: integer
+        cartodb: true
+
+      - name: intensity
+        type: integer
+        cartodb: true
+
+      - name: isHoliday
+        type: boolean
+        cartodb: true
+
+      - name: laneId
+        type: integer
+        cartodb: true
+
+      - name: load
+        type: integer
+        cartodb: true
+
+      - name: location
+        type: geojson-point
+        cartodb: true
+
+      - name: name
+        type: string
+        cartodb: true
+
+      - name: nivelServicio
+        type: integer
+        cartodb: true
+
+      - name: occupancy
+        type: integer
+        cartodb: true
+
+    trigger_attributes:
+      - dateModified
+

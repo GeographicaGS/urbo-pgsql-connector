@@ -135,7 +135,7 @@ function newOrionSubscription(sub, cb){
   };
 
   request(options, function (error, response, body) {
-    log.debug('Orion new subscription respose [%s]',sub.id);
+    log.debug('Orion new subscription response [%s]',sub.id);
     if (!error && response.statusCode == 200) {
 
       var cfg = config.getData(),

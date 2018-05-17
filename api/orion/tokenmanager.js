@@ -35,8 +35,8 @@ function getAuthToken(sub, cb){
             'domain': {
              'name': sub.service
             },
-           'name': sub.auth.user,
-           'password': sub.auth.password
+           'name': sub.auth && sub.auth.user || '',
+           'password': sub.auth && sub.auth.password || ''
           }
         }
       }
