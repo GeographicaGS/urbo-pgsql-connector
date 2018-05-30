@@ -115,6 +115,7 @@ subscriptions:
         cartodb: true
     trigger_attributes:
       - updateddatetime
+      - location
 
   - id: citizenline_issues_lastdata
     subservice_id: citizenline
@@ -178,6 +179,7 @@ subscriptions:
         cartodb: true
     trigger_attributes:
       - updateddatetime
+      - location
 
   # Proposals #######################
   - id: citizenline_proposals
@@ -236,6 +238,7 @@ subscriptions:
         cartodb: true
     trigger_attributes:
       - updateddatetime
+      - location
 
   - id: citizenline_proposals_lastdata
     subservice_id: citizenline
@@ -293,6 +296,7 @@ subscriptions:
         cartodb: true
     trigger_attributes:
       - updateddatetime
+      - location
 
   # Queries ###########################
   - id: citizenline_queries_lastdata
@@ -343,3 +347,4 @@ subscriptions:
         cartodb: true
     trigger_attributes:
       - updateddatetime
+      - location
