@@ -26,16 +26,6 @@ cartodb:
   active: false
   enterprise: true
 
-# urbo-processing parameters
-processing:
-  active: false
-  url: http://localhost:XXXX
-  requestAttempts: 5
-  psqlJob: connectorPsql
-  cartoJob: connectorCarto
-  jobAttempts: 3
-  priority: critical
-
 # Orion Context Broker API URLs
 contextBrokerUrls:
   portAuthtk: xxxxxxxxxxxxx
@@ -49,57 +39,7 @@ subservices:
     subservice: /analytics_kpis
 
 subscriptions:
-  - id: mobility_measurand
-    subservice_id: madrid_mobility
-    schemaname: madrid
-    fetchDataOnCreated: true
-    subsduration: P8M
-    substhrottling: PT0S
-    entityTypes:
-      - typeName: TrafficFlowObserved
-    mode: append
-
-    attributes:
-      - name: code
-        type: string
-        cartodb: true
-
-      - name: congested
-        type: boolean
-        cartodb: true
-
-      - name: dateModified
-        type: ISO8601
-        cartodb: true
-
-      - name: intensidadSat
-        type: integer
-        cartodb: true
-
-      - name: intensity
-        type: integer
-        cartodb: true
-
-      - name: isHoliday
-        type: boolean
-        cartodb: true
-
-      - name: load
-        type: integer
-        cartodb: true
-
-      - name: nivelServicio
-        type: integer
-        cartodb: true
-
-      - name: occupancy
-        type: integer
-        cartodb: true
-
-    trigger_attributes:
-      - dateModified
-
-  - id: mobility_lastdata
+  - id: mobility_trafficflowobserved_lastdata
     subservice_id: madrid_mobility
     schemaname: madrid
     fetchDataOnCreated: false
@@ -110,43 +50,45 @@ subscriptions:
     mode: update
 
     attributes:
-      - name: address
-        type: json
-        cartodb: true
-
+      # Alternate key
       - name: code
         type: string
         cartodb: true
+        constraint: true
 
-      - name: congested
-        type: boolean
+      - name: laneId
+        type: integer
         cartodb: true
+        namedb: lane_id
+        constraint: true
 
-      - name: dateModified
-        type: ISO8601
+      # Meta
+      - name: address
+        type: json
         cartodb: true
-
-#      - name: dateObserved
-#        type: ISO8601
-#        cartodb: true
 
       - name: description
         type: string
         cartodb: true
 
-      - name: intensidadSat
-        type: integer
-        cartodb: true
-
-      - name: intensity
-        type: integer
+      # Flags
+      - name: congested
+        type: boolean
         cartodb: true
 
       - name: isHoliday
         type: boolean
         cartodb: true
+        namedb: is_holiday
 
-      - name: laneId
+      # Indicators
+
+      - name: intensidadSat
+        type: integer
+        cartodb: true
+        namedb: intensity_sat
+
+      - name: intensity
         type: integer
         cartodb: true
 
@@ -154,22 +96,94 @@ subscriptions:
         type: integer
         cartodb: true
 
-      - name: location
-        type: geojson-point
-        cartodb: true
-
-      - name: name
-        type: string
-        cartodb: true
-
       - name: nivelServicio
         type: integer
         cartodb: true
+        namedb: service_level
 
       - name: occupancy
         type: integer
         cartodb: true
 
-    trigger_attributes:
-      - dateModified
+      # Location
 
+      - name: location
+        type: geojson-point
+        cartodb: true,
+        namedb: the_geom
+
+      # Dates
+      - name: dateObserved
+        type: ISO8601
+        cartodb: true
+        namedb: TimeInstant
+
+    trigger_attributes:
+      - dateObserved
+
+  - id: mobility_trafficflowobserved_measurand
+    subservice_id: madrid_mobility
+    schemaname: madrid
+    fetchDataOnCreated: false
+    subsduration: P8M
+    substhrottling: PT0S
+    entityTypes:
+      - typeName: TrafficFlowObserved
+    mode: append
+
+    attributes:
+      # Alternate key
+      - name: code
+        type: string
+        cartodb: true
+        constraint: true
+
+      - name: laneId
+        type: integer
+        cartodb: true
+        namedb: lane_id
+        constraint: true
+
+      # Flags
+      - name: congested
+        type: boolean
+        cartodb: true
+
+      - name: isHoliday
+        type: boolean
+        cartodb: true
+        namedb: is_holiday
+
+      # Indicators
+
+      - name: intensidadSat
+        type: integer
+        cartodb: true
+        namedb: intensity_sat
+
+      - name: intensity
+        type: integer
+        cartodb: true
+
+      - name: load
+        type: integer
+        cartodb: true
+
+      - name: nivelServicio
+        type: integer
+        cartodb: true
+        namedb: service_level
+
+      - name: occupancy
+        type: integer
+        cartodb: true
+
+      # Dates
+      - name: dateObserved
+        type: ISO8601
+        cartodb: true
+        namedb: TimeInstant
+        constraint: true
+
+    trigger_attributes:
+      - dateObserved

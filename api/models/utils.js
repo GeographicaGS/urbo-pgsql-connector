@@ -136,7 +136,7 @@ module.exports.getValueForType = function(value, type, outcome){
       } else {
         // Interval
         // FIXME: real interval support. For now, interval use the mid value
-        return (new Date(dates[1] - (dates[1] - dates[0]))).toISOString();
+        return (new Date(dates[1] - (dates[1] - dates[0])/2)).toISOString();
       }
 
     } else {
