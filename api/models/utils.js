@@ -123,11 +123,24 @@ module.exports.getValueForType = function(value, type, outcome){
     return 'ARRAY[' + sep + value.join(sep + ', ' + sep) + sep + ']::' + cast + '[]';
 
   } else if (type === 'ISO8601' || type === 'timestamp') {
-    if (!value || value === '' || new Date(value) == 'Invalid Date'){
-      return null;
+
+    if (value && value !== ''){
+      let dates = value.split('/').map((x)=>{return new Date(x)});
+
+      if(dates.filter((x)=>{return x == 'Invalid Date'}).length > 0){
+        log.error(`Cannot cast ${value.toString()} to ISO8601: Invalid Date`);
+        return null;
+      } else if (dates.length === 1){
+        // Regular date
+        return dates[0].toISOString();
+      } else {
+        // Interval
+        // FIXME: real interval support. For now, interval use the mid value
+        return (new Date(dates[1] - (dates[1] - dates[0])/2)).toISOString();
+      }
 
     } else {
-      return value;
+      return null;
     }
 
   } else if (type === 'boolean' || type === 'integer' || type === 'float' || type === 'string') {

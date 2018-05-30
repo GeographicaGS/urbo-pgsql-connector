@@ -42,3 +42,4 @@ fiware-dashboard-config.yml
 
 nginx_dev/
 config.yml*
+api/config.*.yml
