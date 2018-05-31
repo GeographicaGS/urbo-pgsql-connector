@@ -34,13 +34,13 @@ contextBrokerUrls:
 
 # Fiware subservices subscriptions configuration
 subservices:
-  - id: madrid_mobility
+  - id: madrid_traffic
     service: madrid
     subservice: /analytics_kpis
 
 subscriptions:
-  - id: mobility_trafficflowobserved_lastdata
-    subservice_id: madrid_mobility
+  - id: traffic_trafficflowobserved_lastdata
+    subservice_id: madrid_traffic
     schemaname: madrid
     fetchDataOnCreated: false
     subsduration: P8M
@@ -121,8 +121,8 @@ subscriptions:
     trigger_attributes:
       - dateObserved
 
-  - id: mobility_trafficflowobserved_measurand
-    subservice_id: madrid_mobility
+  - id: traffic_trafficflowobserved_measurand
+    subservice_id: madrid_traffic
     schemaname: madrid
     fetchDataOnCreated: false
     subsduration: P8M
