@@ -51,7 +51,7 @@ function getDataPage(sub, headers, page, cb) {
 
   request(options, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      if (["200", "404"].indexOf(response.body.errorCode.code)) {
+      if (["200", "404"].indexOf(response.body.errorCode.code)>=0) {
         if (config.getData().processing.active) {
           utils.storeData(sub, response.body.contextResponses);
 
