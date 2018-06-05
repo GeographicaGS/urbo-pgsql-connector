@@ -73,6 +73,8 @@ function getDataPage(sub, headers, page, cb) {
       } else if (response.body.errorCode.code !== "404") {
         console.error('Couldn\'t retrieve subscription data on create:', response.body);
         cb(response.body.errorCode);
+      } else {
+        cb();
       }
 
     } else {
