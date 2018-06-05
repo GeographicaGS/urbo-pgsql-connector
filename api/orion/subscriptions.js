@@ -157,7 +157,7 @@ function newOrionSubscription(sub, cb){
     }
     else{
       log.error(util.format('New subscription [%s] cannot be created',sub.id));
-      log.error('Request error: ' + JSON.stringify(response));
+      log.error('Request error: ' + JSON.stringify(response, null, 2));
       cb(error);
     }
   });
@@ -345,7 +345,7 @@ function createTable(sub,cb){
 function initialize(cb){
   tokenManager.createTokens(function(error,tokens){
     if (error) {
-      return log.error('Error, cannot create tokens for the provided credentials: '+error);
+      return log.error('Error, cannot create tokens for the provided credentials: ', error);
       if(cb) return cb(error);
     }
 

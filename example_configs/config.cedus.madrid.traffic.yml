@@ -38,18 +38,9 @@ subservices:
     service: madrid
     subservice: /analytics_kpis
 
-subscriptions:
-  - id: traffic_trafficflowobserved_lastdata
-    subservice_id: madrid_traffic
-    schemaname: madrid
-    fetchDataOnCreated: false
-    subsduration: P8M
-    substhrottling: PT0S
-    entityTypes:
-      - typeName: TrafficFlowObserved
-    mode: update
+_blocks:
+  - &traffic_trafficflowobserved_catalog
 
-    attributes:
       # Alternate key
       - name: code
         type: string
@@ -71,6 +62,14 @@ subscriptions:
         type: string
         cartodb: true
 
+      # Location
+      - name: location
+        namedb: position
+        type: geojson-point
+        cartodb: true
+
+  - &traffic_trafficflowobserved_variables
+
       # Flags
       - name: congested
         type: boolean
@@ -105,18 +104,27 @@ subscriptions:
         type: integer
         cartodb: true
 
-      # Location
-
-      - name: location
-        type: geojson-point
-        cartodb: true,
-        namedb: the_geom
-
       # Dates
       - name: dateObserved
         type: ISO8601
         cartodb: true
         namedb: TimeInstant
+
+subscriptions:
+
+  - id: traffic_trafficflowobserved_lastdata
+    subservice_id: madrid_traffic
+    schemaname: madrid
+    fetchDataOnCreated: false
+    subsduration: P8M
+    substhrottling: PT0S
+    entityTypes:
+      - typeName: TrafficFlowObserved
+    mode: update
+
+    attributes:
+      - *traffic_trafficflowobserved_catalog
+      - *traffic_trafficflowobserved_variables
 
     trigger_attributes:
       - dateObserved
@@ -132,58 +140,7 @@ subscriptions:
     mode: append
 
     attributes:
-      # Alternate key
-      - name: code
-        type: string
-        cartodb: true
-        constraint: true
-
-      - name: laneId
-        type: integer
-        cartodb: true
-        namedb: lane_id
-        constraint: true
-
-      # Flags
-      - name: congested
-        type: boolean
-        cartodb: true
-
-      - name: isHoliday
-        type: boolean
-        cartodb: true
-        namedb: is_holiday
-
-      # Indicators
-
-      - name: intensidadSat
-        type: integer
-        cartodb: true
-        namedb: intensity_sat
-
-      - name: intensity
-        type: integer
-        cartodb: true
-
-      - name: load
-        type: integer
-        cartodb: true
-
-      - name: nivelServicio
-        type: integer
-        cartodb: true
-        namedb: service_level
-
-      - name: occupancy
-        type: integer
-        cartodb: true
-
-      # Dates
-      - name: dateObserved
-        type: ISO8601
-        cartodb: true
-        namedb: TimeInstant
-        constraint: true
+      *traffic_trafficflowobserved_variables
 
     trigger_attributes:
       - dateObserved
