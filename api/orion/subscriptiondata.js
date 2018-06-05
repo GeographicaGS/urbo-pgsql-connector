@@ -71,11 +71,12 @@ function getDataPage(sub, headers, page, cb) {
         getDataPage(sub, headers, page+1,cb);
 
       } else {
-        cb(null);
+        console.error('Couldn\'t retrieve subscription data on create:', response.body.errorCode);
+        cb(response.body.errorCode);
       }
 
     } else {
-      log.error('Request error: ' + error);
+      log.error('Request error: ', error);
       log.debug(response);
       cb(error);
     }

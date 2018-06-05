@@ -46,7 +46,32 @@ var LOG_DEFAULT_OLD_FILES = 5;
 
 function Config() {
 
-  this._data = yaml.safeLoad(fs.readFileSync('config.yml', 'utf8'));
+  this._data = _(yaml.safeLoad(fs.readFileSync('config.yml', 'utf8')))
+    // Exclude from configuration keys started with "_". To be used
+    // to define auxiliary YAML reusable block references
+    .omit((v,k)=>k.startsWith('_'))
+  ;
+
+  // Allow to define subscription attribute lists as a
+  // list of arrays containing attribute definitions
+  if (this._data.subscriptions){
+    for (let sub of this._data.subscriptions){
+        if (sub.attributes){
+        let attrsAsNestedArrays = _(sub.attributes.map((x)=>(x instanceof Array))).uniq();
+        if (attrsAsNestedArrays.length !== 1){
+          throw new Error(
+            `Subscription ${sub.id} can only be \
+            an array of attribute defs or an array \
+            of arrays of attribute defs.`
+          );
+        }
+
+        if (attrsAsNestedArrays[0]){
+          sub.attributes = _.flatten(sub.attributes)
+        }
+      }
+    }
+  }
 
   // Set default params
   var cdb = this._data.cartodb;
