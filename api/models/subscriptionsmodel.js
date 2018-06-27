@@ -404,56 +404,15 @@ SubscriptionsModel.prototype.upsertSubscriptedData = function(table, obj, objdq,
 }*/
 
 SubscriptionsModel.prototype.storeData = function(sub,contextResponses,cb){
-  for (var i in contextResponses){
-    var obj = {}, objdq = {};
-    obj['id_entity'] = contextResponses[i].contextElement.id;
-
-    var subAttr = sub.attributes.slice();
-    var crAttr = contextResponses[i].contextElement.attributes.slice();
-    if (_.find(subAttr,{namedb:'lat',type:'coords'}) && _.find(subAttr,{namedb:'lon',type:'coords'})){
-      var lat_name = _.find(subAttr,{namedb:'lat'}).name;
-      var lon_name = _.find(subAttr,{namedb:'lon'}).name;
-      var lat = _.find(crAttr,{name: lat_name});
-      var lon = _.find(crAttr,{name: lon_name});
-      if (lat && lon){
-        crAttr.push({
-          name: 'position',
-          type: 'coords',
-          value: util.format('%s, %s',lat.value,lon.value)
-        });
-      }
-      crAttr = _.without(crAttr,_.find(crAttr,{name:lat_name}),_.find(crAttr,{name:lon_name}));
-      subAttr.push({name:'position',type:'coords',cartodb:true});
-    }
-
-    _.each(crAttr,function(attr) {
-      var attrSub = _.findWhere(subAttr, {'name': attr.name});
-      if (attrSub){
-        var attrName = attrSub.namedb || attr.name;
-        var attrType = attrSub.type;
-        var attrOutcome = ('outcome' in attrSub) ? attrSub.outcome : undefined;
-        var value = utils.getValueForType(attr.value, attrType, attrOutcome);
-
-        if (value == null) {
-          objdq[attrName] = 'NULL';
-
-        } else if (utils.isTypeQuoted(attrType)) {
-          obj[attrName] = value;
-
-        } else {
-          objdq[attrName] = value;
-        }
-      }
-    });
-
-    var schemaName = sub.schemaname;
-    var schemaTable = schemaName+'.'+sub.id
-    if ("mode" in sub && sub.mode == "update")
-      this.upsertSubscriptedData(schemaTable,obj,objdq,cb);
-    else
-      this.insert(schemaTable,obj,objdq,cb);
-
+  for (let contextResponse of contextResponses) {
+    utils.processCtxResponses({
+      sub: sub,
+      contextResponse: contextResponse,
+      upsertFn: this.upsertSubscriptedData.bind(this),
+      insertFn: this.insert.bind(this),
+      cb: cb
+    })
   }
-}
+};
 
 module.exports = SubscriptionsModel;

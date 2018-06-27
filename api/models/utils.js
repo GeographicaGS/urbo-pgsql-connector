@@ -69,6 +69,160 @@ module.exports.getPostgresGeoJSONType = function(type) {
     return 'Geometry';
 };
 
+module.exports.getOutcomeTypeForContextResponse = function(
+  attrConfigByName,
+  cbAttr,
+  attrSubName
+){
+  /**
+   * Given a context response metadata object, get the outcome
+   * factor chain list.
+   */
+
+  let attrSub, outcome;
+
+  attrSub = attrConfigByName[attrSubName];
+  outcome = attrSub.outcome;
+
+  if (attrSub.type === 'outcome' && outcome) {
+
+    if (!(outcome instanceof Array)){
+      outcome = [outcome];
+    }
+
+    outcome = outcome.map((outcomeElem)=>{
+      if (typeof outcomeElem.factor === 'string'){
+        outcomeElem = _.clone(outcomeElem);
+
+        outcomeElem.factor = cbAttr[outcomeElem.factor]
+          ? cbAttr[outcomeElem.factor].value
+          : null
+        ;
+      }
+
+      return outcomeElem;
+    });
+  }
+
+  return outcome;
+};
+
+module.exports.patchLatLonToPosition = function(
+  attrConfigByName,
+  cbAttr
+){
+  let attrConfigByDBName = _.chain(attrConfigByName)
+    .values()
+    .filter((x)=> x.namedb === 'lat' || x.namedb === 'lon')
+    .map((x)=>[x.namedb || x.name, x])
+    .object()
+    .value()
+  ;
+
+  // Patch attribute configuration to unify "lat"/"lon" attributes into "position" attribute
+  if (attrConfigByDBName.lat && attrConfigByDBName.lon){
+
+    let lat = cbAttr[attrConfigByDBName.lat.name];
+    let lon = cbAttr[attrConfigByDBName.lon.name];
+
+    delete cbAttr[lat.name];
+    delete cbAttr[lon.name];
+    delete attrConfigByName[lat.name];
+    delete attrConfigByName[lon.name];
+
+    cbAttr['position'] = {
+      name: 'position',
+      type: 'coords',
+      value: util.format('%s, %s',lat.value,lon.value)
+    };
+
+    attrConfigByName['position'] = {
+      name:'position',
+      type:'coords',
+      cartodb:true
+    };
+  }
+};
+
+module.exports.processCtxResponses = function({
+    sub,
+    contextResponse,
+    upsertFn,
+    insertFn,
+    filterFn=null,
+    cb=null,
+    schemaSeparator='.',
+}){
+
+  let existingAttrs, cbAttr, attrConfigByName,
+    obj, objdq,
+    schemaName, schemaTable
+  ;
+
+  existingAttrs = _.intersection(
+    sub.attributes.map((x)=>x.name),
+    contextResponse.contextElement.attributes.map((x)=>x.name)
+  );
+
+  cbAttr = _.chain(
+      contextResponse
+        .contextElement
+        .attributes
+    )
+    .map((x)=>[x.name, x])
+    .object()
+    .pick(existingAttrs)
+    .value()
+  ;
+  attrConfigByName = _.chain(sub.attributes)
+    .map((x)=>[x.name, x])
+    .object()
+    .pick(existingAttrs)
+    .value()
+  ;
+
+  this.patchLatLonToPosition(attrConfigByName, cbAttr);
+
+  // Start filling attributes
+  obj = {
+    'id_entity': contextResponse.contextElement.id
+  };
+  objdq = {};
+
+  for (let attr of _(cbAttr).values()) {
+
+    let attrSub,
+      attrName, outcomeChain, value
+    ;
+
+    attrSub = attrConfigByName[attr.name];
+
+    // Give the caller the chance to skip the attribute
+    if (filterFn && !filterFn(attr, attrSub))
+      continue;
+
+    attrName = attrSub.namedb || attr.name;
+    outcomeChain = this.getOutcomeTypeForContextResponse(attrConfigByName, cbAttr, attr.name);
+    value = this.getValueForType(attr.value, attrSub.type, outcomeChain);
+
+    if (value == null) {
+      objdq[attrName] = 'NULL';
+    } else if (this.isTypeQuoted(attrSub.type)) {
+      obj[attrName] = value;
+    } else {
+      objdq[attrName] = value;
+    }
+  }
+
+  schemaName = sub.schemaname;
+  schemaTable = schemaName + schemaSeparator + sub.id;
+
+  if ("mode" in sub && sub.mode === "update")
+    upsertFn(schemaTable,obj,objdq,cb);
+  else
+    insertFn(schemaTable,obj,objdq,cb);
+};
+
 module.exports.getValueForType = function(value, type, outcome){
   if (typeof value === 'string' && value.toLowerCase() === 'null') {
     return null;
@@ -167,22 +321,33 @@ module.exports.getValueForType = function(value, type, outcome){
 
   } else if (type === 'outcome') {
 
-    if(outcome && outcome.factor && outcome.operation) {
-      var operation = outcome.operation;
-      if (operation === 'SUM') {
-        return value + outcome.factor;
+    return outcome.reduce((value, subOutcome)=>{
 
-      } else if(operation === 'PROD') {
-        return value * outcome.factor;
-
-      } else if(operation === 'MIN') {
-        return value - outcome.factor;
-
-      } else if(operation === 'DIV') {
-        return value / outcome.factor;
+      if (subOutcome &&
+        !_.isNull(value) &&
+        !_.isNull(subOutcome.factor) &&
+        !_.isUndefined(subOutcome.factor) &&
+        subOutcome.operation
+      ) switch(subOutcome.operation)
+      {
+        case 'SUM':
+          value = value + subOutcome.factor; break;
+        case 'PROD':
+          value = value * subOutcome.factor; break;
+        case 'MIN':
+        case 'SUB':
+          value = value - subOutcome.factor; break;
+        case 'DIV':
+          value = subOutcome.factor !==0
+            ? value / subOutcome.factor
+            : null
+          ; break;
+      } else {
+        value = null;
       }
-    }
-    return value;
+
+      return value;
+    }, value);
   } else if (type === 'url') {
     var replace = {
       "+": "%20"
