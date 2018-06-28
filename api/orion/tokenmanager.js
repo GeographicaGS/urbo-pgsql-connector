@@ -53,12 +53,12 @@ function getAuthToken(sub, cb){
     };
 
     request(options, function (error, response, body) {
-      if (!error) {
+      if (!error && response.statusCode < 400) {
         var resp = JSON.parse(JSON.stringify(response));
         cb(null,resp.headers['x-subject-token']);
       }
       else{
-        cb(error,null);
+        cb(error || response.body,null);
       }
     });
   } else {

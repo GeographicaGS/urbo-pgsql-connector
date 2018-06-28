@@ -51,7 +51,7 @@ function getDataPage(sub, headers, page, cb) {
 
   request(options, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      if (response.body.errorCode.code == "200") {
+      if (response.body.errorCode.code === "200") {
         if (config.getData().processing.active) {
           utils.storeData(sub, response.body.contextResponses);
 
@@ -70,12 +70,15 @@ function getDataPage(sub, headers, page, cb) {
         log.info('Retrieved paged %d for subscription [%s]',page,sub.id);
         getDataPage(sub, headers, page+1,cb);
 
+      } else if (response.body.errorCode.code !== "404") {
+        console.error('Couldn\'t retrieve subscription data on create:', response.body);
+        cb(response.body.errorCode);
       } else {
-        cb(null);
+        cb();
       }
 
     } else {
-      log.error('Request error: ' + error);
+      log.error('Request error: ', error);
       log.debug(response);
       cb(error);
     }
