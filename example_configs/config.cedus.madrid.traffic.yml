@@ -87,6 +87,10 @@ _blocks:
         cartodb: true
         namedb: intensity_sat
 
+      - name: intensity_ratio
+        type: float
+        cartodb: true
+
       - name: intensity
         type: integer
         cartodb: true
