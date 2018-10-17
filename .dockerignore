@@ -1,7 +1,8 @@
+# OSs
 .DS_Store
 
 # Logs
-logs
+logs/
 *.log
 
 # Runtime data
@@ -21,28 +22,27 @@ coverage
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 
-# Dependency directory
-# Commenting this out is preferred by some people, see
-# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git-
+# Node
 node_modules
 
 # Users Environment Variables
 .lock-wscript
 
+# Project
 *.private.*
-
+example_configs
+scripts
+tmp/
 Icon
-
-*.pyc
-
-#environment parameters
-config.env
-fiware_auth.json*
-fiware-dashboard-config.yml
-
-nginx_dev/
-config.yml*
-api/config.*.yml
-docker-compose.*.yml
-!docker-compose.override.yml
+db-config.env
+site
+report
+db/migrations
+config.dev.yml
+config.prod.yml
+deploy.sh
+.git
+Dockerfile.*
+Jenkinsfile
+test
 .vscode

@@ -5,6 +5,7 @@
   "scripts": {
     "test": "mocha",
     "start": "node ./bin/www",
+    "start-dev": "nodemon --inspect=0.0.0.0 --debug-brk ./bin/www",
     "debug": "node-debug --web-host 0.0.0.0 ./bin/www"
   },
   "dependencies": {
@@ -25,6 +26,8 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "supertest": "^2.0.1"
+    "supertest": "^2.0.1",
+    "nodemon": "^1.18.4",
+    "mocha": "^2.5.3"
   }
 }

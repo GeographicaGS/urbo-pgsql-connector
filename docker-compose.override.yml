@@ -1,0 +1,23 @@
+version: "3.6"
+
+services:
+  api:
+    build:
+      context: api
+      dockerfile: Dockerfile.new
+    ports:
+      - "3000:3000"
+      - "9229:9229"
+    volumes:
+      - node_modules:/usr/src/app/node_modules
+      - ./api:/usr/src/app
+    networks:
+      - net_urbo_db
+    command: npm run-script start-dev
+
+volumes:
+  node_modules:
+
+networks:
+  net_urbo_db:
+    external: true
