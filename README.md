@@ -1,32 +1,24 @@
 # URBO PGSQL connector
 
-Status **master** branch: [![Build Status](http://jenkins.geographica.gs/buildStatus/icon?job=urbo-connector/master)](http://jenkins.geographica.gs/job/urbo-connector/job/master/)
-
-Status **staging** branch: [![Build Status](http://jenkins.geographica.gs/buildStatus/icon?job=urbo-connector/staging)](http://jenkins.geographica.gs/job/urbo-connector/job/staging/)
-
-Status **dev** branch: [![Build Status](http://jenkins.geographica.gs/buildStatus/icon?job=urbo-connector/dev)](http://jenkins.geographica.gs/job/urbo-connector/job/dev/)
+| Master | Staging | Dev |
+|--------|---------|-----|
+|[![Build Status](https://jenkins.geographica.gs/buildStatus/icon?job=urbo-connector/master)](https://jenkins.geographica.gs/job/urbo-connector/job/master/)|[![Build Status](https://jenkins.geographica.gs/buildStatus/icon?job=urbo-connector/staging)](https://jenkins.geographica.gs/job/urbo-connector/job/staging/)|[![Build Status](https://jenkins.geographica.gs/buildStatus/icon?job=urbo-connector/dev)](https://jenkins.geographica.gs/job/urbo-connector/job/dev/)|
 
 This project is a connector between Fiware and PostgreSQL. It supports spatial features with PostGIS and CartoDB.
 
 You choose which part of Fiware do you want to listen to, you specify how to map the information and you'll get this information ready on a PostgreSQL database. Furthermore, if you want to have great maps you can also have this information at CartoDB, it's up to you.
 
-## How to use
+## How to use
 
 It's your lucky day, we use Docker to deploy, also for development stages.
 
 You need the following dependencies to run this project:
-* Docker: https://docs.docker.com/engine/installation/
+* Docker 18.02+: https://docs.docker.com/engine/installation/
 * Docker-compose: https://docs.docker.com/compose
 
 ### 1. Prepare the database.
-```
-// Create data container
-docker create --name urbo_pgdata -v /data debian /bin/true
-// Start the db
-docker-compose up -d postgis
-// Create the database and execute the start scripts, for connector
-docker-compose exec -T  postgis psql -U postgres -f /usr/src/db/all.sql
-```
+
+**The .sql scripts existing in the db directory in this repository are deprecated**. All the necessary scripts and Docker configurations are now located in the [Urbo API Repository](https://github.com/GeographicaGS/UrboCore-api). Check the [readme](https://github.com/GeographicaGS/UrboCore-api#setting-up-the-database) for more information on how to set up the Posgtres database.
 
 ### 2. Prepare your config file.
 
@@ -46,40 +38,30 @@ docker-compose up
 
 ## Development
 
-###Create an alias to docker-compose
-Let's call it dcp
-```
-echo "alias dcp='docker-compose -f docker-compose.dev.yml'" >> ~/.bash_profile
-source ~/.bash_profile
-```
+### Considerations
 
-### First time
+The *docker-compose.override.yml* file defines containers with an alternative configuration for the API:
+- Starts the Node server with the Inspector mode. This mode allows you to debug the API with your favourite IDE, text editor or Chromium-based web browser. The debug port (9229) will be bridged to your host, so you can debug the application as if you had an instance of the server running on your machine. The API will start with a breakpoint on the first line of code, you will need to connect to the debug process in order to continue with the execution.
+- Publishes the connector container listening port in your host's 3005 port.
+- By default the container will use an image with all the development dependencies installed.
 
-Install node packages on sources directory
-```
-dcp run api  npm install
-```
+### Notes for developers
+The development configurations for the different containers required by the API are defined in the *docker-compose.override.yml* file. By default, docker-compose will override/merge the configuration existing in the *docker-compose.yml* file with the contents of the *.override.yml* file. This means that when you execute `docker-compose up` you will start the development environment by default. You can find more information about how docker-compose allows you to extend configurations [here](https://docs.docker.com/compose/extends/).
 
-Database
+If you wish to change/update the configurations you can create a new _docker-compose.*.yml_ file, that file will be ignored by default by git, so you can create as many configurations as you wish.
+In order to use these configs you will have to append to your docker-compose commands two `-f` flags. For example:
 ```
-// Create data container
-docker create --name urbo_pgdata -v /data debian /bin/true
-// Start the db
-dcp up -d postgis
-// Create the database and execute the start scripts, for connector
-dcp exec -T  postgis psql -U postgres -f /usr/src/db/all.sql
+docker-compose -f docker-compose.yml -f docker-compose.example.yml up -d
 ```
-
-Config file. Copy from sample and fill with your config
+This leads to more difficult to read commands, our recommendation is to create an alias in your shell, let's call it `dcp`:
 ```
-cp api/config.sample.yml api/config.yml
-
+alias dcp="docker-compose -f docker-compose.yml -f docker-compose.example.yml"
 ```
-
-### Start
+With this alias you can issue commands faster, the previous example ends up like this:
 ```
-dcp up
+dcp up -d
 ```
+Remember that you can still use other docker-compose commands with this shortcut: `dcp build`, `dcp down` ...
 
 ### License
 
