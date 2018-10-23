@@ -1,13 +1,5 @@
-postgis:
-  image: geographica/postgis:breezy_badger
-  volumes_from:
-     - urbo_pgdata
-  volumes:
-    - ./:/usr/src
+version: "3.6"
 
-api:
-  build: api
-  ports:
-    - "80:3000"
-  links:
-    - postgis:postgis
+services:
+  api:
+    # container_name: to_specify_in_override.yml

@@ -143,7 +143,7 @@ subscriptions:
         name: name
         # Database attribute name (If it does not exist "name" is used)
         namedb: name
-        # Mandatory: Type of attribute: Currently supported: 'coords', 'string', 'float', 'integer',
+        # Mandatory: Type of attribute: Currently supported: 'coords', 'string', 'float', 'integer', 'outcome',
         #            'ISO8601|timestamp', 'percent', 'url', boolean', json','geojson' (for all types oj GeoJSON),
         #            'geojson-point', 'geojson-line', 'geojson-polygon', 'geojson-multipoint',
         #            'geojson-multiline', 'geojson-multipolygon', 'list' (it cast its content to string),
@@ -160,6 +160,7 @@ subscriptions:
           operation: SUM|PROD|MIN|DIV
         constraint: true
         # Optional. Applies operation(factor) when inserting data
+        # If outcome is specified, the data type must be changed to "outcome"
       - name: position
         type: coords
         cartodb: true
