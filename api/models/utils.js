@@ -268,6 +268,7 @@ module.exports.fixContextResponse = function(contextResponse) {
 
 module.exports.storeData = function(subscription, contextResponses) {
   var processingConfig = config.getData().processing;
+
   var options = {
     'url': processingConfig.url,
     'method': 'POST',
@@ -288,6 +289,20 @@ module.exports.storeData = function(subscription, contextResponses) {
       }
     }
   };
+
+
+  // Added Basic Auth for generate connector m
+  var basicAuthHash = function make_base_auth(processingConfig.user, processingConfig.password) {
+    var tok = user + ':' + password;
+    var hash = btoa(tok);
+    return "Basic " + hash;
+  }
+
+  if (processingConfig.user) and (processingConfig.password) {
+    options.Authorization = basicAuthHash
+  }
+
+
 
   contextResponses.forEach(function(contextResponse) {
 
