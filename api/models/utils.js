@@ -290,16 +290,15 @@ module.exports.storeData = function(subscription, contextResponses) {
     }
   };
 
+  // Added Basic Auth for generate connector if defined at config
+  if (processingConfig.auth) {
+    var basicAuthHash = function make_base_auth(processingConfig.auth.user, processingConfig.auth.password) {
+      var tok = user + ':' + password;
+      var hash = btoa(tok);
+      return "Basic " + hash;
+    }
 
-  // Added Basic Auth for generate connector m
-  var basicAuthHash = function make_base_auth(processingConfig.user, processingConfig.password) {
-    var tok = user + ':' + password;
-    var hash = btoa(tok);
-    return "Basic " + hash;
-  }
-
-  if (processingConfig.user) and (processingConfig.password) {
-    options.Authorization = basicAuthHash
+    options.Authorization = basicAuthHash;
   }
 
 
