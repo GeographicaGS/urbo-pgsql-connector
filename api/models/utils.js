@@ -292,7 +292,9 @@ module.exports.storeData = function(subscription, contextResponses) {
 
   // Added Basic Auth for generate connector if defined at config
   if (processingConfig.auth) {
-    var basicAuthHash = function make_base_auth(processingConfig.auth.user, processingConfig.auth.password) {
+    var user = processingConfig.auth.user;
+    var password = processingConfig.auth.password;
+    var basicAuthHash = function make_base_auth(user, password) {
       var tok = user + ':' + password;
       var hash = btoa(tok);
       return "Basic " + hash;
