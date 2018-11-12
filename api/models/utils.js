@@ -298,9 +298,9 @@ module.exports.storeData = function(subscription, contextResponses) {
       var tok = user + ':' + password;
       var hash = btoa(tok);
       return "Basic " + hash;
-    }
+    };
 
-    options.Authorization = basicAuthHash;
+    options.headers.Authorization = basicAuthHash;
   }
 
 
