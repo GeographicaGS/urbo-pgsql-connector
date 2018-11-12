@@ -43,10 +43,10 @@ node("docker") {
 
             sleep 20
 
-        stage "Testing"
+        // stage "Testing"
 
-            echo "Testing urbo-connector/${build_name}"
-            sh "docker run -i --rm --name urbo_connector--${build_name} --net=connector-network --net-alias=urbo_connector geographica/urbo_connector npm test"
+        //     echo "Testing urbo-connector/${build_name}"
+        //     sh "docker run -i --rm --name urbo_connector--${build_name} --net=connector-network --net-alias=urbo_connector geographica/urbo_connector npm test"
 
     } catch (error) {
 

@@ -57,6 +57,9 @@ processing:
   cartoJob: connectorCarto
   jobAttempts: 3
   priority: critical
+  auth:
+    user: urbo_connector
+    password: urbo_connector_password
 
 # Notifiers array (to the API) configuration
 notifier:
