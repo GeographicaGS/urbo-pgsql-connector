@@ -1,5 +1,5 @@
 version: "3.6"
 
 services:
-  connector:
+  api:
     # container_name: to_specify_in_override.yml

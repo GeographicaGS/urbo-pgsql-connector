@@ -1,7 +1,7 @@
 version: "3.6"
 
 services:
-  connector:
+  api:
     build:
       context: api
       dockerfile: Dockerfile.new
@@ -11,6 +11,7 @@ services:
     volumes:
       - node_modules:/usr/src/app/node_modules
       - ./api:/usr/src/app
+    container_name: urbo_connector
     networks:
       - net_urbo_db
     command: npm run-script start-dev
