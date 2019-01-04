@@ -1,20 +1,20 @@
 // Copyright 2017 Telefónica Digital España S.L.
-// 
+//
 // This file is part of URBO PGSQL connector.
-// 
+//
 // URBO PGSQL connector is free software: you can redistribute it and/or
 // modify it under the terms of the GNU Affero General Public License as
 // published by the Free Software Foundation, either version 3 of the
 // License, or (at your option) any later version.
-// 
+//
 // URBO PGSQL connector is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Affero General Public License
 // along with URBO PGSQL connector. If not, see http://www.gnu.org/licenses/.
-// 
+//
 // For those usages not covered by this license please contact with
 // iot_support at tid dot es
 
@@ -231,16 +231,34 @@ function Config() {
 
   this.getCtxBrUrls = function(optype){
     // Just because we need to handle different servers
-    var urlCtxAuthBase = this._data.contextBrokerUrls.urlCtxAuthBase || this._data.contextBrokerUrls.urlCtxBrBase;
-    var urlCtxBrBase = this._data.contextBrokerUrls.urlCtxBrBase;
+
+    var regex = /(^http?:\/\/[^\/]+(?=\/))(.*)/;
+
+    var urlCtxAuthBaseDomain = this._data.contextBrokerUrls.urlCtxAuthBase || this._data.contextBrokerUrls.urlCtxBrBase;
+    var urlCtxBrBaseDomain = this._data.contextBrokerUrls.urlCtxBrBase;
+    var urlCtxAuthBasePath = '';
+    var urlCtxBrBasePath = '';
+    var m
+
+    if ( (m = regex.exec(urlCtxAuthBaseDomain)) !== null) {
+      urlCtxAuthBaseDomain = m[1];
+      urlCtxAuthBasePath = m[2];
+    }
+
+    if ( (m = regex.exec(urlCtxBrBaseDomain)) !== null) {
+      urlCtxBrBaseDomain = m[1];
+      urlCtxBrBasePath = m[2];
+    }
+
     if (optype == 'authtk'){
       if(!this._data.contextBrokerUrls.portAuthtk) return null;
       var portAuthtk = this._data.contextBrokerUrls.portAuthtk;
-      return urlCtxAuthBase + ':' + portAuthtk + URL_AUTHTK
+      return urlCtxAuthBaseDomain + ':' + portAuthtk + urlCtxAuthBasePath + URL_AUTHTK
     }
     else{
       var portCtxApi = this._data.contextBrokerUrls.portCtxApi;
-      var apiBase = urlCtxBrBase + ':' + portCtxApi;
+      var apiBase = urlCtxBrBaseDomain + ':' + portCtxApi + urlCtxBrBasePath;
+
       if (optype === 'subscr')
         return apiBase + URL_SBC;
       else if (optype === 'updsbscr')
