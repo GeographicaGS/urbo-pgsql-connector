@@ -238,7 +238,7 @@ function Config() {
     var urlCtxBrBaseDomain = this._data.contextBrokerUrls.urlCtxBrBase;
     var urlCtxAuthBasePath = '';
     var urlCtxBrBasePath = '';
-    var m
+    var m;
 
     if ( (m = regex.exec(urlCtxAuthBaseDomain)) !== null) {
       urlCtxAuthBaseDomain = m[1];
@@ -253,7 +253,8 @@ function Config() {
     if (optype == 'authtk'){
       if(!this._data.contextBrokerUrls.portAuthtk) return null;
       var portAuthtk = this._data.contextBrokerUrls.portAuthtk;
-      return urlCtxAuthBaseDomain + ':' + portAuthtk + urlCtxAuthBasePath + URL_AUTHTK
+      return urlCtxAuthBaseDomain + ':' + portAuthtk + urlCtxAuthBasePath + URL_AUTHTK;
+
     }
     else{
       var portCtxApi = this._data.contextBrokerUrls.portCtxApi;
