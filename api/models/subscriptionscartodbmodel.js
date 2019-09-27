@@ -356,7 +356,11 @@ SubscriptionsCartoDBModel.prototype.storeData = function(sub,contextResponses,cb
         var attrType = attrSub.type;
         var attrOutcome = ('outcome' in attrSub) ? attrSub.outcome : undefined;
         if (valid_attrs.indexOf(attr.name)!=-1){
-          var value = utils.getValueForType(attr.value,attrType, attrOutcome);
+          var value = attr.value;
+          if ('condition' in attrSub && 'when' in attrSub.condition && 'then' in attrSub.condition) {
+            value = attrSub.condition.when === value ? attrSub.condition.then : value;
+          }
+          var value = utils.getValueForType(value, attrType, attrOutcome);
           var name = (attrType !== 'coords' && !attrType.startsWith('geojson')) ? attrName : 'the_geom';
 
           if (value == null) {

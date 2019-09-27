@@ -432,7 +432,11 @@ SubscriptionsModel.prototype.storeData = function(sub,contextResponses,cb){
         var attrName = attrSub.namedb || attr.name;
         var attrType = attrSub.type;
         var attrOutcome = ('outcome' in attrSub) ? attrSub.outcome : undefined;
-        var value = utils.getValueForType(attr.value, attrType, attrOutcome);
+        var value = attr.value;
+        if ('condition' in attrSub && 'when' in attrSub.condition && 'then' in attrSub.condition) {
+          value = attrSub.condition.when === value ? attrSub.condition.then : value;
+        }
+        var value = utils.getValueForType(value, attrType, attrOutcome);
 
         if (value == null) {
           objdq[attrName] = 'NULL';
